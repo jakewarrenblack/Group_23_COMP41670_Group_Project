@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Game {
 
-    private enum GameState {ONGOING, WON, LOST};
+    protected enum GameState {ONGOING, WON, LOST};
     private GameState gameState;
 
     private Player[] players = new Player[2];

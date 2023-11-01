@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,8 @@ class GameTest {
     @BeforeEach
     void setUp() {
         myGame = new Game(new Player[2], new Die());
+        Player blackPlayer = new Player("R", Player.Color.BLACK);
+        Player whitePlayer = new Player("J", Player.Color.WHITE);
         typeOut = new ByteArrayOutputStream();
         System.setOut(new PrintStream(typeOut));
     }
@@ -27,19 +30,37 @@ class GameTest {
         System.setOut(systemOut);
     }
     @Test
+    @DisplayName("Checks that game has been created")
+    void testGame(){
+        assertNotNull(myGame);
+    }
+    @Test
     void handleMove() {
     }
 
     @Test
+    @DisplayName("Checks whether we can check the game state is won")
     void isGameWon() {
+        assertFalse(myGame.isGameWon());
     }
 
     @Test
+    @DisplayName("Checks whether we can check the game state is lost")
     void isGameLost() {
+        assertFalse(myGame.isGameWon());
     }
 
     @Test
+    @DisplayName("Checks we can update the game state")
     void setGameState() {
+        assertAll(()->assertFalse(myGame.isGameWon()),
+                ()->assertFalse(myGame.isGameLost()));
+        myGame.setGameState(Game.GameState.WON);
+        assertAll(()->assertTrue(myGame.isGameWon()),
+                ()->assertFalse(myGame.isGameLost()));
+        myGame.setGameState(Game.GameState.LOST);
+        assertAll(()->assertFalse(myGame.isGameWon()),
+                ()->assertTrue(myGame.isGameLost()));
     }
 
     @Test
@@ -52,7 +73,13 @@ class GameTest {
     }
 
     @Test
+    @DisplayName("Checks the correct message is sent to the console. Need to figure out how to capture multiple outputs to test different cases")
     void sendMessage() {
+        String[] tests = new String[]{"Try this message"};
+        for (String test:tests) {
+            Game.sendMessage(test);
+            assertEquals(test, typeOut.toString().trim());
+        }
     }
 
     @Test
