@@ -13,21 +13,7 @@ public class Game {
 
     private Die die;
 
-    public static void main(String[] args) {
-        Game myGame = new Game(new Player[2], new Die());
-        myGame.addPlayers();
-        if (chooseOption("Would you like to begin the game?", new String[]{"Begin Game", "Quit"}) == 2) {myGame.setGameState(GameState.LOST);}
-        // roll dice to choose who goes first
-        // display board
-        while (myGame.gameState.equals(GameState.ONGOING)) {
-            //current player
-                //roll dice
-                //give legal move options
-                //player chooses moves
-                //make moves
-                //display board
-        }
-    }
+
     public Game(Player[] players, Die die){
         this.gameState = GameState.ONGOING;
         this.players = players;
@@ -49,6 +35,9 @@ public class Game {
     }
     public boolean isGameLost(){
         return this.gameState == GameState.LOST;
+    }
+    public boolean isGameOngoing(){
+        return this.gameState == GameState.ONGOING;
     }
     public void setGameState(GameState gameState){
         this.gameState=gameState;
