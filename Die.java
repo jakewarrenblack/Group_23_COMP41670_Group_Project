@@ -1,6 +1,5 @@
 public class Die {
     private Tuple values;
-
     public Die(){
         // Initialise to 'empty' die faces
         this.values = new Tuple(0, 0);
