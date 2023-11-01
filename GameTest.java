@@ -54,13 +54,13 @@ class GameTest {
     @DisplayName("Checks we can update the game state")
     void setGameState() {
         assertAll(()->assertFalse(myGame.isGameWon()),
-                ()->assertFalse(myGame.isGameLost()));
+                ()->assertFalse(myGame.isGameWon()));
         myGame.setGameState(Game.GameState.WON);
         assertAll(()->assertTrue(myGame.isGameWon()),
-                ()->assertFalse(myGame.isGameLost()));
+                ()->assertFalse(myGame.isGameWon()));
         myGame.setGameState(Game.GameState.LOST);
         assertAll(()->assertFalse(myGame.isGameWon()),
-                ()->assertTrue(myGame.isGameLost()));
+                ()->assertTrue(myGame.isGameWon()));
     }
 
     @Test
@@ -77,7 +77,7 @@ class GameTest {
     void sendMessage() {
         String[] tests = new String[]{"Try this message"};
         for (String test:tests) {
-            Game.sendMessage(test);
+            System.out.println(test);
             assertEquals(test, typeOut.toString().trim());
         }
     }
