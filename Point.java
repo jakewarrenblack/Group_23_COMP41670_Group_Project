@@ -2,29 +2,30 @@ import java.util.ArrayList;
 
 public class Point {
     private final int position;
-    private ArrayList<Piece> pieces;
+    private Piece[] pieces;
 
-    private boolean isOccupied;
-
-    public Point(int position, ArrayList<Piece> pieces){
+    public Point(int position){
         this.position = position;
-        this.pieces = pieces;
-        this.isOccupied = false;
+        this.pieces = new Piece[1];
     }
 
     public void addPiece(Piece piece){
-        this.pieces.add(piece);
+        this.pieces[0] = piece;
     }
 
-    public void removePiece(Piece piece){
-        this.pieces.remove(piece);
+    public void removePiece(){
+        this.pieces = new Piece[1];
     }
 
-    public void setIsOccupied(boolean isOccupied){
-        this.isOccupied = isOccupied;
+    public Piece getPiece(){
+        return this.pieces[0];
     }
 
     public boolean isOccupied(){
-        return this.isOccupied;
+        return this.pieces[0] != null;
+    }
+
+    public int getPosition(){
+        return this.position;
     }
 }
