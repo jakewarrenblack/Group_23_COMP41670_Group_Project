@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 
 public class Point {
-    private final int position; // where on the board is this point
-    // TODO: Limit this to 6 pieces per row
+    private final int position;
     private ArrayList<Piece> pieces;
 
     private boolean isOccupied;
