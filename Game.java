@@ -33,61 +33,55 @@ public class Game {
     public boolean isGameWon(){
         return this.gameState == GameState.WON;
     }
-    public boolean isGameLost(){
-        return this.gameState == GameState.LOST;
-    }
+
     public boolean isGameOngoing(){
         return this.gameState == GameState.ONGOING;
     }
     public void setGameState(GameState gameState){
         this.gameState=gameState;
     }
-    public Player addPlayer(Player.Color color){
-        Scanner in = new Scanner(System.in);
-        String name = "";
-        while (name.length()==0) {
-            name=getInput ("Please enter the name of the " + color + " player");
-        }
-        return new Player(name,color);
-    }
 
     public Player[] addPlayers(){
         Player[] players = new Player[2];
-        int i=0;
-        for (Player.Color color:Player.Color.values()){
-            players[i] = addPlayer(color);
-            i+=1;
+
+        for(int i=0; i<2; i++){
+            Player.Color color = Player.Color.values()[i];
+
+            players[i] = new Player(getInput("Please enter the name of the " + color + " player"), color);
         }
+
         return players;
     }
-    public static void sendMessage(String message){System.out.println(message);}
+
     public static int chooseOption(String message, String[] options){
-        sendMessage(message);
-        int i=0;
-        for (String option: options){
-            i+=1;
-            sendMessage(String.valueOf(i)+": "+option);
+        System.out.println(message);
+
+        for(int i=0; i<options.length; i++){
+            System.out.println(i + ": " + options[i]);
         }
+
         Scanner in = new Scanner(System.in);
         int opt=-1;
-        sendMessage("Please select option");
+
+        System.out.println("Please select an option");
+
         while (opt < 0 || opt > options.length) {
             while (!in.hasNextInt()) {
-                String temp = in.next();
-                sendMessage("You must enter a number corresponding to one of the options");
+                System.out.println("You must enter a number corresponding to one of the options");
             }
             opt = in.nextInt();
             if (opt < 0 || opt > options.length) {
-                sendMessage("You must enter a number corresponding to one of the options");
+                System.out.println("You must enter a number corresponding to one of the options");
             }
         }
+
         return opt;
     }
     public String getInput(String message){
         Scanner in = new Scanner(System.in);
         String input = "";
-        while (input.length()==0) {
-            sendMessage(message);
+        while (input.isEmpty()) {
+            System.out.println(message);
             String temp = in.nextLine();
             if (chooseOption("You have entered <" + temp + ">. Confirm?", new String[]{"Yes","No"})==1){
                 input= temp;
