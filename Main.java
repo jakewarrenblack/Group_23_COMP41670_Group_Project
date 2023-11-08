@@ -5,6 +5,7 @@ public class Main {
         Die die = new Die();
         Scanner in = new Scanner(System.in);
         Game myGame = new Game(new Player[2], die);
+        Board b = new Board();
         myGame.addPlayers();
         if (Game.chooseOption("Would you like to begin the game?", new String[]{"Begin Game", "Quit"}) == 2) {myGame.setGameState(Game.GameState.LOST);}
 
@@ -27,11 +28,13 @@ public class Main {
                 System.out.println(myGame.getCurrentPlayer().getName() + " rolled " + die.getCurrentValues().toString());
            }
 
+            if(move.equals("print")){
+                b.print();
+            }
+
+            // TODO: In future, when score is unchanged (non-playing command was given), this won't run
             // This alternates between the players
             myGame.nextTurn();
         }
-
-        Board b = new Board();
-        b.print();
     }
 }
