@@ -24,8 +24,6 @@ public class Game {
         // the player to go first is determined by the dice roll
         this.die.roll(); // roll the dice to initialise some values (it starts as 0,0)
 
-
-
         int leftDie = this.die.getCurrentValues().getLeft();
         int rightDie = this.die.getCurrentValues().getRight();
 
@@ -38,6 +36,7 @@ public class Game {
 
         return this.currentPlayer;
     }
+
 
 
     public void nextTurn(){
@@ -74,6 +73,9 @@ public class Game {
         }
 
         this.players = players;
+
+        // Roll dice to determine who plays first
+        this.setInitialPlayer();
 
         return players;
     }
