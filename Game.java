@@ -83,7 +83,7 @@ public class Game {
         while (input.isEmpty()) {
             System.out.println(message);
             String temp = in.nextLine();
-            if (chooseOption("You have entered <" + temp + ">. Confirm?", new String[]{"Yes","No"})==1){
+            if (chooseOption("You have entered <" + temp + ">. Confirm?", new String[]{"Yes","No"})==0){
                 input= temp;
             }
         }
