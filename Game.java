@@ -20,10 +20,33 @@ public class Game {
         this.die = die;
     }
 
+    public Player setInitialPlayer(){
+        // the player to go first is determined by the dice roll
+        this.die.roll(); // roll the dice to initialise some values (it starts as 0,0)
 
-    private void nextTurn(){
+
+
+        int leftDie = this.die.getCurrentValues().getLeft();
+        int rightDie = this.die.getCurrentValues().getRight();
+
+        while(leftDie == rightDie){
+            this.die.roll();
+        }
+
+        // if leftDie has a greater value, player 0 starts, otherwise, player 1 starts
+        this.currentPlayer = this.players[leftDie > rightDie ? 0 : 1];
+
+        return this.currentPlayer;
+    }
+
+
+    public void nextTurn(){
         // just switch between 0 and 1, whichever is NOT the current player
         this.currentPlayer = this.players[0] == this.currentPlayer ? this.players[1] : this.players[0];
+    }
+
+    public Player getCurrentPlayer(){
+        return this.currentPlayer;
     }
 
     public void handleMove() throws ExecutionControl.NotImplementedException {
@@ -49,6 +72,8 @@ public class Game {
 
             players[i] = new Player(getInput("Please enter the name of the " + color + " player"), color);
         }
+
+        this.players = players;
 
         return players;
     }
