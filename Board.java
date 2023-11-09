@@ -49,7 +49,7 @@ public class Board {
 
                 for (int i = 0; i < 6; i++) {
                     col = startCol - (i+1);
-                    System.out.println("Row "+startRow+" Col "+col);
+                    //System.out.println("Row "+startRow+" Col "+col);
                     for (int j = 0; this.points[i].numPieces() > j; j++) {
                         // Value will be blank, or a piece colour (B, W), if there's a piece here
                         boardPrint[startRow + (j + 1) * increment][col] = this.points[i].getColour();
