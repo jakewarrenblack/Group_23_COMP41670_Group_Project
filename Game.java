@@ -29,11 +29,15 @@ public class Game {
 
         while(leftDie == rightDie){
             this.die.roll();
+            leftDie = this.die.getCurrentValues().getLeft();
+            rightDie = this.die.getCurrentValues().getRight();
         }
+        System.out.println(this.players[0].getName()+" has rolled "+leftDie+", "+this.players[1].getName()+" has rolled "+rightDie);
 
         // if leftDie has a greater value, player 0 starts, otherwise, player 1 starts
         this.currentPlayer = this.players[leftDie > rightDie ? 0 : 1];
 
+        System.out.println(this.currentPlayer.getName()+" will go first");
         return this.currentPlayer;
     }
 
