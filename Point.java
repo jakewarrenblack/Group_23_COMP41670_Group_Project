@@ -14,10 +14,11 @@ public class Point {
 
     public void addPiece(Piece piece){
         this.pieces.push(piece);
+        piece.setPosition(this.position);
     }
 
-    public void removePiece(){
-        this.pieces.pop();
+    public Piece removePiece(){
+        return this.pieces.pop();
     }
 
 //    public Piece getPiece(){return this.pieces[0];}
