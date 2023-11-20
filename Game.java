@@ -13,7 +13,7 @@ public class Game {
 
     private Die die;
 
-
+    private Log log;
     public Game(Player[] players, Die die){
         this.gameState = GameState.ONGOING;
         this.myBoard = new Board();
@@ -81,9 +81,7 @@ public class Game {
         // Not sure if this should sit here or be in another method?
         this.players = players;
         for (int i=0;i<2;i++){
-            for (int j=0;j<15;j++){
-                myBoard.getPoint(players[i].getPiece(j).getPosition()).addPiece(players[i].getPiece(j));
-            }
+            myBoard.placePieces(this.players[i]);
         }
 
         return players;
@@ -130,7 +128,7 @@ public class Game {
         myBoard.getPoint(to).addPiece(myBoard.getPoint(from).removePiece());
     }
     public void print(){
-        myBoard.print(currentPlayer.getColor());
+        myBoard.print(currentPlayer.getColor(),log.recentLog(10));
     }
     public void pipScore(){
         for (int i=0;i<2;i++){
