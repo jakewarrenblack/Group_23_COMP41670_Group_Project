@@ -24,13 +24,13 @@ public class Game {
         // the player to go first is determined by the dice roll
         this.die.roll(); // roll the dice to initialise some values (it starts as 0,0)
 
-        int leftDie = this.die.getCurrentValues().getLeft();
-        int rightDie = this.die.getCurrentValues().getRight();
+        int leftDie = this.die.getCurrentValues()[0];
+        int rightDie = this.die.getCurrentValues()[1];
 
         while(leftDie == rightDie){
             this.die.roll();
-            leftDie = this.die.getCurrentValues().getLeft();
-            rightDie = this.die.getCurrentValues().getRight();
+            leftDie = this.die.getCurrentValues()[0];
+            rightDie = this.die.getCurrentValues()[1];
         }
 
 

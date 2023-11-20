@@ -32,7 +32,7 @@ public class Main {
                 // TODO: Obviously there'll be more of these commands
                 if(move.equals("roll")){
                     die.roll();
-                    System.out.println(myGame.getCurrentPlayer().getName() + " rolled " + die.getCurrentValues().toString());
+                    System.out.println(myGame.getCurrentPlayer().getName() + " rolled " + die.getCurrentValues()[0] + ", " + die.getCurrentValues()[1]);
                 }
 
                 if(move.equals("print")){
