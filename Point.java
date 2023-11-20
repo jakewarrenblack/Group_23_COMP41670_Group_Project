@@ -1,31 +1,48 @@
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 public class Point {
     private final int position;
-    private Piece[] pieces;
+//    private Piece[] pieces;
+    private Stack<Piece> pieces = new Stack<>();
 
     public Point(int position){
         this.position = position;
-        this.pieces = new Piece[1];
+
     }
 
     public void addPiece(Piece piece){
-        this.pieces[0] = piece;
+        this.pieces.push(piece);
+        piece.setPosition(this.position);
     }
 
-    public void removePiece(){
-        this.pieces = new Piece[1];
+    public Piece removePiece(){
+        return this.pieces.pop();
     }
 
-    public Piece getPiece(){
-        return this.pieces[0];
-    }
+//    public Piece getPiece(){return this.pieces[0];}
 
-    public boolean isOccupied(){
-        return this.pieces[0] != null;
-    }
+    public int numPieces(){
+        // Need to include error handling for point with no pieces
+        return this.pieces.size();}
+//    public boolean isOccupied(){return this.pieces[0] != null;}
 
     public int getPosition(){
         return this.position;
     }
-}
+    public String getColour(){
+        // Need to include error handling for point with no pieces
+        String printCol="  ";
+        switch (this.pieces.peek().getColor()) {
+            case BLACK:
+                printCol = " B ";
+                break;
+            case WHITE:
+                printCol = " W ";
+                break;
+        }
+        return printCol;
+        }
+    }
+

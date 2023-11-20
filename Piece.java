@@ -1,12 +1,12 @@
 public class Piece {
-    enum Color {BLACK, WHITE};
-    public final Color color;
+
+    public Player player;
 
     private int position;
 
-    public Piece(Color color){
-        this.color = color;
-        this.position = 0;
+    public Piece(Player player, int position){
+        this.player = player;
+        this.position = position;
     }
 
     public void setPosition(int position){
@@ -16,9 +16,22 @@ public class Piece {
     public int getPosition(){
         return this.position;
     }
+    public int getPip(){
+        Player.Color color = getColor();
+        int pip = -1;
+        switch (color) {
+            case BLACK:
+                pip = 23 - position;
+                break;
+            case WHITE:
+                pip = position;
+        }
+        return pip;
 
-    public Color getColor(){
-        return this.color;
+    }
+
+    public Player.Color getColor(){
+        return player.getColor();
     }
 
 }
