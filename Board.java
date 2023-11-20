@@ -62,14 +62,22 @@ public class Board {
         }
     }
 
-    public void print () {
+    public void print (Player.Color color) {
         updateBoard();
-        for (String[] strings : boardPrint) {
+        int[] printOrder = new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+        if (color.equals(Player.Color.BLACK)){printOrder=new int[]{14,1,2,3,4,5,6,7,8,9,10,11,12,13,0};}
+        for (int i:printOrder){
+            String[] strings = boardPrint[i];
             for (String string : strings) {
                 System.out.print(string);
             }
             System.out.println();
         }
+    }
+    public Point getPoint(int index){return points[index];}
+
+    public String[][] getBoardPrint() {
+        return boardPrint;
     }
 }
 

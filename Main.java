@@ -5,7 +5,7 @@ public class Main {
         Die die = new Die();
         Scanner in = new Scanner(System.in);
         Game myGame = new Game(new Player[2], die);
-        Board b = new Board();
+//        Board b = new Board();
         myGame.addPlayers();
 
         // User has opted to quit
@@ -36,12 +36,17 @@ public class Main {
                 }
 
                 if(move.equals("print")){
-                    b.print();
+                    myGame.print();
+                }
+                if(move.equals("pip")){
+                    myGame.pipScore();
                 }
 
                 // TODO: In future, when score is unchanged (non-playing command was given), this won't run
                 // This alternates between the players
                 myGame.nextTurn();
+
+
             }
         }
     }

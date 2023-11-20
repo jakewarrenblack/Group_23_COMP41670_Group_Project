@@ -3,7 +3,7 @@ import jdk.jshell.spi.ExecutionControl;
 import java.util.Scanner;
 
 public class Game {
-
+    private Board myBoard;
     protected enum GameState {ONGOING, WON, LOST};
     private GameState gameState;
 
@@ -16,6 +16,7 @@ public class Game {
 
     public Game(Player[] players, Die die){
         this.gameState = GameState.ONGOING;
+        this.myBoard = new Board();
         this.players = players;
         this.die = die;
     }
@@ -77,8 +78,13 @@ public class Game {
 
             players[i] = new Player(getInput("Please enter the name of the " + color + " player"), color);
         }
-
+        // Not sure if this should sit here or be in another method?
         this.players = players;
+        for (int i=0;i<2;i++){
+            for (int j=0;j<15;j++){
+                myBoard.getPoint(players[i].getPiece(j).getPosition()).addPiece(players[i].getPiece(j));
+            }
+        }
 
         return players;
     }
@@ -118,5 +124,17 @@ public class Game {
             }
         }
         return input;
+    }
+
+    public void movePiece(int from, int to){
+        myBoard.getPoint(to).addPiece(myBoard.getPoint(from).removePiece());
+    }
+    public void print(){
+        myBoard.print(currentPlayer.getColor());
+    }
+    public void pipScore(){
+        for (int i=0;i<2;i++){
+            System.out.println(players[i].getName()+" has a pip score of "+players[i].pipScore());
+        }
     }
 }
