@@ -100,6 +100,29 @@ public class Board {
      * Any open spaces on the point (they can hold up to six pieces) show " | "
      * The co-ordinates of the points are given in two integer arrays
      */
+
+    /*
+    some rules:
+        - can't move to point with 2+ enemy pieces
+
+        - or a point with 6 of your pieces
+
+        - if you land on one single with enemy piece, that's out
+
+
+        - you need to use both dice if you CAN
+
+        - if you can only use ONE, you MUST use the larger one
+
+        - and if you roll doubles, you effectively have four dice of the same value
+     */
+
+    // TODO: Implement Move class
+    //  movement itself can just be handled with the existing movePiece method
+    //  valid move selection:
+    //      - loop through all points on the board, check if a valid move could be made with either dice
+    //      - if so, add that position to the player's list of possible moves for this turn
+    //      - possible moves for each player will be cleared on each turn
     protected void updateBoard() {
         for (int pointIndex=0;pointIndex<28;pointIndex++){
             int col = getCoords(pointIndex)[1];
