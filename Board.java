@@ -171,9 +171,6 @@ public class Board {
             System.out.print("\n");
         }
     }
-    public Point getPoint(int index){
-        return points[index];
-    }
 
     /**
      * Returns a single point specified by its position on the board
