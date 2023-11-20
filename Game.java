@@ -19,6 +19,7 @@ public class Game {
         this.myBoard = new Board();
         this.players = players;
         this.die = die;
+        this.log=new Log();
     }
 
     public Player setInitialPlayer(){
@@ -35,12 +36,12 @@ public class Game {
         }
 
 
-        System.out.println(this.players[0].getName()+" has rolled "+leftDie+", "+this.players[1].getName()+" has rolled "+rightDie);
+        log.updateLog(this.players[0].getName()+" has rolled "+leftDie+", "+this.players[1].getName()+" has rolled "+rightDie);
 
         // if leftDie has a greater value, player 0 starts, otherwise, player 1 starts
         this.currentPlayer = this.players[leftDie > rightDie ? 0 : 1];
 
-        System.out.println(this.currentPlayer.getName()+" will go first");
+        log.updateLog(this.currentPlayer.getName()+" will go first");
         return this.currentPlayer;
     }
 
@@ -134,5 +135,9 @@ public class Game {
         for (int i=0;i<2;i++){
             System.out.println(players[i].getName()+" has a pip score of "+players[i].pipScore());
         }
+    }
+    public void roll(){
+        int[] dice = die.roll();
+        log.updateLog(getCurrentPlayer().getName() + " rolled " + dice[0] + ", " + dice[1]);
     }
 }
