@@ -18,6 +18,10 @@ public class Board {
         boardPrint[7] = new String[]{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "    "};
 
     }
+    public Piece removePiece(int index){return points[index].removePiece();}
+    public void addPiece(int index,Piece piece){
+        points[index].addPiece(piece);
+    }
     public void placePieces(Player player){
         for (int j=0;j<15;j++){
             points[player.getPiece(j).getPosition()].addPiece(player.getPiece(j));

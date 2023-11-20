@@ -125,7 +125,7 @@ public class Game {
     }
 
     public void movePiece(int from, int to){
-        myBoard.getPoint(to).addPiece(myBoard.getPoint(from).removePiece());
+        myBoard.addPiece(to,myBoard.removePiece(from));
     }
     public void print(){
         myBoard.print(currentPlayer.getColor(),log.recentLog(10));
