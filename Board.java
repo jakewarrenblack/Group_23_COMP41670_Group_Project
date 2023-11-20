@@ -40,6 +40,29 @@ public class Board {
      *     <li>If no piece, leave it blank. Otherwise, use the B/W value.</li>
      * </ul>
      */
+
+    /*
+    some rules:
+        - can't move to point with 2+ enemy pieces
+
+        - or a point with 6 of your pieces
+
+        - if you land on one single with enemy piece, that's out
+
+
+        - you need to use both dice if you CAN
+
+        - if you can only use ONE, you MUST use the larger one
+
+        - and if you roll doubles, you effectively have four dice of the same value
+     */
+
+    // TODO: Implement Move class
+    //  movement itself can just be handled with the existing movePiece method
+    //  valid move selection:
+    //      - loop through all points on the board, check if a valid move could be made with either dice
+    //      - if so, add that position to the player's list of possible moves for this turn
+    //      - possible moves for each player will be cleared on each turn
     protected void updateBoard() {
         int cols[] = new int[]{12,11,10,9,8,7,5,4,3,2,1,0,0,1,2,3,4,5,7,8,9,10,11,12,6,6,13,13};
         int rows[] = new int[]{13,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,1,1,1,1,1,1,13,1,13,1};
