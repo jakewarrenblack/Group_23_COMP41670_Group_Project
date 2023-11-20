@@ -3,12 +3,10 @@ import jdk.jshell.spi.ExecutionControl;
 import java.util.Scanner;
 
 public class Game {
-    private Board board;
+    private final Board board;
     protected enum GameState {ONGOING, WON, LOST};
     private GameState gameState;
-
-    private Player[] players = new Player[2];
-
+    private Player[] players;
     private Player currentPlayer;
 
     private Die die;
@@ -93,7 +91,7 @@ public class Game {
 
         return players;
     }
-    public void placePieces(Player player){myBoard.placePieces(player);}
+    public void placePieces(Player player){board.placePieces(player);}
     public static int chooseOption(String message, String[] options){
         System.out.println(message);
 
@@ -132,20 +130,20 @@ public class Game {
     }
 
     public void movePiece(int from, int to) {
-        if (!myBoard.isPlayers(from, currentPlayer)) {
+        if (!board.isPlayers(from, currentPlayer)) {
             throw new IllegalArgumentException(currentPlayer.getName() + "'s checkers are not on Point " + from);
-        } else if (!myBoard.isEmpty(to)) {
-            if (!myBoard.isPlayers(to,currentPlayer)){
-                if(!myBoard.isBlot(to)) {
+        } else if (!board.isEmpty(to)) {
+            if (!board.isPlayers(to,currentPlayer)){
+                if(!board.isBlot(to)) {
                     throw new IllegalArgumentException("Your opponent has too many checkers on Point " + to + " for you to move there");
                 }//TODO functionality to move opponent's blot to their bar
             } else {
-                if (myBoard.isFull(to)) {
+                if (board.isFull(to)) {
                     throw new IllegalArgumentException("You cannot place more than six checkers on one point");
                 }
             }
         }
-        myBoard.addPiece(to,myBoard.removePiece(from));
+        board.addPiece(to,board.removePiece(from));
         log.updateLog(currentPlayer.getName()+" moved a piece from "+from+" to "+to);
     }
     public void print(){

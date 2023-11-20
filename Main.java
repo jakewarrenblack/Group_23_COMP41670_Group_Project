@@ -177,8 +177,6 @@ public class Main {
                     myGame.pipScore();
                 }
 
-
-
                 // TODO: In future, when score is unchanged (non-playing command was given), this won't run
                 // FIXME: Commented out for now. Don't actually switch players until the player has finished their moves.
                 //  i.e, the player could run 'print', 'pip', 'roll' before actually making a move.
