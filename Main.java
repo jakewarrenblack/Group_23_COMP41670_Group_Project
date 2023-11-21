@@ -42,6 +42,8 @@ public class Main {
                     myGame.pipScore();
                 }
 
+                // TODO: Print out possible moves
+
                 // TODO: In future, when score is unchanged (non-playing command was given), this won't run
                 // This alternates between the players
                 myGame.nextTurn();

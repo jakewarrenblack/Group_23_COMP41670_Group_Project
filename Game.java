@@ -3,22 +3,19 @@ import jdk.jshell.spi.ExecutionControl;
 import java.util.Scanner;
 
 public class Game {
-    private Board myBoard;
+    private final Board myBoard;
     protected enum GameState {ONGOING, WON, LOST};
     private GameState gameState;
-
-    private Player[] players = new Player[2];
-
+    private Player[] players;
     private Player currentPlayer;
-
-    private Die die;
-
-    private Log log;
+    private final Die die;
+    private final Log log;
     public Game(Player[] players, Die die){
         this.gameState = GameState.ONGOING;
         this.myBoard = new Board();
         this.players = players;
         this.die = die;
+        this.log = new Log();
     }
 
     public Player setInitialPlayer(){
@@ -128,7 +125,8 @@ public class Game {
         myBoard.addPiece(to,myBoard.removePiece(from));
     }
     public void print(){
-        myBoard.print(currentPlayer.getColor(),log.recentLog(10));
+
+        myBoard.print(currentPlayer.getColor(), log.recentLog(10));
     }
     public void pipScore(){
         for (int i=0;i<2;i++){
