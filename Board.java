@@ -162,8 +162,12 @@ public class Board {
             if (i>3&i<=13){
                 System.out.print("     "+recentLog[i-4]);
             }
+
             System.out.print("\n");
         }
+    }
+    public Point getPoint(int index){
+        return points[index];
     }
 
     /**
