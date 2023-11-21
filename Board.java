@@ -37,10 +37,6 @@ public class Board {
         public int getRow(){return row;}
     }
 
-//    private final int[][] layout = new int[][]{{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27},
-//            {23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4},
-//            {12,11,10,9,8,7,5,4,3,2,1,0,0,1,2,3,4,5,7,8,9,10,11,12,6,6,13,13},
-//            {13,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,1,1,1,1,1,1,13,1,13,1}};
     public Board() {
         for (int i = 0; i < 28; i++) {
             this.points[i] = new Point(layout.values()[i].getWhite(),layout.values()[i].getBlack(),layout.values()[i].getCol(),layout.values()[i].getRow());
@@ -91,7 +87,6 @@ public class Board {
     public int numPieces(int index){
         return points[index].numPieces();
     }
-
     /**
      * Creates a text version of the board which can be printed to the console
      * Each point is a 6x1 array of 3 character strings
