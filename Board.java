@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Board {
     Point[] points = new Point[24];
     // We also need to have spaces for the bars and the off sections
@@ -68,40 +70,30 @@ public class Board {
     //      - loop through all points on the board, check if a valid move could be made with either dice
     //      - if so, add that position to the player's list of possible moves for this turn
     //      - possible moves for each player will be cleared on each turn
+
     protected void updateBoard() {
-        int cols[] = new int[]{12,11,10,9,8,7,5,4,3,2,1,0,0,1,2,3,4,5,7,8,9,10,11,12,6,6,13,13};
-        int rows[] = new int[]{13,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,1,1,1,1,1,1,13,1,13,1};
+        for (Point point : this.points) {
+            int col = point.getPosition();  // position represents the column index?
+            int row = point.getPosition() > 12 ? 13 : 1;
 
-        for (int pointIndex = 0; pointIndex < 24; pointIndex++){
-
-            int col = cols[pointIndex];
-            int row = rows[pointIndex];
-            int increment=-1;
-
-            if (row==1){
-                increment=1;
-            }
+            int increment = (row == 1) ? 1 : -1;
 
             for (int i = 0; i < 6; i++) {
-                for (int j = 0; numPieces(pointIndex) > j; j++) {
-                    // Value will be blank, or a piece colour (B, W), if there's a piece here
-                    boardPrint[row + (j) * increment][col] = getColour(pointIndex);
+                for (int j = 0; point.numPieces() > j; j++) {
+                    boardPrint[row + (j) * increment][col] = point.getColour();
                 }
-                for (int j = numPieces(pointIndex); j < 6; j++) {
+                for (int j = point.numPieces(); j < 6; j++) {
                     boardPrint[row + (j) * increment][col] = " | ";
                 }
             }
         }
 
-        for (int pointIndex = 24; pointIndex < 28; pointIndex++){
+        // for bar and home points
+        for (int pointIndex = 24; pointIndex < 28; pointIndex++) {
+            int col = this.points.get(pointIndex).getPosition();
+            int row = this.points.get(pointIndex).getPosition() > 12 ? 13 : 1;
 
-            int col = cols[pointIndex];
-            int row = rows[pointIndex];
-            int increment=-1;
-
-            if (row==1){
-                increment=1;
-            }
+            int increment = (row == 1) ? 1 : -1;
 
             for (int j = 0; j < 6; j++) {
                 boardPrint[row + (j) * increment][col] = "   ";
@@ -109,29 +101,34 @@ public class Board {
         }
     }
 
-    public void print (Player.Color color, String[] recentLog) {
-        updateBoard();
 
-        int[] printOrder = new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 
-        if (color.equals(Player.Color.BLACK)){
-            printOrder=new int[]{14,1,2,3,4,5,6,7,8,9,10,11,12,13,0};
+    public void print(Player.Color color, String[] recentLog) {
+        updateBoard(this.points);
+
+        int[] printOrder = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+
+        if (color.equals(Player.Color.BLACK)) {
+            printOrder = new int[]{14, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0};
         }
 
-        for (int i:printOrder){
+        for (int i : printOrder) {
             String[] strings = boardPrint[i];
 
             for (String string : strings) {
                 System.out.print(string);
             }
 
-            if (i>3&i<=13){
-                System.out.print("     "+recentLog[i-4]);
+            if (i > 3 & i <= 13) {
+                System.out.print("     " + recentLog[i - 4]);
             }
 
             System.out.print("\n");
         }
     }
+
+
+
     public Point getPoint(int index){
         return points[index];
     }

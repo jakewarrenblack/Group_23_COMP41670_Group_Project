@@ -8,6 +8,8 @@ public class Main {
 //        Board b = new Board();
         myGame.addPlayers();
 
+        int[] rollValue = new int[2];
+
         // User has opted to quit
         if (Game.chooseOption("Would you like to begin the game?", new String[]{"Begin Game", "Quit"}) == 1) {
             System.out.println("Goodbye!");
@@ -16,6 +18,10 @@ public class Main {
         // Otherwise, user has opted to begin a game
         else{
             myGame.setInitialPlayer();
+
+            // game just started, set the initial dice roll value, which the player will have to use
+            rollValue[0] = die.getCurrentValues()[0];
+            rollValue[1] = die.getCurrentValues()[1];
 
             while (myGame.isGameOngoing()) {
                 // player to go first is determined by the dice roll
@@ -29,11 +35,13 @@ public class Main {
                     continue;
                 }
 
-                // TODO: Obviously there'll be more of these commands
+                // TODO: Prevent rolling multiple times before making a move
                 if(move.equals("roll")){
                     die.roll();
-                    System.out.println(myGame.getCurrentPlayer().getName() + " rolled " + die.getCurrentValues()[0] + ", " + die.getCurrentValues()[1]);
+                    System.out.println(myGame.getCurrentPlayer().getName() + " to play " + die.getCurrentValues()[0] + "-" + die.getCurrentValues()[1] + ". Select from:");
                 }
+
+                // TODO: Print out possible moves
 
                 if(move.equals("print")){
                     myGame.print();
@@ -42,11 +50,15 @@ public class Main {
                     myGame.pipScore();
                 }
 
-                // TODO: Print out possible moves
+
 
                 // TODO: In future, when score is unchanged (non-playing command was given), this won't run
-                // This alternates between the players
-                myGame.nextTurn();
+                // FIXME: Commented out for now. Don't actually switch players until the player has finished their moves.
+                //  i.e, the player could run 'print', 'pip', 'roll' before actually making a move.
+
+                // before switching turns, clear the dice value for the next player
+                rollValue = null;
+                //myGame.nextTurn();
 
 
             }
