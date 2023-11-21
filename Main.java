@@ -31,6 +31,8 @@ public class Main {
 
                 if (!myGame.acceptCommand(move)){return;}
 
+                // TODO: Print out possible moves
+
                 // TODO: In future, when score is unchanged (non-playing command was given), this won't run
                 // This alternates between the players
                 myGame.nextTurn();

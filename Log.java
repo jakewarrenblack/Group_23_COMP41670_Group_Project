@@ -27,9 +27,10 @@ public class Log {
 
     public String[] recentLog(int entries){
         String[] extract = new String[entries];
-        int blanks = entries-log.size()>0 ? entries-log.size():0;
-        int extras = log.size()-entries>0 ? log.size()-entries:0;
-        for (int i=0;i<blanks;i++) {
+        int blanks = Math.max(entries - this.log.size(), 0);
+        int extras = Math.max(this.log.size() - entries, 0);
+
+        for (int i=0; i < blanks; i++) {
             extract[i] = "";
         }
         for (int i=blanks;i<entries;i++){
