@@ -33,16 +33,10 @@ public class Point {
     }
     public String getColour(){
         // Need to include error handling for point with no pieces
-        String printCol="  ";
-        switch (this.pieces.peek().getColor()) {
-            case BLACK:
-                printCol = " B ";
-                break;
-            case WHITE:
-                printCol = " W ";
-                break;
-        }
-        return printCol;
+        return switch (this.pieces.peek().getColor()) {
+            case BLACK -> " B ";
+            case WHITE -> " W ";
+        };
         }
     }
 

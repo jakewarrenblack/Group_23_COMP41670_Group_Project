@@ -38,11 +38,14 @@ public class Move {
     private final Player player;
     private final Die die;
 
-    public Move(int startPoint, int endPoint, Player player, Die die){
+    private final boolean bearOffAllowed;
+
+    public Move(int startPoint, int endPoint, Player player, Die die, boolean bearOffAllowed){
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.player = player;
         this.die = die;
+        this.bearOffAllowed = bearOffAllowed;
     }
 
     /**
@@ -52,18 +55,34 @@ public class Move {
      * @return boolean
      */
 
-    private boolean isIllegalMove(){
-        // TODO:
+    private boolean isMoveLegal(){
         //  Check not moving from current place back to current place (like picking the piece up and putting it back down again)
+        if(this.startPoint == this.endPoint){
+            return false;
+        }
+
         //  Check not moving backwards
-        //  Check not moving off the board (we'll have to add a special case for this, maybe it's allowed, once all player's pieces are in the home board)
-        return false;
+        if(this.startPoint < this.endPoint){
+            return false;
+        }
+
+        //  Check not moving off the board (presuming bearing off is not yet permitted)
+        if(!this.bearOffAllowed){
+            // TODO: How to check this? Player is trying to move off the board?
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * True if position is occupied by 2 or more enemy pieces, or is occupied by 6 friendly pieces.
      */
     private boolean isBlocked(){
+        // TODO: Only bother with next part IF the user is trying to move to an index higher than 2
+        //  Otherwise, that's not even possible, and the user can knock the other player's piece off
+        //  Get the position the user is trying to move to, and check if there are 2+ pieces preceding it
+
         return false;
     }
 
@@ -77,7 +96,7 @@ public class Move {
 
     // Validating a move consists of several smaller validation checks
     public boolean validateMove(){
-        return !isIllegalMove() && !isBlocked() && isValidDiceRoll();
+        return isMoveLegal() && !isBlocked() && isValidDiceRoll();
     }
 
 
