@@ -81,11 +81,13 @@ public class Game {
 
         for(int i=0; i<2; i++){
             Player.Color color = Player.Color.values()[i];
+
             players[i] = new Player(getInput("Please enter the name of the " + color + " player"), color);
         }
         // Not sure if this should sit here or be in another method?
         this.players = players;
         for (int i=0;i<2;i++){
+            board.placePieces(this.players[i]);
             placePieces(this.players[i]);
         }
 
