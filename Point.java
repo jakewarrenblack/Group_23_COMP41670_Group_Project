@@ -10,6 +10,15 @@ public class Point {
         this.position = position;
     }
 
+    public Piece getTopChecker() {
+        if (!this.pieces.isEmpty()) {
+            return pieces.peek();
+        } else {
+            //FIXME: add error handling case where the stack is empty (no checkers on the piece)
+            return null;
+        }
+    }
+
     public void addPiece(Piece piece){
         this.pieces.push(piece);
         piece.setPosition(this.position);

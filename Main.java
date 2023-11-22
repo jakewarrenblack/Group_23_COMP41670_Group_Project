@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -60,10 +61,38 @@ public class Main {
                 }
 
 
+                ArrayList<Point> occupiedPoints = new ArrayList<>();
+
                 // FIXME: Actually, we DON'T need to iterate over every point, we need to iterate over every PIECE. The former would be pointlessly inefficient.
                 for(Point p: allBoardPoints){
                     System.out.println(p);
+                    if(p.numPieces() != 0){
+                        occupiedPoints.add(p);
+                    }
                 }
+
+                // for all the occupied points, the pieces which can be moved are the
+                // ones whose colour match the player's colour
+                // (and are on top of their respective pile)
+                ArrayList<Piece> movablePieces = new ArrayList<>();
+
+                for(Point p: occupiedPoints){
+                    // FIXME: Well, maybe not fix, but I'm not 100% sure if the checker on 'top' of the pile is index 0 or index length-1?
+                    // FIXME: Also, it'd probably? be better if the Pieces got their position as their position within their Point,
+                    //  not just the position of the Point itself
+                    Piece topPiece = p.getTopChecker();
+
+                    if(topPiece.getColor() == currentPlayer.getColor()){
+                     movablePieces.add(topPiece);
+                    }
+
+                }
+
+                // allBoardPoints is like this:
+                // 0:
+                    // position = 0
+                    // pieces = Stack of size 2
+                    // meaning column 0 has 2 pieces, so [0][0] and [0][1] are occupied
 
                 // example scenario:
                 //  black player rolls a 5-3
