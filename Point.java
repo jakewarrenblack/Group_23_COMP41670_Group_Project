@@ -35,8 +35,9 @@ public class Point {
 
     /**
      * Adds a piece to this point and updates the piece's position to the position of this point
-     * @param piece         The piece to add
-     * TODO Should probably add an exception for if we try to add a piece of a different colour
+     *
+     * @param piece The piece to add
+     *              TODO Should probably add an exception for if we try to add a piece of a different colour
      */
     public void addPiece(Piece piece) {
         this.pieces.push(piece);

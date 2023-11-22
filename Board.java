@@ -89,6 +89,7 @@ public class Board {
     public int numPieces(int index){
         return points[index].numPieces();
     }
+
     /**
      * Creates a text version of the board which can be printed to the console
      * Each point is a 6x1 array of 3 character strings

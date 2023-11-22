@@ -97,7 +97,6 @@ public class Main {
         Scanner in = new Scanner(System.in);
         Game myGame = new Game();
         Player currentPlayer;
-//        Board b = new Board();
         myGame.addPlayers();
 
         int[] rollValue = new int[2];
