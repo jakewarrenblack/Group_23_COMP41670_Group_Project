@@ -9,7 +9,7 @@ public class Point {
     //    private Piece[] pieces;
     private Stack<Piece> pieces = new Stack<>();
 
-    public Point(int positionWhite, int positionBlack, int row, int col) {
+    public Point(int positionWhite, int positionBlack, int col, int row) {
         this.positionWhite = positionWhite;
         this.positionBlack = positionBlack;
         this.row = row;

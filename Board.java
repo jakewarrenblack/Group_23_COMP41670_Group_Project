@@ -4,20 +4,46 @@ public class Board {
     // We also need to have spaces for the bars and the off sections
     private String[][] boardPrint = new String[15][14];
     /* layout stores the positional information for the points on the board
-    *  The first int array stores the positions of each point from the perspective of the WHITE player
-    *  The second the positions from the perspective of the BLACK player
-    *  The third the column in which the point appears
-    *  The fourth the row in which is starts
-    *  points 24 and 25 are the BAR points for WHITE and BLACK respectively
-    *  points 26 and 27 are the OFF areas for WHITE and BLACK respectively
+     *  positionWhite stores the positions of each point from the perspective of the WHITE player
+     *  positionBlack the positions from the perspective of the BLACK player
+     *  col the column in which the point appears
+     *  row the row in which is starts
+     *  points 24 and 25 are the BAR points for WHITE and BLACK respectively
+     *  points 26 and 27 are the OFF areas for WHITE and BLACK respectively
      */
-    private final int[][] layout = new int[][]{{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27},
-            {23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4},
-            {12,11,10,9,8,7,5,4,3,2,1,0,0,1,2,3,4,5,7,8,9,10,11,12,6,6,13,13},
-            {13,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,1,1,1,1,1,1,13,1,13,1}};
+    enum layout{ONE(0,23,12,13),TWO(1,22,11,13),THREE(2,21,10,13),
+            FOUR(3,20,9,13),FIVE(4,19,8,13),SIX(5,18,7,13),
+            SEVEN(6,17,5,13),EIGHT(7,16,4,13),NINE(8,15,3,13),
+            TEN(9,14,2,13),ELEVEN(10,13,1,13),TWELVE(11,12,0,13),
+            THIRTEEN(12,11,0,1),FOURTEEN(13,10,1,1),FIFTEEN(14,9,2,1),
+            SIXTEEN(15,8,3,1),SEVENTEEN(16,7,4,1),EIGHTEEN(17,6,5,1),
+            NINETEEN(18,5,7,1),TWENTY(19,4,8,1),TWENTYONE(20,3,9,1),
+            TWENTYTWO(21,2,10,1),TWENTYTHREE(22,1,11,1),TWENTYFOUR(23,0,12,1),
+            BARW(-1,25,6,13),BARB(25,-1,6,1),
+            OFFW(24,-2,13,13),OFFB(-2,24,13,1);
+        private int positionWhite;
+        private int positionBlack;
+        private int col;
+        private int row;
+        layout(int positionWhite,int positionBlack,int col, int row){
+            this.positionWhite=positionWhite;
+            this.positionBlack=positionBlack;
+            this.col=col;
+            this.row=row;
+        }
+        public int getWhite(){return positionWhite;}
+        public int getBlack(){return positionBlack;}
+        public int getCol(){return col;}
+        public int getRow(){return row;}
+    }
+
+//    private final int[][] layout = new int[][]{{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27},
+//            {23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4},
+//            {12,11,10,9,8,7,5,4,3,2,1,0,0,1,2,3,4,5,7,8,9,10,11,12,6,6,13,13},
+//            {13,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,1,1,1,1,1,1,13,1,13,1}};
     public Board() {
         for (int i = 0; i < 28; i++) {
-            this.points[i] = new Point(layout[0][i],layout[1][i],layout[2][i],layout[3][i]);
+            this.points[i] = new Point(layout.values()[i].getWhite(),layout.values()[i].getBlack(),layout.values()[i].getCol(),layout.values()[i].getRow());
         }
 
         // The top of the board
@@ -76,8 +102,8 @@ public class Board {
      */
     protected void updateBoard() {
         for (int pointIndex=0;pointIndex<28;pointIndex++){
-            int col = getCoords(pointIndex)[0];
-            int row = getCoords(pointIndex)[1];
+            int col = getCoords(pointIndex)[1];
+            int row = getCoords(pointIndex)[0];
             int increment=-1;
             if (row==1){increment=1;}
             for (int i = 0; i < 6; i++) {
