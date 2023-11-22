@@ -46,12 +46,14 @@ public class Point {
      */
     public int numPieces() {
         // Need to include error handling for point with no pieces
-        return this.pieces.size();}
-//    public boolean isOccupied(){return this.pieces[0] != null;}
+        return this.pieces.size();
+    }
 
     public int getPositionWhite() {
         return this.positionWhite;
     }
+
+    public String getColour(){
 
     /**
      * The colour of the pieces placed on this point

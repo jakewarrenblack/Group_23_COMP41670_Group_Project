@@ -18,15 +18,10 @@ public class Piece {
     }
     public int getPip(){
         Player.Color color = getColor();
-        int pip = -1;
-        switch (color) {
-            case BLACK:
-                pip = 23 - position;
-                break;
-            case WHITE:
-                pip = position;
-        }
-        return pip;
+        return switch (color) {
+            case BLACK -> 23 - position;
+            case WHITE -> position;
+        };
 
     }
 

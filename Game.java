@@ -3,7 +3,7 @@ import jdk.jshell.spi.ExecutionControl;
 import java.util.Scanner;
 
 public class Game {
-    private Board myBoard;
+    private Board board;
     protected enum GameState {ONGOING, WON, LOST};
     private GameState gameState;
 
@@ -17,7 +17,7 @@ public class Game {
     private Command command;
     public Game(){
         this.gameState = GameState.ONGOING;
-        this.myBoard = new Board();
+        this.board = new Board();
         this.players = new Player[2];
         this.die = new Die();
         this.log=new Log();
@@ -49,10 +49,11 @@ public class Game {
 
 
 
-    public void nextTurn(){
+    public Player nextTurn(){
         // just switch between 0 and 1, whichever is NOT the current player
         this.currentPlayer = this.players[0] == this.currentPlayer ? this.players[1] : this.players[0];
-        myBoard.print(currentPlayer.getColor(), log.recentLog(10));
+
+        return this.currentPlayer;
     }
 
     public Player getCurrentPlayer(){
@@ -148,12 +149,17 @@ public class Game {
         log.updateLog(currentPlayer.getName()+" moved a piece from "+from+" to "+to);
     }
     public void print(){
-        myBoard.print(currentPlayer.getColor(),log.recentLog(10));
+
+        board.print(currentPlayer.getColor(), log.recentLog(10));
     }
     public void pipScore(){
         for (int i=0;i<2;i++){
             log.updateLog(players[i].getName()+" has a pip score of "+players[i].pipScore());
         }
+    }
+
+    public Board getBoard(){
+        return this.board;
     }
     public void roll(){
         int[] dice = die.roll();

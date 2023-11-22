@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Board {
     private Point[] points = new Point[28];
 
@@ -152,9 +154,13 @@ public class Board {
     public void print (Player.Color color, String[] recentLog) {
         updateBoard();
 
-        int[] printOrder = new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
-        if (color.equals(Player.Color.BLACK)){printOrder=new int[]{14,1,2,3,4,5,6,7,8,9,10,11,12,13,0};}
-        for (int i:printOrder){
+        int[] printOrder = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+
+        if (color.equals(Player.Color.BLACK)) {
+            printOrder = new int[]{14, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0};
+        }
+
+        for (int i : printOrder) {
             String[] strings = boardPrint[i];
             for (String string : strings) {
                 System.out.print(string);
@@ -162,7 +168,6 @@ public class Board {
             if (i>3&i<=13){
                 System.out.print("     "+recentLog[i-4]);
             }
-
             System.out.print("\n");
         }
     }
@@ -194,5 +199,9 @@ public class Board {
     public boolean isFull(int index){return points[index].isFull();}
     public boolean isBlot(int index){return points[index].isBlot();}
     public boolean isEmpty(int index){return points[index].isEmpty();}
-}
 
+
+    public Point[] getPoints(){
+        return this.points;
+    }
+}
