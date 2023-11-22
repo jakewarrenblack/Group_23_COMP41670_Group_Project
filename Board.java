@@ -1,11 +1,23 @@
 public class Board {
-    Point[] points = new Point[24];
-    // We also need to have spaces for the bars and the off sections
-    String[][] boardPrint = new String[15][14];
+    private Point[] points = new Point[28];
 
+    // We also need to have spaces for the bars and the off sections
+    private String[][] boardPrint = new String[15][14];
+    /* layout stores the positional information for the points on the board
+    *  The first int array stores the positions of each point from the perspective of the WHITE player
+    *  The second the positions from the perspective of the BLACK player
+    *  The third the column in which the point appears
+    *  The fourth the row in which is starts
+    *  points 24 and 25 are the BAR points for WHITE and BLACK respectively
+    *  points 26 and 27 are the OFF areas for WHITE and BLACK respectively
+     */
+    private final int[][] layout = new int[][]{{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27},
+            {23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4},
+            {12,11,10,9,8,7,5,4,3,2,1,0,0,1,2,3,4,5,7,8,9,10,11,12,6,6,13,13},
+            {13,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,1,1,1,1,1,1,13,1,13,1}};
     public Board() {
-        for (int i = 0; i < 24; i++) {
-            this.points[i] = new Point(i);
+        for (int i = 0; i < 28; i++) {
+            this.points[i] = new Point(layout[0][i],layout[1][i],layout[2][i],layout[3][i]);
         }
 
         // The top of the board
@@ -63,12 +75,9 @@ public class Board {
      * The co-ordinates of the points are given in two integer arrays
      */
     protected void updateBoard() {
-        // TODO Should these be instance variables of points?
-        int cols[] = new int[]{12,11,10,9,8,7,5,4,3,2,1,0,0,1,2,3,4,5,7,8,9,10,11,12,6,6,13,13};
-        int rows[] = new int[]{13,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,1,1,1,1,1,1,13,1,13,1};
-        for (int pointIndex=0;pointIndex<24;pointIndex++){
-            int col = cols[pointIndex];
-            int row = rows[pointIndex];
+        for (int pointIndex=0;pointIndex<28;pointIndex++){
+            int col = getCoords(pointIndex)[0];
+            int row = getCoords(pointIndex)[1];
             int increment=-1;
             if (row==1){increment=1;}
             for (int i = 0; i < 6; i++) {
@@ -77,22 +86,18 @@ public class Board {
                     boardPrint[row + (j) * increment][col] = getColour(pointIndex);
                 }
                 for (int j = numPieces(pointIndex); j < 6; j++) {
-                    boardPrint[row + (j) * increment][col] = " | ";
+                    boardPrint[row + (j) * increment][col] = emptySpace(pointIndex);
                 }
             }
         }
-        // TODO Need to add the bar and off as points and then draw these
-        for (int pointIndex=24;pointIndex<28;pointIndex++){
-            int col = cols[pointIndex];
-            int row = rows[pointIndex];
-            int increment=-1;
-            if (row==1){increment=1;}
-            for (int j = 0; j < 6; j++) {
-                boardPrint[row + (j) * increment][col] = "   ";
-            }
+    }
+    public String emptySpace(int i){
+        if (i<24){
+            return " | ";
+        } else {
+            return "   ";
         }
     }
-
     /**
      * Prints a text representation of the board to the screen
      * The board can be drawn from the perspective of the black player or the white player
@@ -130,6 +135,7 @@ public class Board {
      * @return              A string indicating the colour of the pieces on the point
      */
     public String getColour(int index){return points[index].getColour();}
+    public int[] getCoords(int index){return points[index].getCoords();}
 
     public String[][] getBoardPrint() {
         return boardPrint;

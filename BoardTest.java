@@ -126,7 +126,7 @@ class BoardTest {
 
     @Test
     void getPoint() {
-        assertEquals(10,testBoard.getPoint(10).getPosition());
+        assertEquals(10,testBoard.getPoint(10).getPositionWhite());
     }
 
     @Test

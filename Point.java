@@ -1,32 +1,39 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 public class Point {
-    private final int position;
-//    private Piece[] pieces;
+    private final int positionWhite;
+    private final int positionBlack;
+    private final int row;
+    private final int col;
+
+    //    private Piece[] pieces;
     private Stack<Piece> pieces = new Stack<>();
 
-    public Point(int position){
-        this.position = position;
+    public Point(int positionWhite, int positionBlack, int row, int col) {
+        this.positionWhite = positionWhite;
+        this.positionBlack = positionBlack;
+        this.row = row;
+        this.col = col;
 
     }
 
     /**
      * Adds a piece to this point and updates the piece's position to the position of this point
-     * @param piece         The piece to add
-     * TODO Should probably add an exception for if we try to add a piece of a different colour
+     *
+     * @param piece The piece to add
+     *              TODO Should probably add an exception for if we try to add a piece of a different colour
      */
-    public void addPiece(Piece piece){
+    public void addPiece(Piece piece) {
         this.pieces.push(piece);
-        piece.setPosition(this.position);
+        piece.setPosition(this.positionWhite);
     }
 
     /**
      * Removes the top piece from this point
-     * @return              The piece which has been removed
+     *
+     * @return The piece which has been removed
      */
-    public Piece removePiece(){
+    public Piece removePiece() {
         return this.pieces.pop();
     }
 
@@ -34,24 +41,27 @@ public class Point {
 
     /**
      * The number of pieces currently placed on this point
-     * @return              Integer value of number of pieces
+     *
+     * @return Integer value of number of pieces
      */
-    public int numPieces(){
+    public int numPieces() {
         // Need to include error handling for point with no pieces
-        return this.pieces.size();}
+        return this.pieces.size();
+    }
 //    public boolean isOccupied(){return this.pieces[0] != null;}
 
-    public int getPosition(){
-        return this.position;
+    public int getPositionWhite() {
+        return this.positionWhite;
     }
 
     /**
      * The colour of the pieces placed on this point
-     * @return              String indicating the colour of the pieces on the point
+     *
+     * @return String indicating the colour of the pieces on the point
      */
-    public String getColour(){
+    public String getColour() {
         // Need to include error handling for point with no pieces
-        String printCol="  ";
+        String printCol = "  ";
         switch (this.pieces.peek().getColor()) {
             case BLACK:
                 printCol = " B ";
@@ -61,6 +71,8 @@ public class Point {
                 break;
         }
         return printCol;
-        }
     }
 
+    public int[] getCoords(){return new int[]{row, col};}
+
+}
