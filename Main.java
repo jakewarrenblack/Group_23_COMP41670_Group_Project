@@ -29,17 +29,7 @@ public class Main {
                     continue;
                 }
 
-                // TODO: Obviously there'll be more of these commands
-                if(move.equals("roll")){
-                    myGame.roll();
-                }
-
-                if(move.equals("print")){
-                    myGame.print();
-                }
-                if(move.equals("pip")){
-                    myGame.pipScore();
-                }
+                if (!myGame.acceptCommand(move)){return;}
 
                 // TODO: In future, when score is unchanged (non-playing command was given), this won't run
                 // This alternates between the players

@@ -72,7 +72,14 @@ public class Point {
         }
         return printCol;
     }
-
+    public boolean isPlayers(Player chkPlayer){
+        if (pieces.size()>0) {
+            return chkPlayer.equals(pieces.peek().getPlayer());
+        } else {return false;}
+    }
+    public boolean isFull(){return pieces.size()==6;}
+    public boolean isBlot(){return pieces.size()==1;}
+    public boolean isEmpty(){return pieces.size()==0;}
     public int[] getCoords(){return new int[]{row, col};}
 
 }

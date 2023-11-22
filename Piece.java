@@ -34,4 +34,7 @@ public class Piece {
         return player.getColor();
     }
 
+    public Player getPlayer() {
+        return player;
+    }
 }

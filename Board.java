@@ -166,5 +166,11 @@ public class Board {
     public String[][] getBoardPrint() {
         return boardPrint;
     }
+    public boolean isPlayers(int index, Player chkPlayer){
+        return points[index].isPlayers(chkPlayer);
+    }
+    public boolean isFull(int index){return points[index].isFull();}
+    public boolean isBlot(int index){return points[index].isBlot();}
+    public boolean isEmpty(int index){return points[index].isEmpty();}
 }
 
