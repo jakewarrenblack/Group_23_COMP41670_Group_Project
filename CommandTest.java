@@ -16,7 +16,7 @@ class CommandTest {
     @BeforeEach
     void setUp() {
         players = new Player[]{new Player("B", Player.Color.BLACK),new Player("W", Player.Color.WHITE)};
-        game = new Game(players,new Die());
+        game = new Game();
         command = new Command(game);
         System.setOut(new PrintStream(outputStreamCaptor));
     }

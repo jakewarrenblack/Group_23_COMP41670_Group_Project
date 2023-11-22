@@ -15,12 +15,11 @@ public class Game {
 
     private Log log;
     private Command command;
-    public Game(Player[] players, Die die){
+    public Game(){
         this.gameState = GameState.ONGOING;
         this.myBoard = new Board();
-        this.players = players;
-        currentPlayer=players[0];
-        this.die = die;
+        this.players = new Player[2];
+        this.die = new Die();
         this.log=new Log();
         this.command=new Command(this);
     }
@@ -74,13 +73,15 @@ public class Game {
     public void setGameState(GameState gameState){
         this.gameState=gameState;
     }
-
+    public void addPlayer(int index, Player player, boolean isCurrentPlayer){
+        this.players[index]=player;
+        if (isCurrentPlayer){currentPlayer=player;}
+    }
     public Player[] addPlayers(){
         Player[] players = new Player[2];
 
         for(int i=0; i<2; i++){
             Player.Color color = Player.Color.values()[i];
-
             players[i] = new Player(getInput("Please enter the name of the " + color + " player"), color);
         }
         // Not sure if this should sit here or be in another method?

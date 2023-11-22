@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         Die die = new Die();
         Scanner in = new Scanner(System.in);
-        Game myGame = new Game(new Player[2], die);
+        Game myGame = new Game();
 //        Board b = new Board();
         myGame.addPlayers();
 

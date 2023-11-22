@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameTest {
     private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-    private Player[] players;
     private Player blackPlayer;
     private Player whitePlayer;
     private Game myGame;
@@ -19,8 +18,9 @@ class GameTest {
     void setUp() {
         blackPlayer = new Player("B", Player.Color.BLACK);
         whitePlayer = new Player("W", Player.Color.WHITE);
-        players = new Player[]{blackPlayer,whitePlayer};
-        myGame = new Game(players, new Die());
+        myGame = new Game();
+        myGame.addPlayer(0,blackPlayer,true);
+        myGame.addPlayer(1,whitePlayer,false);
         myGame.placePieces(blackPlayer);
         myGame.placePieces(whitePlayer);
         System.setOut(new PrintStream(outputStreamCaptor));
