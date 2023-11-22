@@ -38,16 +38,17 @@ public class Point {
      * @param piece         The piece to add
      * TODO Should probably add an exception for if we try to add a piece of a different colour
      */
-    public void addPiece(Piece piece){
+    public void addPiece(Piece piece) {
         this.pieces.push(piece);
         piece.setPosition(this.positionWhite);
     }
 
     /**
      * Removes the top piece from this point
-     * @return              The piece which has been removed
+     *
+     * @return The piece which has been removed
      */
-    public Piece removePiece(){
+    public Piece removePiece() {
         return this.pieces.pop();
     }
 
@@ -89,6 +90,8 @@ public class Point {
             return chkPlayer.equals(pieces.peek().getPlayer());
         } else {return false;}
     }
+
+    public int[] getCoords(){return new int[]{row, col};}
     public boolean isFull(){return pieces.size()==6;}
     public boolean isBlot(){return pieces.size()==1;}
     public boolean isEmpty(){return pieces.size()==0;}
