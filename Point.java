@@ -24,6 +24,16 @@ public class Point {
      *              TODO Should probably add an exception for if we try to add a piece of a different colour
      */
     public void addPiece(Piece piece) {
+    public Piece getTopChecker() {
+        if (!this.pieces.isEmpty()) {
+            return pieces.peek();
+        } else {
+            //FIXME: add error handling case where the stack is empty (no checkers on the piece)
+            return null;
+        }
+    }
+
+    public void addPiece(Piece piece){
         this.pieces.push(piece);
         piece.setPosition(this.positionWhite);
     }
@@ -37,7 +47,6 @@ public class Point {
         return this.pieces.pop();
     }
 
-//    public Piece getPiece(){return this.pieces[0];}
 
     /**
      * The number of pieces currently placed on this point
