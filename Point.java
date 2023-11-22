@@ -20,6 +20,7 @@ public class Point {
     }
 
 
+
     public int numPieces(){
         // Need to include error handling for point with no pieces
         return this.pieces.size();
@@ -28,6 +29,7 @@ public class Point {
     public int getPosition(){
         return this.position;
     }
+
     public String getColour(){
         // Need to include error handling for point with no pieces
         return switch (this.pieces.peek().getColor()) {
@@ -35,6 +37,15 @@ public class Point {
             case WHITE -> " W ";
         };
 
+    }
+
+    @Override
+    public String toString() {
+        if (this.numPieces() == 0) {
+            return " | ";
+        } else {
+            return this.getColour();
+        }
     }
 }
 

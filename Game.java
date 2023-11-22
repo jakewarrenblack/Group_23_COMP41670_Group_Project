@@ -3,7 +3,7 @@ import jdk.jshell.spi.ExecutionControl;
 import java.util.Scanner;
 
 public class Game {
-    private final Board myBoard;
+    private final Board board;
     protected enum GameState {ONGOING, WON, LOST};
     private GameState gameState;
     private Player[] players;
@@ -12,7 +12,7 @@ public class Game {
     private final Log log;
     public Game(Player[] players, Die die){
         this.gameState = GameState.ONGOING;
-        this.myBoard = new Board();
+        this.board = new Board();
         this.players = players;
         this.die = die;
         this.log = new Log();
@@ -43,9 +43,11 @@ public class Game {
 
 
 
-    public void nextTurn(){
+    public Player nextTurn(){
         // just switch between 0 and 1, whichever is NOT the current player
         this.currentPlayer = this.players[0] == this.currentPlayer ? this.players[1] : this.players[0];
+
+        return this.currentPlayer;
     }
 
     public Player getCurrentPlayer(){
@@ -78,7 +80,7 @@ public class Game {
         // Not sure if this should sit here or be in another method?
         this.players = players;
         for (int i=0;i<2;i++){
-            myBoard.placePieces(this.players[i]);
+            board.placePieces(this.players[i]);
         }
 
         return players;
@@ -121,16 +123,18 @@ public class Game {
         return input;
     }
 
-    public void movePiece(int from, int to){
-        myBoard.addPiece(to,myBoard.removePiece(from));
-    }
+
     public void print(){
 
-        myBoard.print(currentPlayer.getColor(), log.recentLog(10));
+        board.print(currentPlayer.getColor(), log.recentLog(10));
     }
     public void pipScore(){
         for (int i=0;i<2;i++){
             System.out.println(players[i].getName()+" has a pip score of "+players[i].pipScore());
         }
+    }
+
+    public Board getBoard(){
+        return this.board;
     }
 }
