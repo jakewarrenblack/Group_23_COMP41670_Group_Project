@@ -96,7 +96,7 @@ public class Game {
         System.out.println(message);
 
         for(int i=0; i<options.length; i++){
-            System.out.println(i + ": " + options[i]);
+            System.out.println((i+1) + ": " + options[i]);
         }
 
         Scanner in = new Scanner(System.in);
@@ -108,7 +108,7 @@ public class Game {
             while (!in.hasNextInt()) {
                 System.out.println("You must enter a number corresponding to one of the options");
             }
-            opt = in.nextInt();
+            opt = in.nextInt()-1;
             if (opt < 0 || opt > options.length) {
                 System.out.println("You must enter a number corresponding to one of the options");
             }
@@ -132,11 +132,15 @@ public class Game {
     public void movePiece(int from, int to) {
         if (!myBoard.isPlayers(from, currentPlayer)) {
             throw new IllegalArgumentException(currentPlayer.getName() + "'s checkers are not on Point " + from);
-        } else if (!myBoard.isPlayers(to,currentPlayer)) {
-            if(!myBoard.isBlot(to)&!myBoard.isEmpty(to)){
-                throw new IllegalArgumentException("Your opponent has too many checkers on Point "+to+" for you to move there");
-            } else if (myBoard.isBlot(to)) {
-                //TODO functionality to move opponent's blot to their bar
+        } else if (!myBoard.isEmpty(to)) {
+            if (!myBoard.isPlayers(to,currentPlayer)){
+                if(!myBoard.isBlot(to)) {
+                    throw new IllegalArgumentException("Your opponent has too many checkers on Point " + to + " for you to move there");
+                }//TODO functionality to move opponent's blot to their bar
+            } else {
+                if (myBoard.isFull(to)) {
+                    throw new IllegalArgumentException("You cannot place more than six checkers on one point");
+                }
             }
         }
         myBoard.addPiece(to,myBoard.removePiece(from));

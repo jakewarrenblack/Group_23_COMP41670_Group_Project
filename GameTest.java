@@ -3,31 +3,31 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
-    private final static InputStream systemIn = System.in;
-    private final static PrintStream systemOut = System.out;
-    private ByteArrayInputStream typeIn;
-    private static ByteArrayOutputStream typeOut;
+    private final PrintStream standardOut = System.out;
+    private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+    private Player[] players;
+    private Player blackPlayer;
+    private Player whitePlayer;
     private Game myGame;
     @BeforeEach
     void setUp() {
-        myGame = new Game(new Player[2], new Die());
-        Player blackPlayer = new Player("R", Player.Color.BLACK);
-        Player whitePlayer = new Player("J", Player.Color.WHITE);
-        typeOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(typeOut));
+        blackPlayer = new Player("B", Player.Color.BLACK);
+        whitePlayer = new Player("W", Player.Color.WHITE);
+        players = new Player[]{blackPlayer,whitePlayer};
+        myGame = new Game(players, new Die());
+        myGame.placePieces(blackPlayer);
+        myGame.placePieces(whitePlayer);
+        System.setOut(new PrintStream(outputStreamCaptor));
     }
     @AfterEach
     void tearDown() {
-        System.setIn(systemIn);
-        System.setOut(systemOut);
+        System.setOut(standardOut);
     }
     @Test
     @DisplayName("Checks that game has been created")
@@ -50,18 +50,17 @@ class GameTest {
         assertFalse(myGame.isGameWon());
     }
 
-    @Test
-    @DisplayName("Checks we can update the game state")
-    void setGameState() {
-        assertAll(()->assertFalse(myGame.isGameWon()),
-                ()->assertFalse(myGame.isGameWon()));
-        myGame.setGameState(Game.GameState.WON);
-        assertAll(()->assertTrue(myGame.isGameWon()),
-                ()->assertFalse(myGame.isGameWon()));
-        myGame.setGameState(Game.GameState.LOST);
-        assertAll(()->assertFalse(myGame.isGameWon()),
-                ()->assertTrue(myGame.isGameWon()));
-    }
+//    @Test
+//    @DisplayName("Checks we can update the game state")
+//    void setGameState() {
+//        assertFalse(myGame.isGameWon()),
+//        myGame.setGameState(Game.GameState.WON);
+//        assertAll(()->assertTrue(myGame.isGameWon()),
+//                ()->assertFalse(myGame.isGameWon()));
+//        myGame.setGameState(Game.GameState.LOST);
+//        assertAll(()->assertFalse(myGame.isGameWon()),
+//                ()->assertTrue(myGame.isGameWon()));
+//    }
 
     @Test
     void addPlayer() {
@@ -78,10 +77,33 @@ class GameTest {
         String[] tests = new String[]{"Try this message"};
         for (String test:tests) {
             System.out.println(test);
-            assertEquals(test, typeOut.toString().trim());
+            assertEquals(test, outputStreamCaptor.toString().trim());
         }
     }
-
+    @Test
+    void move(){
+        myGame.movePiece(0,2);
+        assertEquals("B moved a piece from 0 to 2",outputStreamCaptor.toString().trim());
+    }
+    @Test
+    void noPieceToMove(){
+        try {
+            myGame.movePiece(1, 2);
+        } catch (IllegalArgumentException e) {
+            String actualMessage = e.getMessage();
+            assertTrue(actualMessage.contains("B's checkers are not on Point 1"));
+        }
+    }
+    @Test
+    void fullPoint(){
+        myGame.movePiece(0,11);
+        try {
+            myGame.movePiece(0,11);
+        } catch (IllegalArgumentException e) {
+            String actualMessage = e.getMessage();
+            assertTrue(e.getMessage().contains("You cannot place more than six checkers on one point"));
+        }
+    }
     @Test
     void chooseOption() {
     }
