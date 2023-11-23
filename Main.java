@@ -65,11 +65,14 @@ public class Main {
                 if (!myGame.acceptCommand(move)){return;}
 
                 if(rollValue == null){
-                    // TODO: Prevent rolling multiple times before making a move
                     if(move.equals("roll")){
                         die.roll();
+                        rollValue = die.getCurrentValues();
                         System.out.println(myGame.getCurrentPlayer().getName() + " to play " + die.getCurrentValues()[0] + "-" + die.getCurrentValues()[1] + ". Select from:");
                     }
+                }
+                else{
+                    System.out.println("You already rolled! Please make a move.");
                 }
 
                 // Black player moves from the bottom-right (index 24) to the top-right (index 1) -> (clockwise). In other words, the position index must be moving DOWN from 24...to 1...
@@ -97,9 +100,11 @@ public class Main {
                     }
                 }
 
+                // for assigning a letter label to each move option
+                char moveLabel = 'A';
+
                 for(Piece p: movablePieces){
-                    // for assigning a letter label to each move option
-                    char moveLabel = 'A';
+
 
                     // black player will add dice values to determine move
                     // white player will subtract dice values to determine move
@@ -119,7 +124,6 @@ public class Main {
                             else{
                                 System.out.println(moveLabel + ") Play: " + p.getPosition() + "-" + calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE));
                             }
-
 
                             moveLabel++;
                         }
