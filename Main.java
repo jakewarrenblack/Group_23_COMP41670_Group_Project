@@ -1,8 +1,70 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
+    private static Map<Character, Move> validMoves = new HashMap<>();
 
+    public static void getAvailableValidMoves(Game myGame, Die die, Player currentPlayer){
+        // Black player moves from the bottom-right (index 24) to the top-right (index 1) -> (clockwise). In other words, the position index must be moving DOWN from 24...to 1...
+        // White player moves from the top-right (index 1) to the bottom-right (index 24) -> (counter-clockwise). In other words, the position index must be moving UP from 1...to 24...
+        Point[] allBoardPoints = myGame.getBoard().getPoints();
+
+        int[] diceOptions = {die.getCurrentValues()[0], die.getCurrentValues()[1], (die.getCurrentValues()[0] + die.getCurrentValues()[1])};
+
+        ArrayList<Point> occupiedPoints = new ArrayList<>();
+
+        for(Point p: allBoardPoints){
+            if(p.numPieces() != 0){
+                occupiedPoints.add(p);
+            }
+        }
+
+        // for all the occupied points, the pieces which can be moved are the ones whose colour match the player's colour (and are on top of their respective pile)
+        ArrayList<Piece> movablePieces = new ArrayList<>();
+
+        for(Point p: occupiedPoints){
+            Piece topPiece = p.getTopChecker();
+
+            if(topPiece.getColor() == currentPlayer.getColor()){
+                movablePieces.add(topPiece);
+            }
+        }
+
+        // for assigning a letter label to each move option
+        char moveLabel = 'A';
+
+        for(Piece p: movablePieces){
+
+
+            // black player will add dice values to determine move
+            // white player will subtract dice values to determine move
+            for(int option: diceOptions){
+                int endPosition = calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE);
+
+                // NOTE we only bother showing the valid moves. There'd be (num dice moves, which is 3 * num movable pieces) potential moves otherwise. E.g pieces in 4 Points would yield 4 * 3 = 12 potential moves.
+                // Create a 'potential' Move object for the current potential move
+                Move potentialMove = new Move(p.getPosition(), endPosition, currentPlayer, die, bearOffAllowed(movablePieces, currentPlayer), myGame);
+
+                if (potentialMove.validateMove()) {
+
+
+                    validMoves.put(moveLabel, potentialMove); // Store the valid move in the Map
+
+                    // if this runs, bearing off has been allowed
+                    if(endPosition > allBoardPoints.length || endPosition < 0){
+                        System.out.println(moveLabel + ") Play: " + p.getPosition() + "-off");
+                    }
+                    else{
+                        System.out.println(moveLabel + ") Play: " + p.getPosition() + "-" + calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE));
+                    }
+
+                    moveLabel++;
+                }
+            }
+        }
+    }
     /**
      *
      * This is for figuring out where the player's piece would end up based on which dice value they use.
@@ -75,60 +137,38 @@ public class Main {
                     System.out.println("You already rolled! Please make a move.");
                 }
 
-                // Black player moves from the bottom-right (index 24) to the top-right (index 1) -> (clockwise). In other words, the position index must be moving DOWN from 24...to 1...
-                // White player moves from the top-right (index 1) to the bottom-right (index 24) -> (counter-clockwise). In other words, the position index must be moving UP from 1...to 24...
-                Point[] allBoardPoints = myGame.getBoard().getPoints();
+                if(move.equals("moves")){
+                    getAvailableValidMoves(myGame, die, currentPlayer);
 
-                int[] diceOptions = {die.getCurrentValues()[0], die.getCurrentValues()[1], (die.getCurrentValues()[0] + die.getCurrentValues()[1])};
+                    System.out.print("Choose a move (A, B, C, ...): ");
+                    Scanner moveScanner = new Scanner(System.in);
 
-                ArrayList<Point> occupiedPoints = new ArrayList<>();
+                    char moveChoice = moveScanner.next().charAt(0);
 
-                for(Point p: allBoardPoints){
-                    if(p.numPieces() != 0){
-                        occupiedPoints.add(p);
+                    // Pull the selected move out of the map (A hashmap of letter labels and possible validated moves)
+                    Move chosenMove = validMoves.get(moveChoice);
+
+                    if (chosenMove != null) {
+                        // Perform the move by removing and adding the piece
+                        int startPosition = chosenMove.getStartPoint();
+                        int endPosition = chosenMove.getEndPoint();
+                        Piece movedPiece = myGame.getBoard().removePiece(startPosition);
+                        myGame.getBoard().addPiece(endPosition, movedPiece);
+
+                        // Update the board
+                        myGame.getBoard().updateBoard();
+
+                        // Print the updated board
+                        myGame.print();
+
+                        // Switch to the next player
+                        currentPlayer = myGame.nextTurn();
+                    } else {
+                        System.out.println("Invalid move choice. Please try again.");
                     }
+
                 }
 
-                // for all the occupied points, the pieces which can be moved are the ones whose colour match the player's colour (and are on top of their respective pile)
-                ArrayList<Piece> movablePieces = new ArrayList<>();
-
-                for(Point p: occupiedPoints){
-                    Piece topPiece = p.getTopChecker();
-
-                    if(topPiece.getColor() == currentPlayer.getColor()){
-                     movablePieces.add(topPiece);
-                    }
-                }
-
-                // for assigning a letter label to each move option
-                char moveLabel = 'A';
-
-                for(Piece p: movablePieces){
-
-
-                    // black player will add dice values to determine move
-                    // white player will subtract dice values to determine move
-                    for(int option: diceOptions){
-                        int endPosition = calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE);
-
-                        // NOTE we only bother showing the valid moves. There'd be (num dice moves, which is 3 * num movable pieces) potential moves otherwise. E.g pieces in 4 Points would yield 4 * 3 = 12 potential moves.
-                        // Create a 'potential' Move object for the current potential move
-                        Move potentialMove = new Move(p.getPosition(), endPosition, currentPlayer, die, bearOffAllowed(movablePieces, currentPlayer), myGame);
-
-                        if (potentialMove.validateMove()) {
-
-                            // if this runs, bearing off has been allowed
-                            if(endPosition > allBoardPoints.length || endPosition < 0){
-                                System.out.println(moveLabel + ") Play: " + p.getPosition() + "-off");
-                            }
-                            else{
-                                System.out.println(moveLabel + ") Play: " + p.getPosition() + "-" + calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE));
-                            }
-
-                            moveLabel++;
-                        }
-                    }
-                }
 
                 if(move.equals("print")){
                     myGame.print();
@@ -146,6 +186,13 @@ public class Main {
                 // before switching turns, clear the dice value for the next player
                 rollValue = null;
                 //currentPlayer = myGame.nextTurn();
+
+
+                ///////////////////////////////////////////////////////////////////////////////////////////////
+                // Making moves:
+
+//              // Switch to the next player
+//              currentPlayer = myGame.nextTurn();
 
 
             }
