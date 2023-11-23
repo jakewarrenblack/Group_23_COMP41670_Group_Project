@@ -38,14 +38,17 @@ public class Move {
     private final Player player;
     private final Die die;
 
+    private final Game myGame;
+
     private final boolean bearOffAllowed;
 
-    public Move(int startPoint, int endPoint, Player player, Die die, boolean bearOffAllowed){
+    public Move(int startPoint, int endPoint, Player player, Die die, boolean bearOffAllowed, Game myGame){
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.player = player;
         this.die = die;
         this.bearOffAllowed = bearOffAllowed;
+        this.myGame = myGame;
     }
 
     /**
@@ -56,18 +59,27 @@ public class Move {
      */
 
     private boolean isMoveLegal(){
+        // black player moves from the bottom-right (index 24) to the top-right (index 1) -> (clockwise).
+        // white player moves from the top-right (index 1) to the bottom-right (index 24) -> (counter-clockwise).
+        boolean playerMovingBackwards = switch (this.player.getColor()) {
+            case BLACK ->
+                    this.startPoint > this.endPoint;// as the black player moves, their position index *should* increase
+            case WHITE ->
+                    this.startPoint < this.endPoint; // as the white player moves, their position index *should* decrease
+        };
+
         //  Check not moving from current place back to current place (like picking the piece up and putting it back down again)
         if(this.startPoint == this.endPoint){
             return false;
         }
 
         //  Check not moving backwards
-        if(this.startPoint < this.endPoint){
+        if(playerMovingBackwards){
             return false;
         }
 
         //  Check not moving off the board (presuming bearing off is not yet permitted)
-        if (!this.bearOffAllowed && this.endPoint > 23) { // FIXME: Is this 23 or 24? Maybe this is fine, just calling attention to it
+        if (!this.bearOffAllowed && this.endPoint > 23 || this.endPoint < 0) { // FIXME: Is this 23 or 24? Maybe this is fine, just calling attention to it
             // Player is trying to move off the board prematurely
             return false;
         }
@@ -93,17 +105,11 @@ public class Move {
         return false;
     }
 
-    /**
-     * Check if the user's dice roll will permit the move they're trying to make.
-     * @return boolean
-     */
-    private boolean isValidDiceRoll(){
-        return false;
-    }
+
 
     // Validating a move consists of several smaller validation checks
     public boolean validateMove(){
-        return isMoveLegal() && !isBlocked() && isValidDiceRoll();
+        return isMoveLegal() && !isBlocked();
     }
 
 
