@@ -37,10 +37,7 @@ public class Main {
             rollValue[1] = die.getCurrentValues()[1];
 
             while (myGame.isGameOngoing()) {
-                // player to go first is determined by the dice roll
-
                 System.out.println(myGame.getCurrentPlayer().getName() + "'s move:");
-
                 String move = in.nextLine().toLowerCase();
 
                 if(move.isEmpty()){
@@ -50,15 +47,18 @@ public class Main {
 
                 if (!myGame.acceptCommand(move)){return;}
 
-                // TODO: Print out possible moves
+                if(rollValue == null){
+                    // TODO: Prevent rolling multiple times before making a move
+                    if(move.equals("roll")){
+                        die.roll();
+                        System.out.println(myGame.getCurrentPlayer().getName() + " to play " + die.getCurrentValues()[0] + "-" + die.getCurrentValues()[1] + ". Select from:");
+                    }
+                }
+
+
 
                 // Black player moves from the bottom-right (index 24) to the top-right (index 1) -> (clockwise). In other words, the position index must be moving DOWN from 24...to 1...
                 // White player moves from the top-right (index 1) to the bottom-right (index 24) -> (counter-clockwise). In other words, the position index must be moving UP from 1...to 24...
-
-                // possible move distances are dice 1, dice 2, or dice1 + dice2
-
-                // I need to iterate through all the pieces on the board and find the pieces belonging to the relevant player. Of these, the pieces at the top of their respective triangles can be moved.
-                // The direction they can move depends on which player we're dealing with.
                 Point[] allBoardPoints = myGame.getBoard().getPoints();
 
                 int[] diceOptions = {die.getCurrentValues()[0], die.getCurrentValues()[1], (die.getCurrentValues()[0] + die.getCurrentValues()[1])};
@@ -66,15 +66,12 @@ public class Main {
                 ArrayList<Point> occupiedPoints = new ArrayList<>();
 
                 for(Point p: allBoardPoints){
-                    System.out.println(p);
                     if(p.numPieces() != 0){
                         occupiedPoints.add(p);
                     }
                 }
 
-                // for all the occupied points, the pieces which can be moved are the
-                // ones whose colour match the player's colour
-                // (and are on top of their respective pile)
+                // for all the occupied points, the pieces which can be moved are the ones whose colour match the player's colour (and are on top of their respective pile)
                 ArrayList<Piece> movablePieces = new ArrayList<>();
 
                 for(Point p: occupiedPoints){
@@ -86,54 +83,39 @@ public class Main {
                 }
 
                 for(Piece p: movablePieces){
-                    //System.out.println("Movable piece " + p.getPosition());
+                    // if every one of a player's movable pieces is in their home board, they're allowed to begin bearing off
+                    boolean bearOffAllowed;
+                    if(p.getPosition() > 18 && currentPlayer.getColor() == Player.Color.WHITE){
+                        bearOffAllowed = true;
+                    }
+                    else if(p.getPosition() < 7 && currentPlayer.getColor() == Player.Color.BLACK){
+                        bearOffAllowed = true;
+                    }
+                    else{
+                        bearOffAllowed = false;
+                    }
+
+
+                    // for assigning a letter label to each move option
+                    char moveLabel = 'A';
+
 
                     // black player will add dice values to determine move
                     // white player will subtract dice values to determine move
                     for(int option: diceOptions){
-                        System.out.println(
-                                "Potential move: " + p.getPosition() + "-" +
-                                calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE)
-                        );
+                        int endPosition = calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE);
 
+                        // NOTE we only bother showing the valid moves. There'd be (num dice moves, which is 3 * num movable pieces) potential moves otherwise. E.g pieces in 4 Points would yield 4 * 3 = 12 potential moves.
+
+                        // Create a 'potential' Move object for the current potential move
+                        Move potentialMove = new Move(p.getPosition(), endPosition, currentPlayer, die, bearOffAllowed);
+
+                        if (potentialMove.validateMove()) {
+                            System.out.println(moveLabel + ") Play: " + p.getPosition() + "-" + (endPosition > allBoardPoints.length ? "off" : calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE)));
+                            moveLabel++;
+                        }
                     }
                 }
-
-                // example scenario, jake (black player) goes first, options:
-                // 0, 11, 16, 18
-
-                // example, rolled a 5-3
-
-                // black moves counter clockwise
-
-                // options would be:
-                // use the 5:
-                // move 0-5
-                // move 11-16
-                // move 16-21
-                // move 18-23
-
-                // use the 3:
-                // move 0-3
-                // 11-14
-                // 16-19
-                // 18-21
-
-
-
-
-
-                // allBoardPoints is like this:
-                // 0:
-                    // position = 0
-                    // pieces = Stack of size 2
-                    // meaning column 0 has 2 pieces, so [0][0] and [0][1] are occupied
-
-                // example scenario:
-                //  black player rolls a 5-3
-                //  their options are to move one piece 5 places, and another piece 3 places, OR they can move one piece 8 places
-                // to give the player their move options, i need to iterate through all the points on the board, finding the relevant (black) pieces
-
 
                 if(move.equals("print")){
                     myGame.print();
@@ -150,7 +132,7 @@ public class Main {
 
                 // before switching turns, clear the dice value for the next player
                 rollValue = null;
-                currentPlayer = myGame.nextTurn();
+                //currentPlayer = myGame.nextTurn();
 
 
             }

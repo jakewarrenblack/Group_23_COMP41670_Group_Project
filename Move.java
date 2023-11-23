@@ -67,8 +67,8 @@ public class Move {
         }
 
         //  Check not moving off the board (presuming bearing off is not yet permitted)
-        if(!this.bearOffAllowed){
-            // TODO: How to check this? Player is trying to move off the board?
+        if (!this.bearOffAllowed && this.endPoint > 23) { // FIXME: Is this 23 or 24? Maybe this is fine, just calling attention to it
+            // Player is trying to move off the board prematurely
             return false;
         }
 
@@ -78,10 +78,17 @@ public class Move {
     /**
      * True if position is occupied by 2 or more enemy pieces, or is occupied by 6 friendly pieces.
      */
-    private boolean isBlocked(){
-        // TODO: Only bother with next part IF the user is trying to move to an index higher than 2
-        //  Otherwise, that's not even possible, and the user can knock the other player's piece off
-        //  Get the position the user is trying to move to, and check if there are 2+ pieces preceding it
+    private boolean isBlocked() {
+        // Only bother with the next part if the user is trying to move to an index higher than 2
+        // Otherwise, that's not even possible, and the user can knock the other player's piece off
+        if (this.endPoint > 2) {
+            Point destinationPoint = myGame.getBoard().getPoint(this.endPoint);
+
+            // Check if the destination point is occupied by 2 or more enemy pieces
+            if (destinationPoint.numPieces() >= 2 && destinationPoint.getTopChecker().getColor() != this.player.getColor()) {
+                return true;
+            }
+        }
 
         return false;
     }
