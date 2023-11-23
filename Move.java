@@ -105,6 +105,13 @@ public class Move {
         return false;
     }
 
+    public int getStartPoint(){
+        return this.startPoint;
+    }
+
+    public int getEndPoint(){
+        return this.endPoint;
+    }
 
 
     // Validating a move consists of several smaller validation checks
