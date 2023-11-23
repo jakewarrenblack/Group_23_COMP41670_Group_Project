@@ -13,6 +13,23 @@ public class Main {
         return subtract ? a - b : a + b;
     }
 
+    public static boolean bearOffAllowed(ArrayList<Piece> movablePieces, Player currentPlayer){
+        // if every one of a player's movable pieces is in their home board, they're allowed to begin bearing off
+        boolean bearOffAllowed = true;
+
+        for(Piece p: movablePieces){
+                // If ANY of the player's pieces are not in their home board, they're not allowed to bear off
+                if(p.getPosition() <= 18 && currentPlayer.getColor() == Player.Color.WHITE){
+                    bearOffAllowed = false;
+                }
+                else if(p.getPosition() >= 7 && currentPlayer.getColor() == Player.Color.BLACK){
+                    bearOffAllowed = false;
+                }
+            }
+
+        return bearOffAllowed;
+    }
+
     public static void main(String[] args) {
         Die die = new Die();
         Scanner in = new Scanner(System.in);
@@ -53,8 +70,6 @@ public class Main {
                     }
                 }
 
-
-
                 // Black player moves from the bottom-right (index 24) to the top-right (index 1) -> (clockwise). In other words, the position index must be moving DOWN from 24...to 1...
                 // White player moves from the top-right (index 1) to the bottom-right (index 24) -> (counter-clockwise). In other words, the position index must be moving UP from 1...to 24...
                 Point[] allBoardPoints = myGame.getBoard().getPoints();
@@ -81,22 +96,8 @@ public class Main {
                 }
 
                 for(Piece p: movablePieces){
-                    // if every one of a player's movable pieces is in their home board, they're allowed to begin bearing off
-                    boolean bearOffAllowed;
-                    if(p.getPosition() > 18 && currentPlayer.getColor() == Player.Color.WHITE){
-                        bearOffAllowed = true;
-                    }
-                    else if(p.getPosition() < 7 && currentPlayer.getColor() == Player.Color.BLACK){
-                        bearOffAllowed = true;
-                    }
-                    else{
-                        bearOffAllowed = false;
-                    }
-
-
                     // for assigning a letter label to each move option
                     char moveLabel = 'A';
-
 
                     // black player will add dice values to determine move
                     // white player will subtract dice values to determine move
@@ -104,12 +105,20 @@ public class Main {
                         int endPosition = calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE);
 
                         // NOTE we only bother showing the valid moves. There'd be (num dice moves, which is 3 * num movable pieces) potential moves otherwise. E.g pieces in 4 Points would yield 4 * 3 = 12 potential moves.
-
                         // Create a 'potential' Move object for the current potential move
-                        Move potentialMove = new Move(p.getPosition(), endPosition, currentPlayer, die, bearOffAllowed);
+                        Move potentialMove = new Move(p.getPosition(), endPosition, currentPlayer, die, bearOffAllowed(movablePieces, currentPlayer), myGame);
 
                         if (potentialMove.validateMove()) {
-                            System.out.println(moveLabel + ") Play: " + p.getPosition() + "-" + (endPosition > allBoardPoints.length ? "off" : calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE)));
+
+                            // if this runs, bearing off has been allowed
+                            if(endPosition > allBoardPoints.length || endPosition < 0){
+                                System.out.println(moveLabel + ") Play: " + p.getPosition() + "-off");
+                            }
+                            else{
+                                System.out.println(moveLabel + ") Play: " + p.getPosition() + "-" + calculate(p.getPosition(), option, currentPlayer.getColor() == Player.Color.WHITE));
+                            }
+
+
                             moveLabel++;
                         }
                     }
