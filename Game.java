@@ -147,7 +147,7 @@ public class Game {
         log.updateLog(currentPlayer.getName()+" moved a piece from "+from+" to "+to);
     }
     public void print(){
-        myBoard.print(currentPlayer.getColor(),log.recentLog(10));
+        board.print(currentPlayer.getColor(),log.recentLog(10));
     }
     public void pipScore(){
         for (int i=0;i<2;i++){
@@ -159,9 +159,6 @@ public class Game {
         return this.board;
     }
 
-    public Board getBoard(){
-        return this.board;
-    }
     public void roll(){
         int[] dice = die.roll();
         log.updateLog(getCurrentPlayer().getName() + " rolled " + dice[0] + ", " + dice[1]);

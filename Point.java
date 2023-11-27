@@ -45,7 +45,6 @@ public class Point {
     }
 
 
-
     /**
      * The number of pieces currently placed on this point
      *
