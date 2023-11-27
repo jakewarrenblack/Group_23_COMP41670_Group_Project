@@ -95,7 +95,7 @@ public class Main {
     public static void main(String[] args) {
         Die die = new Die();
         Scanner in = new Scanner(System.in);
-        Game myGame = new Game(new Player[2], die);
+        Game myGame = new Game();
         Player currentPlayer;
         myGame.addPlayers();
 
@@ -123,6 +123,7 @@ public class Main {
                     continue;
                 }
 
+                if (!myGame.acceptCommand(move)){return;}
 
                 if(rollValue == null){
                     if(move.equals("roll")){
@@ -174,8 +175,6 @@ public class Main {
                 if(move.equals("pip")){
                     myGame.pipScore();
                 }
-
-
 
                 // TODO: In future, when score is unchanged (non-playing command was given), this won't run
                 // FIXME: Commented out for now. Don't actually switch players until the player has finished their moves.

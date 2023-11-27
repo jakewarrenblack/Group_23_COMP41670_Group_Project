@@ -8,14 +8,18 @@ public class Game {
     private GameState gameState;
     private Player[] players;
     private Player currentPlayer;
-    private final Die die;
-    private final Log log;
-    public Game(Player[] players, Die die){
+
+    private Die die;
+
+    private Log log;
+    private Command command;
+    public Game(){
         this.gameState = GameState.ONGOING;
         this.board = new Board();
-        this.players = players;
-        this.die = die;
-        this.log = new Log();
+        this.players = new Player[2];
+        this.die = new Die();
+        this.log=new Log();
+        this.command=new Command(this);
     }
 
     public Player setInitialPlayer(){
@@ -32,12 +36,12 @@ public class Game {
         }
 
 
-        System.out.println(this.players[0].getName()+" has rolled "+leftDie+", "+this.players[1].getName()+" has rolled "+rightDie);
+        log.updateLog(this.players[0].getName()+" has rolled "+leftDie+", "+this.players[1].getName()+" has rolled "+rightDie);
 
         // if leftDie has a greater value, player 0 starts, otherwise, player 1 starts
         this.currentPlayer = this.players[leftDie > rightDie ? 0 : 1];
 
-        System.out.println(this.currentPlayer.getName()+" will go first");
+        log.updateLog(this.currentPlayer.getName()+" will go first");
         return this.currentPlayer;
     }
 
@@ -68,29 +72,31 @@ public class Game {
     public void setGameState(GameState gameState){
         this.gameState=gameState;
     }
-
+    public void addPlayer(int index, Player player, boolean isCurrentPlayer){
+        this.players[index]=player;
+        if (isCurrentPlayer){currentPlayer=player;}
+    }
     public Player[] addPlayers(){
         Player[] players = new Player[2];
 
         for(int i=0; i<2; i++){
             Player.Color color = Player.Color.values()[i];
-
             players[i] = new Player(getInput("Please enter the name of the " + color + " player"), color);
         }
         // Not sure if this should sit here or be in another method?
         this.players = players;
         for (int i=0;i<2;i++){
-            board.placePieces(this.players[i]);
+            placePieces(this.players[i]);
         }
 
         return players;
     }
-
+    public void placePieces(Player player){board.placePieces(player);}
     public static int chooseOption(String message, String[] options){
         System.out.println(message);
 
         for(int i=0; i<options.length; i++){
-            System.out.println(i + ": " + options[i]);
+            System.out.println((i+1) + ": " + options[i]);
         }
 
         Scanner in = new Scanner(System.in);
@@ -102,7 +108,7 @@ public class Game {
             while (!in.hasNextInt()) {
                 System.out.println("You must enter a number corresponding to one of the options");
             }
-            opt = in.nextInt();
+            opt = in.nextInt()-1;
             if (opt < 0 || opt > options.length) {
                 System.out.println("You must enter a number corresponding to one of the options");
             }
@@ -123,18 +129,47 @@ public class Game {
         return input;
     }
 
-
+    public void movePiece(int from, int to) {
+        if (!board.isPlayers(from, currentPlayer)) {
+            throw new IllegalArgumentException(currentPlayer.getName() + "'s checkers are not on Point " + from);
+        } else if (!board.isEmpty(to)) {
+            if (!board.isPlayers(to,currentPlayer)){
+                if(!board.isBlot(to)) {
+                    throw new IllegalArgumentException("Your opponent has too many checkers on Point " + to + " for you to move there");
+                }//TODO functionality to move opponent's blot to their bar
+            } else {
+                if (board.isFull(to)) {
+                    throw new IllegalArgumentException("You cannot place more than six checkers on one point");
+                }
+            }
+        }
+        board.addPiece(to,board.removePiece(from));
+        log.updateLog(currentPlayer.getName()+" moved a piece from "+from+" to "+to);
+    }
     public void print(){
-
-        board.print(currentPlayer.getColor(), log.recentLog(10));
+        myBoard.print(currentPlayer.getColor(),log.recentLog(10));
     }
     public void pipScore(){
         for (int i=0;i<2;i++){
-            System.out.println(players[i].getName()+" has a pip score of "+players[i].pipScore());
+            log.updateLog(players[i].getName()+" has a pip score of "+players[i].pipScore());
         }
     }
 
     public Board getBoard(){
         return this.board;
+    }
+
+    public Board getBoard(){
+        return this.board;
+    }
+    public void roll(){
+        int[] dice = die.roll();
+        log.updateLog(getCurrentPlayer().getName() + " rolled " + dice[0] + ", " + dice[1]);
+    }
+    public void updateLog(String message){
+        log.updateLog(message);
+    }
+    public boolean acceptCommand(String command){
+        return this.command.acceptCommand(command);
     }
 }

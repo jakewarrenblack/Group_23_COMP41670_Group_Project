@@ -9,8 +9,8 @@ class PointTest {
     private Player testPlayer;
     @BeforeEach
     void setUp(){
-        firstPoint = new Point(1);
-        secondPoint = new Point(2);
+        firstPoint = new Point(1,22,14,12);
+        secondPoint = new Point(2,21,14,11);
         testPlayer = new Player("Test", Player.Color.WHITE);
     }
     @Test
@@ -37,8 +37,8 @@ class PointTest {
 
     @Test
     void getPosition() {
-        assertAll(()->assertEquals(1,firstPoint.getPosition()),
-                ()->assertEquals(2,secondPoint.getPosition()));
+        assertAll(()->assertEquals(1,firstPoint.getPositionWhite()),
+                ()->assertEquals(2,secondPoint.getPositionWhite()));
     }
 
     @Test

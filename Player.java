@@ -33,11 +33,33 @@ public class Player  {
     public String getName(){
         return this.name;
     }
+
+    /**
+     * Returns the colour of the pieces used by this player
+     * @return          The color of the pieces used by this player
+     */
     public Color getColor(){return this.color;}
 
+    /**
+     * Returns one of the player's pieced
+     * @param index         The index of the piece to returns
+     * @return              The returned piece
+     */
     public Piece getPiece(int index){
         return pieces[index];
     }
+
+    /**
+     * How many pieces does the player have?
+     * @return              The number of pieces in the player's collection
+     */
+    public int numPieces(){return pieces.length;}
+
+    /**
+     * Gives the player's pip score.
+     * The pip score is calculated by taking the pip value of the points on which every piece is positioned
+     * @return              The player's pip score
+     */
     public int pipScore(){
         int pipScore = 0;
         for (int i=0;i< pieces.length;i++){
@@ -45,6 +67,13 @@ public class Player  {
         }
         return pipScore;
     }
+
+    /**
+     * What is the position of the point a piece is sitting on
+     * @param index         The index of the piece
+     * @return              The position of the point the piece is on
+     */
+    public int piecePosition(int index){return pieces[index].getPosition();}
 
 
 }
