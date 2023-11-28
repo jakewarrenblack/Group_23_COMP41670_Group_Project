@@ -1,7 +1,7 @@
 public class Player  {
     private final String name;
     private int score;
-    private final int[] startPoints = new int[]{23,23,12,12,12,12,12,7,7,7,5,5,5,5,5};
+    private final int[] startPoints = new int[]{24,24,13,13,13,13,13,8,8,8,6,6,6,6,6};
 
     private Piece[] pieces;
     public enum Color {BLACK, WHITE};
@@ -17,7 +17,7 @@ public class Player  {
         this.pieces = new Piece[startPoints.length];
         for (int i=0;i<startPoints.length;i++){
             int position = startPoints[i];
-            if (color.equals(Color.BLACK)){position = 23-position;}
+            if (color.equals(Color.BLACK)){position = 25-position;}
             pieces[i]=new Piece(this,position);
         }
     }
@@ -48,7 +48,7 @@ public class Player  {
     public Piece getPiece(int index){
         return pieces[index];
     }
-
+    protected Piece[] getPieces(){return this.pieces;}
     /**
      * How many pieces does the player have?
      * @return              The number of pieces in the player's collection
@@ -63,7 +63,7 @@ public class Player  {
     public int pipScore(){
         int pipScore = 0;
         for (int i=0;i< pieces.length;i++){
-            pipScore+=pieces[i].getPip()+1;
+            pipScore+=pieces[i].getPip();
         }
         return pipScore;
     }
@@ -75,5 +75,18 @@ public class Player  {
      */
     public int piecePosition(int index){return pieces[index].getPosition();}
 
-
+    public boolean canMoveOff(){
+        int minPip = 26;
+        for (Piece p:pieces){
+            minPip = Math.min(minPip,p.getPip());
+        }
+        return minPip<6;
+    }
+    public boolean hasWon(){
+        int minPip = 26;
+        for (Piece p:pieces){
+            minPip=Math.max(minPip,p.getPip());
+        }
+        return minPip<1;
+    }
 }

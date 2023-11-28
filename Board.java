@@ -1,7 +1,9 @@
-import java.util.ArrayList;
+import javax.swing.*;
 
 public class Board {
-    private Point[] points = new Point[28];
+    private Point[] points = new Point[26];
+    private Point[] bars = new Point[2];
+    private Point[] offs = new Point[2];
 
     // We also need to have spaces for the bars and the off sections
     private String[][] boardPrint = new String[15][14];
@@ -13,43 +15,43 @@ public class Board {
      *  points 24 and 25 are the BAR points for WHITE and BLACK respectively
      *  points 26 and 27 are the OFF areas for WHITE and BLACK respectively
      */
-    enum layout{ONE(0,23,12,13),TWO(1,22,11,13),THREE(2,21,10,13),
-            FOUR(3,20,9,13),FIVE(4,19,8,13),SIX(5,18,7,13),
-            SEVEN(6,17,5,13),EIGHT(7,16,4,13),NINE(8,15,3,13),
-            TEN(9,14,2,13),ELEVEN(10,13,1,13),TWELVE(11,12,0,13),
-            THIRTEEN(12,11,0,1),FOURTEEN(13,10,1,1),FIFTEEN(14,9,2,1),
-            SIXTEEN(15,8,3,1),SEVENTEEN(16,7,4,1),EIGHTEEN(17,6,5,1),
-            NINETEEN(18,5,7,1),TWENTY(19,4,8,1),TWENTYONE(20,3,9,1),
-            TWENTYTWO(21,2,10,1),TWENTYTHREE(22,1,11,1),TWENTYFOUR(23,0,12,1),
-            BARW(-1,25,6,13),BARB(25,-1,6,1),
-            OFFW(24,-2,13,13),OFFB(-2,24,13,1);
-        private int positionWhite;
-        private int positionBlack;
+    public enum layout{OFFWBARB(0,25,13,13),
+            ONE(1,24,12,13),TWO(2,23,11,13),THREE(3,22,10,13),
+            FOUR(4,21,9,13),FIVE(5,20,8,13),SIX(6,19,7,13),
+            SEVEN(7,18,5,13),EIGHT(8,17,4,13),NINE(9,16,3,13),
+            TEN(10,15,2,13),ELEVEN(11,14,1,13),TWELVE(12,13,0,13),
+            THIRTEEN(13,12,0,1),FOURTEEN(14,11,1,1),FIFTEEN(15,10,2,1),
+            SIXTEEN(16,9,3,1),SEVENTEEN(17,8,4,1),EIGHTEEN(18,7,5,1),
+            NINETEEN(19,6,7,1),TWENTY(20,5,8,1),TWENTYONE(21,4,9,1),
+            TWENTYTWO(22,3,10,1),TWENTYTHREE(23,2,11,1),TWENTYFOUR(24,1,12,1),
+            OFFBBARW(25,0,13,1);
+        private int pipWhite;
+        private int pipBlack;
         private int col;
         private int row;
-        layout(int positionWhite,int positionBlack,int col, int row){
-            this.positionWhite=positionWhite;
-            this.positionBlack=positionBlack;
+        layout(int pipWhite, int pipBlack, int col, int row){
+            this.pipWhite = pipWhite;
+            this.pipBlack = pipBlack;
             this.col=col;
             this.row=row;
         }
-        public int getWhite(){return positionWhite;}
-        public int getBlack(){return positionBlack;}
+        public int getWhite(){return pipWhite;}
+        public int getBlack(){return pipBlack;}
         public int getCol(){return col;}
         public int getRow(){return row;}
+
     }
 
     public Board() {
-        for (int i = 0; i < 28; i++) {
+        for (int i = 1; i < 25; i++) {
             this.points[i] = new Point(layout.values()[i].getWhite(),layout.values()[i].getBlack(),layout.values()[i].getCol(),layout.values()[i].getRow());
         }
-
+        this.points[0]=new OffBoard(layout.OFFWBARB.getWhite(), layout.OFFWBARB.getBlack(),layout.OFFWBARB.getCol(), layout.OFFWBARB.getRow());
+        this.points[25]=new OffBoard(layout.OFFBBARW.getWhite(), layout.OFFBBARW.getBlack(),layout.OFFBBARW.getCol(), layout.OFFBBARW.getRow());
         // The top of the board
         boardPrint[0] = new String[]{"-13", "-+-", "-+-", "-+-", "-+-", "18-", "BAR", "-19", "-+-", "-+-", "-+-", "-+-", "-24", " OFF"};
-
         // The bottom of the board
         boardPrint[14] = new String[]{"-12", "-+-", "-+-", "-+-", "-+-", "-7-", "BAR", "-6-", "-+-", "-+-", "-+-", "-+-", "-1-", " OFF"};
-
         // The middle row, separating the two halves of the board
         boardPrint[7] = new String[]{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "    "};
 
@@ -80,7 +82,6 @@ public class Board {
             points[player.piecePosition(j)].addPiece(player.getPiece(j));
         }
     }
-
     /**
      * Gives the number of pieces on a given point
      * @param       index       The point we're interested in
@@ -121,24 +122,30 @@ public class Board {
     //      - if so, add that position to the player's list of possible moves for this turn
     //      - possible moves for each player will be cleared on each turn
     protected void updateBoard() {
-        for (int pointIndex=0;pointIndex<28;pointIndex++){
-            int col = getCoords(pointIndex)[1];
-            int row = getCoords(pointIndex)[0];
-            int increment=-1;
-            if (row==1){increment=1;}
-            for (int i = 0; i < 6; i++) {
-                for (int j = 0; numPieces(pointIndex) > j; j++) {
-                    // Value will be blank, or a piece colour (B, W), if there's a piece here
-                    boardPrint[row + (j) * increment][col] = getColour(pointIndex);
+        for (int pointIndex=0;pointIndex<26;pointIndex++){
+            int stacks = 1;
+            if (pointIndex==0|pointIndex==25){stacks=2;}
+            for (int stack=0;stack<stacks;stack++) {
+                if (stacks > 1) {
+                    ((OffBoard) points[pointIndex]).setColor(stack == 0);
                 }
-                for (int j = numPieces(pointIndex); j < 6; j++) {
-                    boardPrint[row + (j) * increment][col] = emptySpace(pointIndex);
+                int col = getCoords(pointIndex)[1];
+                int row = getCoords(pointIndex)[0];
+                int increment=row==1?1:-1;
+                for (int i = 0; i < 6; i++) {
+                    for (int j = 0; numPieces(pointIndex) > j; j++) {
+                        // Value will be blank, or a piece colour (B, W), if there's a piece here
+                        boardPrint[row + (j) * increment][col] = getColour(pointIndex);
+                    }
+                    for (int j = numPieces(pointIndex); j < 6; j++) {
+                        boardPrint[row + (j) * increment][col] = emptySpace(pointIndex);
+                    }
                 }
             }
         }
     }
     public String emptySpace(int i){
-        if (i<24){
+        if (i>0&i<25){
             return " | ";
         } else {
             return "   ";
@@ -200,5 +207,18 @@ public class Board {
 
     public Point[] getPoints(){
         return this.points;
+    }
+    public OffBoard getBar(Player player){
+        return player.getColor()== Player.Color.WHITE ? (OffBoard) points[layout.OFFBBARW.getWhite()] : (OffBoard) points[layout.OFFWBARB.getWhite()];
+    }
+    public OffBoard getOff(Player player){
+        return player.getColor()==Player.Color.WHITE ? (OffBoard) points[layout.OFFWBARB.getWhite()] : (OffBoard) points[layout.OFFBBARW.getWhite()];
+    }
+    public boolean hasBarPieces(Player player){
+        return !getBar(player).isEmpty();
+    }
+    public boolean isOff(int index, Player player){
+        int off = player.getColor()==Player.Color.WHITE ? layout.OFFWBARB.getWhite():layout.OFFBBARW.getWhite();
+        return points[index].equals(points[off]);
     }
 }

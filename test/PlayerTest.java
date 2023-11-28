@@ -40,4 +40,5 @@ class PlayerTest {
         assertAll(()->assertEquals(167,testWhite.pipScore()),
                 ()->assertEquals(167,testBlack.pipScore()));
     }
+
 }

@@ -18,7 +18,7 @@ class GameTest {
     void setUp() {
         blackPlayer = new Player("B", Player.Color.BLACK);
         whitePlayer = new Player("W", Player.Color.WHITE);
-        myGame = new Game();
+        myGame = new Game(new Die());
         myGame.addPlayer(0,blackPlayer,true);
         myGame.addPlayer(1,whitePlayer,false);
         myGame.placePieces(blackPlayer);
@@ -82,27 +82,19 @@ class GameTest {
     }
     @Test
     void move(){
-        myGame.movePiece(0,2);
-        assertEquals("B moved a piece from 0 to 2",outputStreamCaptor.toString().trim());
+        myGame.movePiece(1,3);
+        assertEquals("B moved a piece from 1 to 3",outputStreamCaptor.toString().trim());
     }
     @Test
     void noPieceToMove(){
-        try {
-            myGame.movePiece(1, 2);
-        } catch (IllegalArgumentException e) {
-            String actualMessage = e.getMessage();
-            assertTrue(actualMessage.contains("B's checkers are not on Point 1"));
-        }
+        myGame.movePiece(2, 3);
+        assertEquals("B's checkers are not on Point 2",outputStreamCaptor.toString().trim());
     }
     @Test
     void fullPoint(){
-        myGame.movePiece(0,11);
-        try {
-            myGame.movePiece(0,11);
-        } catch (IllegalArgumentException e) {
-            String actualMessage = e.getMessage();
-            assertTrue(e.getMessage().contains("You cannot place more than six checkers on one point"));
-        }
+        myGame.movePiece(1,12);
+        myGame.movePiece(1,12);
+        assertEquals("B moved a piece from 1 to 12\r\nPoint 12has six checkers on it already",outputStreamCaptor.toString().trim());
     }
     @Test
     void chooseOption() {
@@ -110,5 +102,13 @@ class GameTest {
 
     @Test
     void getInput() {
+    }
+    @Test
+    void getMovablePieces() {
+        Piece[] blackMovable = new Piece[]{myGame.getBoard().getPoint(1).getTopChecker(), myGame.getBoard().getPoint(12).getTopChecker(), myGame.getBoard().getPoint(17).getTopChecker(), myGame.getBoard().getPoint(19).getTopChecker()};
+        Object[] result = myGame.getMovablePieces().toArray();
+        for (int i = 0; i < 4; i++) {
+            assertEquals(blackMovable[i], result[i]);
+        }
     }
 }

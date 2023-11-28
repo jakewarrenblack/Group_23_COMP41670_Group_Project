@@ -37,8 +37,8 @@ class PointTest {
 
     @Test
     void getPosition() {
-        assertAll(()->assertEquals(1,firstPoint.getPositionWhite()),
-                ()->assertEquals(2,secondPoint.getPositionWhite()));
+        assertAll(()->assertEquals(1,firstPoint.getPosition(true)),
+                ()->assertEquals(2,secondPoint.getPosition(true)));
     }
 
     @Test
@@ -46,4 +46,5 @@ class PointTest {
         firstPoint.addPiece(testPlayer.getPiece(1));
         assertEquals(" W ",firstPoint.getColour());
     }
+
 }

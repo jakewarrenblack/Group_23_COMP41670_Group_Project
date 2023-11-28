@@ -1,3 +1,7 @@
+import javax.print.DocFlavor;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Command {
     enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST}
     private Game game;
@@ -25,7 +29,7 @@ public class Command {
                 } catch (IllegalArgumentException e){game.updateLog(e.getMessage());}
                 break;
             case "DOUBLE":
-                game.updateLog("The Double command hasn't been implemented yet");
+                game.doubleBet();
                 break;
             case "DICE":
                 game.updateLog("The Dice command hasn't been implemented yet");
@@ -37,6 +41,14 @@ public class Command {
                 game.updateLog("I do not recognise "+cmdTokens[0]+" as a command");
         }
         return true;
+    }
+    public String[] listCommands(List<String> exclude){
+        List<String> commands = new ArrayList<String>();
+        for (Commands command:Command.Commands.values()){
+            if (!(exclude.contains(command.name())|exclude.contains(command.name().toLowerCase())|exclude.contains(command.name().toUpperCase()))){commands.add(command.name());}
+        }
+        String[] commandsOut = commands.toArray(new String[0]);
+        return commandsOut;
     }
     public void hint(){
         System.out.println("ROLL rolls two dice for the current player");

@@ -22,19 +22,19 @@ class BoardTest {
     void placeWhitePieces(){
         Player testPlayer = new Player("Test", Player.Color.WHITE);
         testBoard.placePieces(testPlayer);
-        assertAll(()->assertEquals(2,testBoard.numPieces(23)),
-                ()->assertEquals(5,testBoard.numPieces(12)),
-                ()->assertEquals(3,testBoard.numPieces(7)),
-                ()->assertEquals(5,testBoard.numPieces(5)));
+        assertAll(()->assertEquals(2,testBoard.numPieces(24)),
+                ()->assertEquals(5,testBoard.numPieces(13)),
+                ()->assertEquals(3,testBoard.numPieces(8)),
+                ()->assertEquals(5,testBoard.numPieces(6)));
     }
     @Test
     void placeBlackPieces(){
         Player testPlayer = new Player("Test", Player.Color.BLACK);
         testBoard.placePieces(testPlayer);
-        assertAll(()->assertEquals(2,testBoard.numPieces(0)),
-                ()->assertEquals(5,testBoard.numPieces(11)),
-                ()->assertEquals(3,testBoard.numPieces(16)),
-                ()->assertEquals(5,testBoard.numPieces(18)));
+        assertAll(()->assertEquals(2,testBoard.numPieces(1)),
+                ()->assertEquals(5,testBoard.numPieces(12)),
+                ()->assertEquals(3,testBoard.numPieces(17)),
+                ()->assertEquals(5,testBoard.numPieces(19)));
     }
     @Test
     void placeAllPieces(){
@@ -42,22 +42,22 @@ class BoardTest {
         Player otherPlayer = new Player("Other", Player.Color.WHITE);
         testBoard.placePieces(testPlayer);
         testBoard.placePieces(otherPlayer);
-        assertAll(()->assertEquals(2,testBoard.numPieces(23)),
-                ()->assertEquals(" W ",testBoard.getColour(23)),
+        assertAll(()->assertEquals(2,testBoard.numPieces(24)),
+                ()->assertEquals(" W ",testBoard.getColour(24)),
+                ()->assertEquals(5,testBoard.numPieces(13)),
+                ()->assertEquals(" W ",testBoard.getColour(13)),
+                ()->assertEquals(3,testBoard.numPieces(8)),
+                ()->assertEquals(" W ",testBoard.getColour(8)),
+                ()->assertEquals(5,testBoard.numPieces(6)),
+                ()->assertEquals(" W ",testBoard.getColour(6)),
+                ()->assertEquals(2,testBoard.numPieces(1)),
+                ()->assertEquals(" B ",testBoard.getColour(1)),
                 ()->assertEquals(5,testBoard.numPieces(12)),
-                ()->assertEquals(" W ",testBoard.getColour(23)),
-                ()->assertEquals(3,testBoard.numPieces(7)),
-                ()->assertEquals(" W ",testBoard.getColour(7)),
-                ()->assertEquals(5,testBoard.numPieces(5)),
-                ()->assertEquals(" W ",testBoard.getColour(5)),
-                ()->assertEquals(2,testBoard.numPieces(0)),
-                ()->assertEquals(" B ",testBoard.getColour(0)),
-                ()->assertEquals(5,testBoard.numPieces(11)),
-                ()->assertEquals(" B ",testBoard.getColour(11)),
-                ()->assertEquals(3,testBoard.numPieces(16)),
-                ()->assertEquals(" B ",testBoard.getColour(16)),
-                ()->assertEquals(5,testBoard.numPieces(18)),
-                ()->assertEquals(" B ",testBoard.getColour(18)));
+                ()->assertEquals(" B ",testBoard.getColour(12)),
+                ()->assertEquals(3,testBoard.numPieces(17)),
+                ()->assertEquals(" B ",testBoard.getColour(17)),
+                ()->assertEquals(5,testBoard.numPieces(19)),
+                ()->assertEquals(" B ",testBoard.getColour(19)));
 
     }
     @Test
@@ -126,7 +126,7 @@ class BoardTest {
 
     @Test
     void getPoint() {
-        assertEquals(10,testBoard.getPoint(10).getPositionWhite());
+        assertEquals(10,testBoard.getPoint(10).getPosition(true));
     }
 
     @Test

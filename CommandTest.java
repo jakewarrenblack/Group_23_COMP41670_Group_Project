@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +17,9 @@ class CommandTest {
     @BeforeEach
     void setUp() {
         players = new Player[]{new Player("B", Player.Color.BLACK),new Player("W", Player.Color.WHITE)};
-        game = new Game();
+        game = new Game(new Die());
+        game.addPlayer(0,players[0],true);
+        game.addPlayer(1,players[1],false);
         command = new Command(game);
         System.setOut(new PrintStream(outputStreamCaptor));
     }
@@ -35,21 +38,21 @@ class CommandTest {
     @Test
     void move(){
         game.placePieces(players[0]);
-        command.acceptCommand("Move 0 2");
-        assertEquals("B moved a piece from 0 to 2",outputStreamCaptor.toString().trim());
+        command.acceptCommand("Move 1 3");
+        assertEquals("B moved a piece from 1 to 3",outputStreamCaptor.toString().trim());
     }
     @Test
     void noPieceToMove(){
         game.placePieces(players[0]);
-        command.acceptCommand("Move 1 2");
-        assertEquals("B's checkers are not on Point 1",outputStreamCaptor.toString().trim());
+        command.acceptCommand("Move 2 3");
+        assertEquals("B's checkers are not on Point 2",outputStreamCaptor.toString().trim());
     }
     @Test
     void fullPoint(){
         game.placePieces(players[0]);
         game.placePieces(players[1]);
-        command.acceptCommand("Move 0 5");
-        assertEquals("Your opponent has too many checkers on Point 5 for you to move there",outputStreamCaptor.toString().trim());
+        command.acceptCommand("Move 1 6");
+        assertEquals("Your opponent has too many checkers on point 6",outputStreamCaptor.toString().trim());
     }
     @Test
     void doubleCmd(){}
@@ -61,6 +64,15 @@ class CommandTest {
     void invalid(){
         command.acceptCommand("?>");
         assertEquals("I do not recognise ?> as a command",outputStreamCaptor.toString().trim());
+    }
+    @Test
+    void listCommands(){
+        ArrayList<String> exclude = new ArrayList<String>();
+        exclude.add("MOVE");
+        String[] expected = new String[]{"ROLL","QUIT","PIP","HINT","DOUBLE","DICE","TEST"};
+        for (int i=0;i<expected.length;i++) {
+            assertEquals(expected[i], command.listCommands(exclude)[i]);
+        }
     }
     @Test
     void blank(){

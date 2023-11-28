@@ -1,13 +1,13 @@
 import java.util.Stack;
 
 public class Point {
-    private final int positionWhite;
-    private final int positionBlack;
-    private final int row;
-    private final int col;
+    protected final int positionWhite;
+    protected final int positionBlack;
+    protected final int row;
+    protected final int col;
 
     //    private Piece[] pieces;
-    private Stack<Piece> pieces = new Stack<>();
+    protected Stack<Piece> pieces = new Stack<>();
 
     public Point(int positionWhite, int positionBlack, int col, int row) {
         this.positionWhite = positionWhite;
@@ -55,8 +55,8 @@ public class Point {
         return this.pieces.size();
     }
 
-    public int getPositionWhite() {
-        return this.positionWhite;
+    public int getPosition(boolean isWhite) {
+        return isWhite ? positionWhite:positionBlack;
     }
 
     /**
@@ -83,9 +83,13 @@ public class Point {
         } else {return false;}
     }
 
-    public int[] getCoords(){return new int[]{row, col};}
+    public int[] getCoords(){
+        return new int[]{row, col};}
     public boolean isFull(){return pieces.size()==6;}
     public boolean isBlot(){return pieces.size()==1;}
     public boolean isEmpty(){return pieces.size()==0;}
-
+    public boolean isOff(){return this instanceof OffBoard;}
+    public int getPip(){
+        return getColour().equals(" W ") ? positionWhite:positionBlack;
+    }
 }

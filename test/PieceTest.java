@@ -5,9 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PieceTest {
     Player testPlayer;
+    Player testPlayer2;
     @BeforeEach
     void setUp(){
+
         testPlayer=new Player("Test", Player.Color.BLACK);
+        testPlayer2=new Player("TestW", Player.Color.WHITE);
     }
 
     @Test
@@ -27,5 +30,16 @@ class PieceTest {
     void getColor() {
         Piece testPiece = new Piece(testPlayer,1);
         assertEquals(Player.Color.BLACK,testPiece.getColor());
+    }
+    @Test
+    void getPip(){
+        Piece blackPiece = new Piece(testPlayer,1);
+        Piece blackPiece2 = new Piece(testPlayer,5);
+        Piece whitePiece1 = new Piece(testPlayer2,24);
+        Piece whitePiece2 = new Piece(testPlayer2,6);
+        assertAll(()->assertEquals(24,blackPiece.getPip()),
+                ()->assertEquals(20,blackPiece2.getPip()),
+                ()->assertEquals(24,whitePiece1.getPip()),
+                ()->assertEquals(6,whitePiece2.getPip()));
     }
 }

@@ -12,6 +12,7 @@ public class Piece {
     public void setPosition(int position){
         this.position = position;
     }
+//    public void setPip(int pip){this.pip=pip;}
 
     public int getPosition(){
         return this.position;
@@ -19,10 +20,9 @@ public class Piece {
     public int getPip(){
         Player.Color color = getColor();
         return switch (color) {
-            case BLACK -> 23 - position;
+            case BLACK -> 25 - position;
             case WHITE -> position;
         };
-
     }
 
     public Player.Color getColor(){
