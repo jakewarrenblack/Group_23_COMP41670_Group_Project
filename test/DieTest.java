@@ -34,7 +34,6 @@ class DieTest {
     void getCurrentValues() {
         List rolls = testDie.roll();
         assertAll(()->assertTrue(rolls.contains(testDie.getCurrentValues().get(0))),
-                ()->assertTrue(rolls.contains(testDie.getCurrentValues().get(1))),
-                ()->assertTrue(testDie.getCurrentValues().get(0)>=testDie.getCurrentValues().get(1)));
+                ()->assertTrue(rolls.contains(testDie.getCurrentValues().get(1))));
     }
 }

@@ -41,7 +41,12 @@ public class Point {
      * @return The piece which has been removed
      */
     public Piece removePiece() {
-        return this.pieces.pop();
+
+        if ( this.pieces.size()>0){
+            return this.pieces.pop();
+        } else {
+            return null;
+        }
     }
 
 
@@ -54,7 +59,7 @@ public class Point {
         // Need to include error handling for point with no pieces
         return this.pieces.size();
     }
-
+    // TODO This seems to only be used in unit tests. Do we really need it?
     public int getPosition(boolean isWhite) {
         return isWhite ? positionWhite:positionBlack;
     }
@@ -67,13 +72,15 @@ public class Point {
     public String getColour() {
         // Need to include error handling for point with no pieces
         String printCol = "  ";
-        switch (this.pieces.peek().getColor()) {
-            case BLACK:
-                printCol = " B ";
-                break;
-            case WHITE:
-                printCol = " W ";
-                break;
+        if (this.pieces.size()>0) {
+            switch (this.pieces.peek().getColor()) {
+                case BLACK:
+                    printCol = " B ";
+                    break;
+                case WHITE:
+                    printCol = " W ";
+                    break;
+            }
         }
         return printCol;
     }
@@ -88,8 +95,9 @@ public class Point {
     public boolean isFull(){return pieces.size()==6;}
     public boolean isBlot(){return pieces.size()==1;}
     public boolean isEmpty(){return pieces.size()==0;}
-    public boolean isOff(){return this instanceof OffBoard;}
+    public boolean isOff(){return false;}
     public int getPip(){
-        return getColour().equals(" W ") ? positionWhite:positionBlack;
+        if (isEmpty()){ return 0;}
+        else {return getColour().equals(" W ") ? positionWhite:positionBlack;}
     }
 }
