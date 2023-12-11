@@ -122,10 +122,15 @@ public class Board {
     //      - if so, add that position to the player's list of possible moves for this turn
     //      - possible moves for each player will be cleared on each turn
     protected void updateBoard() {
-        for (int pointIndex=0;pointIndex<26;pointIndex++){
+        // Loop over all the points of the board, including the off/bar combo points
+        for (int pointIndex=0;pointIndex<points.length;pointIndex++){
+            // Points on the board have a single Stack because the can only hold checkers of one colour,
+            // but the off/bar combo points have separate Stacks for Black and White pieces
             int stacks = 1;
-            if (pointIndex==0|pointIndex==25){stacks=2;}
+            if (pointIndex==0|pointIndex==points.length-1){stacks=2;}
             for (int stack=0;stack<stacks;stack++) {
+                // If it's an off/bar combo, tell it which colour we're interested in
+                // first White, then Black
                 if (stacks > 1) {
                     ((OffBoard) points[pointIndex]).setColor(stack == 0);
                 }

@@ -98,6 +98,6 @@ public class Point {
     public boolean isOff(){return false;}
     public int getPip(){
         if (isEmpty()){ return 0;}
-        else {return getColour().equals(" W ") ? positionWhite:positionBlack;}
+        else {return this.pieces.peek().equals(Player.Color.WHITE) ? positionWhite:positionBlack;}
     }
 }
