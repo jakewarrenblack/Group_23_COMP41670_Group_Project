@@ -133,11 +133,13 @@ class OffBoardTest {
     }
     @Test
     void isPlayers(){
-        // Return true if the player is the focus at the moment
+        // Return true if the player is the focus at the moment and there are pieces on the bar/off
         offWhiteBarBlack.setColor(Player.Color.WHITE);
+        offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
         assertTrue(offWhiteBarBlack.isPlayers(testPlayerW));
         assertFalse(offWhiteBarBlack.isPlayers(testPlayerB));
         offWhiteBarBlack.setColor(Player.Color.BLACK);
+        offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
         assertTrue(offWhiteBarBlack.isPlayers(testPlayerB));
         assertFalse(offWhiteBarBlack.isPlayers(testPlayerW));
     }

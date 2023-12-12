@@ -58,9 +58,9 @@ public class OffBoard extends Point{
     }
     public boolean isPlayers(Player chkPlayer) {
         if (returnWhite) {
-            return chkPlayer.getColor().equals(Player.Color.WHITE);
+            return chkPlayer.getColor().equals(Player.Color.WHITE)&!piecesWhite.isEmpty();
         } else {
-            return chkPlayer.getColor().equals(Player.Color.BLACK);
+            return chkPlayer.getColor().equals(Player.Color.BLACK)&!piecesBlack.isEmpty();
         }
     }
     // TODO figure out a way to do this without hard coding

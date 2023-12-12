@@ -85,7 +85,7 @@ class GameTest {
     @Test
     void move(){
         myGame.movePiece(1,3);
-        assertEquals("B moved a piece from 1 to 3",outputStreamCaptor.toString().trim());
+        assertEquals(3,blackPlayer.getPiece(1).getPosition());
     }
     @Test
     void noPieceToMove(){
@@ -96,7 +96,7 @@ class GameTest {
     void fullPoint(){
         myGame.movePiece(1,12);
         myGame.movePiece(1,12);
-        assertEquals("B moved a piece from 1 to 12\r\nPoint 12 has six checkers on it already",outputStreamCaptor.toString().trim());
+        assertEquals("Point 12 has six checkers on it already",outputStreamCaptor.toString().trim());
     }
     @Test
     void chooseOption() {
@@ -109,6 +109,7 @@ class GameTest {
     void getMovablePieces() {
         Piece[] blackMovable = new Piece[]{myGame.getBoard().getPoint(1).getTopChecker(), myGame.getBoard().getPoint(12).getTopChecker(), myGame.getBoard().getPoint(17).getTopChecker(), myGame.getBoard().getPoint(19).getTopChecker()};
         Object[] result = myGame.getMovablePieces().toArray();
+        assertEquals(blackMovable.length,result.length);
         for (int i = 0; i < 4; i++) {
             assertEquals(blackMovable[i], result[i]);
         }
@@ -187,6 +188,27 @@ class GameTest {
         }
     }
     @Test
+    void getAvailableValidMovesReplica(){
+        // App crashes when black starts with roll of 1 and 2
+        ArrayList<Game.Move> expected = new ArrayList<Game.Move>();
+        expected.add(new Game.Move(1,3));
+        expected.add(new Game.Move(12,14));
+        expected.add(new Game.Move(17,19));
+        expected.add(new Game.Move(19,21));
+        ArrayList<Game.Move> moves = myGame.getAvailableValidMoves(2);
+        assertEquals(expected.size(),moves.size());
+        boolean contains=false;
+        for (int i=0;i<expected.size();i++){
+            int j=0;
+            while (!contains) {
+                contains = expected.get(i).equals(moves.get(j));
+                j++;
+            }
+            assertTrue(contains);
+            contains=false;
+        }
+    }
+    @Test
     void getAllAvailableValidMoves(){
         // A move using the smalled die roll is not valid if you're left unable to use the larger die roll
         // A contrived example of this is where black rolls a 5 and a 3 with the following configuration
@@ -203,6 +225,26 @@ class GameTest {
         rolls.add(5);
         ArrayList<Game.Move> validMoves = contrived.getAllAvailableValidMoves(rolls);
         Game.Move[] expected = new Game.Move[]{new Game.Move(20,23),new Game.Move(15,18),new Game.Move(10,13),new Game.Move(12,17),new Game.Move(10,15)};
+        assertEquals(expected.length,validMoves.size());
+        boolean contains=false;
+        for (int i=0;i<expected.length;i++){
+            int j=0;
+            while (!contains) {
+                contains = expected[i].equals(validMoves.get(j));
+                j++;
+            }
+            assertTrue(contains);
+            contains=false;
+        }
+    }
+    @Test
+    void getAllAvailableValidMovesReplica(){
+        // App crashes when black starts with roll of 1 and 2
+        ArrayList<Integer> rolls = new ArrayList<Integer>();
+        rolls.add(1);
+        rolls.add(2);
+        ArrayList<Game.Move> validMoves = myGame.getAllAvailableValidMoves(rolls);
+        Game.Move[] expected = new Game.Move[]{new Game.Move(1,2),new Game.Move(1,3),new Game.Move(12,14),new Game.Move(17,18),new Game.Move(17,19),new Game.Move(19,20),new Game.Move(19,21)};
         assertEquals(expected.length,validMoves.size());
         boolean contains=false;
         for (int i=0;i<expected.length;i++){

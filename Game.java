@@ -132,7 +132,6 @@ public class Game {
                 board.setColour(from,currentPlayer.getColor());
                 board.setColour(to,currentPlayer.getColor());
                 board.addPiece(to, board.removePiece(from));
-                log.updateLog(currentPlayer.getName() + " moved a piece from " + from + " to " + to);
             }
         }
         catch(IllegalArgumentException e){
@@ -304,8 +303,14 @@ public class Game {
         }
         else {
             for (Point p : board.getPoints()) {
-                if (!p.isOff(currentPlayer.getColor()) && p.isPlayers(currentPlayer)) {
-                    movablePieces.add(p.getTopChecker());
+                p.setColor(currentPlayer.getColor());
+                if (!p.isOff(currentPlayer.getColor())){
+                    if (p.isPlayers(currentPlayer)) {
+                        movablePieces.add(p.getTopChecker());
+                        if(p.getTopChecker()==null) {
+                            System.out.println("Break");
+                        }
+                    }
                 }
             }
         }

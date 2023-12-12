@@ -31,6 +31,7 @@ public class Main {
                     myGame.updateLog(currentPlayer.getName() + " has won!");
                     myGame.setGameState(Game.GameState.WON);
                 }
+                myGame.nextTurn();
 
                 exclude.add("MOVE");
                 exclude.add("ROLL");
@@ -42,7 +43,6 @@ public class Main {
                 String[] commands = myGame.listCommands(exclude);
                 int command = Game.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
                 new Command(myGame).acceptCommand(commands[command]);
-                myGame.nextTurn();
             }
         }
     }

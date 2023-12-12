@@ -39,6 +39,7 @@ public class Command {
             case "MOVE" -> {
                 try {
                     game.movePiece(Integer.parseInt(cmdTokens[1]), Integer.parseInt(cmdTokens[2]));
+                    game.updateLog("You have moved from "+cmdTokens[1]+" to "+cmdTokens[2]);
                 } catch (IllegalArgumentException e) {
                     game.updateLog(e.getMessage());
                 }
