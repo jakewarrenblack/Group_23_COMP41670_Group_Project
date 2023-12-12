@@ -60,8 +60,8 @@ public class Point {
         return this.pieces.size();
     }
     // TODO This seems to only be used in unit tests. Do we really need it?
-    public int getPosition(boolean isWhite) {
-        return isWhite ? positionWhite:positionBlack;
+    public int getPosition() {
+        return positionWhite;
     }
 
     /**
@@ -91,13 +91,14 @@ public class Point {
     }
 
     public int[] getCoords(){
-        return new int[]{row, col};}
+        // Always col, row
+        return new int[]{col, row};}
     public boolean isFull(){return pieces.size()==6;}
     public boolean isBlot(){return pieces.size()==1;}
     public boolean isEmpty(){return pieces.size()==0;}
     public boolean isOff(){return false;}
     public int getPip(){
         if (isEmpty()){ return 0;}
-        else {return this.pieces.peek().equals(Player.Color.WHITE) ? positionWhite:positionBlack;}
+        else {return this.pieces.peek().getColor().equals(Player.Color.WHITE) ? positionWhite:positionBlack;}
     }
 }

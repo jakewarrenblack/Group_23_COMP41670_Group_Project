@@ -9,9 +9,12 @@ public class OffBoard extends Point{
         super(positionWhite,positionBlack,col,row);
         returnWhite=true;
     }
-    // TODO Not sure we need this one. It seems to be redundant with activeStack?
     public void setColor(boolean isWhite){
         returnWhite=isWhite;
+        pieces=activeStack();
+    }
+    public void setColor(Player.Color color){
+        returnWhite=color== Player.Color.WHITE;
         pieces=activeStack();
     }
     public Stack<Piece> activeStack(){
@@ -26,20 +29,38 @@ public class OffBoard extends Point{
     public void addPiece(Piece piece) {
         if(piece.getColor().equals(Player.Color.WHITE)==returnWhite) {
             super.addPiece(piece);
-        }
+        } else {throw new IllegalArgumentException("This point is not focused on "+piece.getColor().name()+" and cannot accept this piece right now");}
     }
 
     public boolean isFull() {return false;}
 
     public boolean isBlot(){return false;}
-    public boolean isOff(){return true;}
-
+    //TODO figure out a way to do this without hard coding
+    public boolean isOff() {
+        if (returnWhite) {
+            return positionWhite == 0;
+        } else {
+            return positionWhite == 25;
+        }
+    }
+    public boolean isPlayers(Player chkPlayer) {
+        if (returnWhite) {
+            return chkPlayer.getColor().equals(Player.Color.WHITE);
+        } else {
+            return chkPlayer.getColor().equals(Player.Color.BLACK);
+        }
+    }
+    // TODO figure out a way to do this without hard coding
     public int[] getCoords() {
+        // Always column, row
         int col = -1;
-        int row = this.row;
-        if (returnWhite){
-            col = (positionWhite == 0 ? this.col:6);
-        } else { col = (positionBlack == 0 ? this.col:6);}
-        return new int[]{row, col};
+        int row = -1;
+        if (returnWhite) {
+            row = 13;
+            col = (positionWhite == 0 ? this.col : 6);
+        } else {
+            row=1;
+            col = (positionBlack == 0 ? this.col:6);}
+        return new int[]{col, row};
     }
 }

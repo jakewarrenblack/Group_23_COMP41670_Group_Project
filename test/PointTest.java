@@ -47,10 +47,8 @@ class PointTest {
 
     @Test
     void getPosition() {
-        assertAll(()->assertEquals(1,firstPoint.getPosition(true)),
-                ()->assertEquals(2,secondPoint.getPosition(true)),
-                ()->assertEquals(24,firstPoint.getPosition(false)),
-                ()->assertEquals(23,secondPoint.getPosition(false)));
+        assertAll(()->assertEquals(1,firstPoint.getPosition()),
+                ()->assertEquals(2,secondPoint.getPosition()));
     }
 
     @Test
@@ -111,6 +109,10 @@ class PointTest {
         assertNull(firstPoint.getTopChecker());
         firstPoint.addPiece(testPlayerW.getPiece(0));
         assertEquals(testPlayerW.getPiece(0),firstPoint.getTopChecker());
+    }
+    @Test
+    void getCoords(){
+        assertArrayEquals(new int[]{14,12},firstPoint.getCoords());
     }
 
 }
