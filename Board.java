@@ -15,20 +15,34 @@ public class Board {
      *  points 24 and 25 are the BAR points for WHITE and BLACK respectively
      *  points 26 and 27 are the OFF areas for WHITE and BLACK respectively
      */
-    public enum layout{OFFWBARB(0,25,13,13),
-            ONE(1,24,12,13),TWO(2,23,11,13),THREE(3,22,10,13),
-            FOUR(4,21,9,13),FIVE(5,20,8,13),SIX(6,19,7,13),
-            SEVEN(7,18,5,13),EIGHT(8,17,4,13),NINE(9,16,3,13),
-            TEN(10,15,2,13),ELEVEN(11,14,1,13),TWELVE(12,13,0,13),
-            THIRTEEN(13,12,0,1),FOURTEEN(14,11,1,1),FIFTEEN(15,10,2,1),
-            SIXTEEN(16,9,3,1),SEVENTEEN(17,8,4,1),EIGHTEEN(18,7,5,1),
-            NINETEEN(19,6,7,1),TWENTY(20,5,8,1),TWENTYONE(21,4,9,1),
-            TWENTYTWO(22,3,10,1),TWENTYTHREE(23,2,11,1),TWENTYFOUR(24,1,12,1),
+    public enum layout{
+            OFFWBARB(0,25,13,13),
+            ONE(1,24,12,13),
+            TWO(2,23,11,13),
+            THREE(3,22,10,13),
+            FOUR(4,21,9,13),
+            FIVE(5,20,8,13),
+            SIX(6,19,7,13),
+            SEVEN(7,18,5,13),
+            EIGHT(8,17,4,13),
+            NINE(9,16,3,13),
+            TEN(10,15,2,13),
+            ELEVEN(11,14,1,13),
+            TWELVE(12,13,0,13),
+            THIRTEEN(13,12,0,1),
+            FOURTEEN(14,11,1,1),
+            FIFTEEN(15,10,2,1),
+            SIXTEEN(16,9,3,1),
+            SEVENTEEN(17,8,4,1),
+            EIGHTEEN(18,7,5,1),
+            NINETEEN(19,6,7,1),
+            TWENTY(20,5,8,1),
+            TWENTYONE(21,4,9,1),
+            TWENTYTWO(22,3,10,1),
+            TWENTYTHREE(23,2,11,1),
+            TWENTYFOUR(24,1,12,1),
             OFFBBARW(25,0,13,1);
-        private int pipWhite;
-        private int pipBlack;
-        private int col;
-        private int row;
+        private final int pipWhite, pipBlack, col, row;
         layout(int pipWhite, int pipBlack, int col, int row){
             this.pipWhite = pipWhite;
             this.pipBlack = pipBlack;
@@ -41,6 +55,8 @@ public class Board {
         public int getRow(){return row;}
 
     }
+
+
 
     public Board() {
         for (int i = 1; i < 25; i++) {
@@ -115,40 +131,38 @@ public class Board {
         - and if you roll doubles, you effectively have four dice of the same value
      */
 
-    // TODO: Implement Move class
-    //  movement itself can just be handled with the existing movePiece method
-    //  valid move selection:
-    //      - loop through all points on the board, check if a valid move could be made with either dice
-    //      - if so, add that position to the player's list of possible moves for this turn
-    //      - possible moves for each player will be cleared on each turn
+
     protected void updateBoard() {
-        // Loop over all the points of the board, including the off/bar combo points
-        for (int pointIndex=0;pointIndex<points.length;pointIndex++){
-            // Points on the board have a single Stack because the can only hold checkers of one colour,
-            // but the off/bar combo points have separate Stacks for Black and White pieces
+        int pointIndex = 0;
+        for (Point point : points) {
             int stacks = 1;
-            if (pointIndex==0|pointIndex==points.length-1){stacks=2;}
-            for (int stack=0;stack<stacks;stack++) {
-                // If it's an off/bar combo, tell it which colour we're interested in
-                // first White, then Black
+
+            if (pointIndex == 0 || pointIndex == points.length - 1) {
+                stacks = 2;
+            }
+
+            for (int stack = 0; stack < stacks; stack++) {
                 if (stacks > 1) {
-                    ((OffBoard) points[pointIndex]).setColor(stack == 0);
+                    ((OffBoard) point).setColor(stack == 0);
                 }
-                int col = getCoords(pointIndex)[1];
-                int row = getCoords(pointIndex)[0];
-                int increment=row==1?1:-1;
+
+                int col = point.getCoords()[1];
+                int row = point.getCoords()[0];
+                int increment = row == 1 ? 1 : -1;
+
                 for (int i = 0; i < 6; i++) {
-                    for (int j = 0; numPieces(pointIndex) > j; j++) {
-                        // Value will be blank, or a piece colour (B, W), if there's a piece here
-                        boardPrint[row + (j) * increment][col] = getColour(pointIndex);
+                    for (int j = 0; point.numPieces() > j; j++) {
+                        boardPrint[row + (j) * increment][col] = point.getColour();
                     }
-                    for (int j = numPieces(pointIndex); j < 6; j++) {
+                    for (int j = point.numPieces(); j < 6; j++) {
                         boardPrint[row + (j) * increment][col] = emptySpace(pointIndex);
                     }
                 }
             }
+            pointIndex++;
         }
     }
+
     public String emptySpace(int i){
         if (i>0&i<25){
             return " | ";
@@ -189,39 +203,26 @@ public class Board {
      * @param index         The position of the point to return
      * @return              The point to return
      */
-    public Point getPoint(int index){return points[index];}
-
-    /**
-     * Returns the colour of the pieces on a single point
-     * @param index         The position of the point to return
-     * @return              A string indicating the colour of the pieces on the point
-     */
-    public String getColour(int index){return points[index].getColour();}
-    public int[] getCoords(int index){return points[index].getCoords();}
-
-    public String[][] getBoardPrint() {
-        return boardPrint;
+    public Point getPoint(int index){
+        return points[index];
     }
-    public boolean isPlayers(int index, Player chkPlayer){
-        return points[index].isPlayers(chkPlayer);
-    }
-    public boolean isFull(int index){return points[index].isFull();}
-    public boolean isBlot(int index){return points[index].isBlot();}
-    public boolean isEmpty(int index){return points[index].isEmpty();}
-
 
     public Point[] getPoints(){
         return this.points;
     }
+
     public OffBoard getBar(Player player){
         return player.getColor()== Player.Color.WHITE ? (OffBoard) points[layout.OFFBBARW.getWhite()] : (OffBoard) points[layout.OFFWBARB.getWhite()];
     }
+
     public OffBoard getOff(Player player){
         return player.getColor()==Player.Color.WHITE ? (OffBoard) points[layout.OFFWBARB.getWhite()] : (OffBoard) points[layout.OFFBBARW.getWhite()];
     }
+
     public boolean hasBarPieces(Player player){
         return !getBar(player).isEmpty();
     }
+
     public boolean isOff(int index, Player player){
         int off = player.getColor()==Player.Color.WHITE ? layout.OFFWBARB.getWhite():layout.OFFBBARW.getWhite();
         return points[index].equals(points[off]);

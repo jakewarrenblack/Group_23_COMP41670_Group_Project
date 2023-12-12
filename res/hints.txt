@@ -1,0 +1,12 @@
++-------------------------------------------------------------------------------------------------------------------------+--+
+|                                                       HOW TO PLAY                                                       |  |
++-------------------------------------------------------------------------------------------------------------------------+--+
+|   ROLL rolls two dice for the current player                                                                            |  |
+|   PIP gives the current PIP score for each player                                                                       |  |
+|   MOVE <from> <to> moves a checker from the <from>th point to the <to>th point                                          |  |
+|   DOUBLE proposes doubling the stakes                                                                                   |  |
+|   DICE <one> <two> fixes the dice scores for the next roll                                                              |  |
+|   TEST <location> runs the series of commands defined by the text file at <location>                                    |  |
+|   HINT prints a list of available commands to the console                                                               |  |
+|   QUIT exits the game                                                                                                   |  |
++-------------------------------------------------------------------------------------------------------------------------+--+

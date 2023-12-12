@@ -42,7 +42,7 @@ public class Point {
      */
     public Piece removePiece() {
 
-        if ( this.pieces.size()>0){
+        if (!this.pieces.isEmpty()){
             return this.pieces.pop();
         } else {
             return null;
@@ -72,32 +72,43 @@ public class Point {
     public String getColour() {
         // Need to include error handling for point with no pieces
         String printCol = "  ";
-        if (this.pieces.size()>0) {
-            switch (this.pieces.peek().getColor()) {
-                case BLACK:
-                    printCol = " B ";
-                    break;
-                case WHITE:
-                    printCol = " W ";
-                    break;
-            }
+        if (!this.pieces.isEmpty()) {
+            printCol = switch (this.pieces.peek().getColor()) {
+                case BLACK -> " B ";
+                case WHITE -> " W ";
+            };
         }
         return printCol;
     }
     public boolean isPlayers(Player chkPlayer){
-        if (pieces.size()>0) {
+        if (!pieces.isEmpty()) {
             return chkPlayer.equals(pieces.peek().getPlayer());
         } else {return false;}
     }
 
     public int[] getCoords(){
-        return new int[]{row, col};}
+        return new int[]{row, col};
+    }
+
     public boolean isFull(){return pieces.size()==6;}
-    public boolean isBlot(){return pieces.size()==1;}
-    public boolean isEmpty(){return pieces.size()==0;}
-    public boolean isOff(){return false;}
+
+    /**
+     * A blot is a point with only one piece on it
+     */
+    public boolean isBlot(){
+        return pieces.size()==1;
+    }
+
+    public boolean isEmpty(){return pieces.isEmpty();}
+
+    public boolean isOff(){
+        return false;
+    }
+
     public int getPip(){
         if (isEmpty()){ return 0;}
         else {return this.pieces.peek().equals(Player.Color.WHITE) ? positionWhite:positionBlack;}
     }
+
+
 }
