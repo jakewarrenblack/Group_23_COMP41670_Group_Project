@@ -6,7 +6,7 @@ public class Board {
     private Point[] offs = new Point[2];
 
     // We also need to have spaces for the bars and the off sections
-    private String[][] boardPrint = new String[15][14];
+    private final String[][] boardPrint = new String[15][14];
     /* layout stores the positional information for the points on the board
      *  positionWhite stores the positions of each point from the perspective of the WHITE player
      *  positionBlack the positions from the perspective of the BLACK player
@@ -15,62 +15,50 @@ public class Board {
      *  points 24 and 25 are the BAR points for WHITE and BLACK respectively
      *  points 26 and 27 are the OFF areas for WHITE and BLACK respectively
      */
-    public enum layout{
-            OFFWBARB(0,25,13,13),
-            ONE(1,24,12,13),
-            TWO(2,23,11,13),
-            THREE(3,22,10,13),
-            FOUR(4,21,9,13),
-            FIVE(5,20,8,13),
-            SIX(6,19,7,13),
-            SEVEN(7,18,5,13),
-            EIGHT(8,17,4,13),
-            NINE(9,16,3,13),
-            TEN(10,15,2,13),
-            ELEVEN(11,14,1,13),
-            TWELVE(12,13,0,13),
-            THIRTEEN(13,12,0,1),
-            FOURTEEN(14,11,1,1),
-            FIFTEEN(15,10,2,1),
-            SIXTEEN(16,9,3,1),
-            SEVENTEEN(17,8,4,1),
-            EIGHTEEN(18,7,5,1),
-            NINETEEN(19,6,7,1),
-            TWENTY(20,5,8,1),
-            TWENTYONE(21,4,9,1),
-            TWENTYTWO(22,3,10,1),
-            TWENTYTHREE(23,2,11,1),
-            TWENTYFOUR(24,1,12,1),
-            OFFBBARW(25,0,13,1);
-        private final int pipWhite, pipBlack, col, row;
-        layout(int pipWhite, int pipBlack, int col, int row){
-            this.pipWhite = pipWhite;
-            this.pipBlack = pipBlack;
-            this.col=col;
-            this.row=row;
+
+    // using this to replace all the enums we had before
+    // this way, we can just refer to the points by their index, rather than having to use so many enums
+    public static class BoardLayout {
+        public static final Point[] POINTS = new Point[26];
+
+        // this is a static block, which is executed when the class is loaded, no need for BoardLayout to be instantiated,
+        // means the POINTS array available immediately
+
+        static {
+            // loop through 24 normal points
+            for (int i = 1; i <= 24; i++) {
+                int positionWhite = i;
+                int positionBlack = 25 - i;
+
+                // the column is the remainder of the index divided by 13, and the row is the index divided by 13
+                // this is because there are 13 points in each row
+                int col = (i - 1) % 13;
+                int row = (i - 1) / 13;
+                POINTS[i] = new Point(positionWhite, positionBlack, col, row);
+            }
+
+            // these are special points
+            // the bar points, for when the player has pieces on the bar
+            POINTS[0] = new Point(0, 25, 13, 13); // OFFWBARB
+            POINTS[25] = new Point(25, 0, 13, 1); // OFFBBARW
         }
-        public int getWhite(){return pipWhite;}
-        public int getBlack(){return pipBlack;}
-        public int getCol(){return col;}
-        public int getRow(){return row;}
-
     }
-
-
 
     public Board() {
         for (int i = 1; i < 25; i++) {
-            this.points[i] = new Point(layout.values()[i].getWhite(),layout.values()[i].getBlack(),layout.values()[i].getCol(),layout.values()[i].getRow());
+            Point point = BoardLayout.POINTS[i];
+            this.points[i] = new Point(point.getPosition(true), point.getPosition(false), point.getCoords()[1], point.getCoords()[0]);
         }
-        this.points[0]=new OffBoard(layout.OFFWBARB.getWhite(), layout.OFFWBARB.getBlack(),layout.OFFWBARB.getCol(), layout.OFFWBARB.getRow());
-        this.points[25]=new OffBoard(layout.OFFBBARW.getWhite(), layout.OFFBBARW.getBlack(),layout.OFFBBARW.getCol(), layout.OFFBBARW.getRow());
+        Point offWBarB = BoardLayout.POINTS[0];
+        this.points[0] = new OffBoard(offWBarB.getPosition(true), offWBarB.getPosition(false), offWBarB.getCoords()[1], offWBarB.getCoords()[0]);
+        Point offBBarW = BoardLayout.POINTS[25];
+        this.points[25] = new OffBoard(offBBarW.getPosition(true), offBBarW.getPosition(false), offBBarW.getCoords()[1], offBBarW.getCoords()[0]);
         // The top of the board
         boardPrint[0] = new String[]{"-13", "-+-", "-+-", "-+-", "-+-", "18-", "BAR", "-19", "-+-", "-+-", "-+-", "-+-", "-24", " OFF"};
         // The bottom of the board
         boardPrint[14] = new String[]{"-12", "-+-", "-+-", "-+-", "-+-", "-7-", "BAR", "-6-", "-+-", "-+-", "-+-", "-+-", "-1-", " OFF"};
         // The middle row, separating the two halves of the board
         boardPrint[7] = new String[]{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "    "};
-
     }
 
     /**
@@ -151,6 +139,7 @@ public class Board {
                 int increment = row == 1 ? 1 : -1;
 
                 for (int i = 0; i < 6; i++) {
+
                     for (int j = 0; point.numPieces() > j; j++) {
                         boardPrint[row + (j) * increment][col] = point.getColour();
                     }
@@ -212,11 +201,11 @@ public class Board {
     }
 
     public OffBoard getBar(Player player){
-        return player.getColor()== Player.Color.WHITE ? (OffBoard) points[layout.OFFBBARW.getWhite()] : (OffBoard) points[layout.OFFWBARB.getWhite()];
+        return (OffBoard) (player.getColor() == Player.Color.WHITE ? points[BoardLayout.POINTS[0].getPosition(true)] : points[BoardLayout.POINTS[0].getPosition(false)]);
     }
 
     public OffBoard getOff(Player player){
-        return player.getColor()==Player.Color.WHITE ? (OffBoard) points[layout.OFFWBARB.getWhite()] : (OffBoard) points[layout.OFFBBARW.getWhite()];
+        return (OffBoard) (player.getColor() == Player.Color.WHITE ? points[BoardLayout.POINTS[25].getPosition(true)] : points[BoardLayout.POINTS[25].getPosition(false)]);
     }
 
     public boolean hasBarPieces(Player player){
@@ -224,7 +213,7 @@ public class Board {
     }
 
     public boolean isOff(int index, Player player){
-        int off = player.getColor()==Player.Color.WHITE ? layout.OFFWBARB.getWhite():layout.OFFBBARW.getWhite();
+        int off = player.getColor() == Player.Color.WHITE ? BoardLayout.POINTS[25].getPosition(true) : BoardLayout.POINTS[25].getPosition(false);
         return points[index].equals(points[off]);
     }
 }
