@@ -35,11 +35,19 @@ class PieceTest {
     void getPip(){
         Piece blackPiece = new Piece(testPlayer,1);
         Piece blackPiece2 = new Piece(testPlayer,5);
+        Piece blackPieceBar = new Piece(testPlayer,0);
+        Piece blackPieceOff = new Piece(testPlayer,25);
         Piece whitePiece1 = new Piece(testPlayer2,24);
         Piece whitePiece2 = new Piece(testPlayer2,6);
+        Piece whitePieceBar = new Piece(testPlayer2,25);
+        Piece whitePieceOff = new Piece(testPlayer2,0);
         assertAll(()->assertEquals(24,blackPiece.getPip()),
                 ()->assertEquals(20,blackPiece2.getPip()),
+                ()->assertEquals(25,blackPieceBar.getPip()),
+                ()->assertEquals(0,blackPieceOff.getPip()),
                 ()->assertEquals(24,whitePiece1.getPip()),
-                ()->assertEquals(6,whitePiece2.getPip()));
+                ()->assertEquals(6,whitePiece2.getPip()),
+                ()->assertEquals(25,whitePieceBar.getPip()),
+                ()->assertEquals(0,whitePieceOff.getPip()));
     }
 }

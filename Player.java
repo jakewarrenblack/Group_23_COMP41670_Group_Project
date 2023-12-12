@@ -74,7 +74,7 @@ public class Player  {
      * @return              The position of the point the piece is on
      */
     public int piecePosition(int index){return pieces[index].getPosition();}
-
+    // TODO Find a way to avoid absolute value
     public boolean canMoveOff(){
         int minPip = 26;
         for (Piece p:pieces){
@@ -82,8 +82,9 @@ public class Player  {
         }
         return minPip<6;
     }
+    // TODO Find a way to avoid absolute value
     public boolean hasWon(){
-        int minPip = 26;
+        int minPip = 0;
         for (Piece p:pieces){
             minPip=Math.max(minPip,p.getPip());
         }
