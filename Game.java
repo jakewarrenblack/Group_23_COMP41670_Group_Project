@@ -5,18 +5,14 @@ import java.util.*;
 
 public class Game {
     private final Board board;
-
     protected enum GameState {ONGOING, WON, LOST}
-    private Double cube;
-    ;
+    private final Double cube;
     private GameState gameState;
     private Player[] players;
     private Player currentPlayer;
-
-    private Die die;
-
-    private Log log;
-    private Command command;
+    private final Die die;
+    private final Log log;
+    private final Command command;
 
     public Game(Die die) {
         this.gameState = GameState.ONGOING;
@@ -30,7 +26,7 @@ public class Game {
 
     public Player setInitialPlayer() {
         // the player to go first is determined by the dice roll
-        while (die.getCurrentValues().get(0) == die.getCurrentValues().get(1)) {
+        while (Objects.equals(die.getCurrentValues().get(0), die.getCurrentValues().get(1))) {
             this.die.roll();
         }
         log.updateLog(this.players[0].getName() + " has rolled " + die.getCurrentValues().get(0) + ", " + this.players[1].getName() + " has rolled " + die.getCurrentValues().get(1));
@@ -55,9 +51,6 @@ public class Game {
         return this.currentPlayer;
     }
 
-    public void handleMove() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Not yet implemented");
-    }
 
     public boolean isGameWon() {
 
@@ -133,28 +126,50 @@ public class Game {
     }
 
     public void movePiece(int from, int to) {
-        try {if (isLegalMove(from, to)) {
+        try {
+            if (isLegalMove(from, to)) {
                 board.addPiece(to, board.removePiece(from));
                 log.updateLog(currentPlayer.getName() + " moved a piece from " + from + " to " + to);
             }
-        } catch (IllegalArgumentException e)  {log.updateLog(e.getMessage());}
+        }
+        catch(IllegalArgumentException e){
+            log.updateLog(e.getMessage());
+        }
     }
+
+    /**
+     * Checks if a move from one point to another is legal.
+     *
+     * @param from The index of the point from which a piece is being moved.
+     * @param to The index of the point to which a piece is being moved.
+     * @return true if the move is legal, false otherwise.
+     * @throws IllegalArgumentException if the move is not legal. The exception's message provides details about why the move is not legal.
+     */
     public boolean isLegalMove(int from, int to){
-        if (!board.isPlayers(from, currentPlayer)) {
+        Point fromPoint = board.getPoint(from);
+        Point toPoint = board.getPoint(to);
+
+        if (!fromPoint.isPlayers(currentPlayer)) {
             throw new IllegalArgumentException(currentPlayer.getName() + "'s checkers are not on Point " + from);
-        } else if (board.isOff(to,currentPlayer)){
-            if(!currentPlayer.canMoveOff()){throw new IllegalArgumentException("You cannot move a piece off the board until all your checkers are in the final quadrant");}
-        } else if (!board.isEmpty(to)) {
-            if (!board.isPlayers(to, currentPlayer)) {
-                if (!board.isBlot(to)) {
+        }
+        else if (toPoint.isOff()){
+            if(!currentPlayer.canMoveOff()){
+                throw new IllegalArgumentException("You cannot move a piece off the board until all your checkers are in the final quadrant");
+            }
+        }
+        else if (!toPoint.isEmpty()) {
+            if (!toPoint.isPlayers(currentPlayer)) {
+                if (!toPoint.isBlot()) {
                     throw new IllegalArgumentException("Your opponent has too many checkers on point " + to);
                 }
-            } else {
-                if (board.isFull(to)) {
-                    throw new IllegalArgumentException("Point " + to + "has six checkers on it already");
+            }
+            else {
+                if (toPoint.isFull()) {
+                    throw new IllegalArgumentException("Point " + to + " has six checkers on it already");
                 }
             }
         }
+
         return true;
     }
     public void print() {
@@ -173,10 +188,12 @@ public class Game {
 
     public void roll() {
         List<Integer> dice = die.roll();
-        String message=currentPlayer.getName() + " rolled " + Integer.toString(dice.get(0));
+        String message=currentPlayer.getName() + " rolled " + dice.get(0);
+
         for (int i=1;i<dice.size();i++){
-            message+=", " + Integer.toString(dice.get(i));
+            message+=", " + dice.get(i);
         }
+
         log.updateLog(message);
     }
 
@@ -184,14 +201,12 @@ public class Game {
         log.updateLog(message);
     }
 
-    public boolean acceptCommand(String command) {
-        return this.command.acceptCommand(command);
-    }
 
-    public List getAvailableValidMoves(int dieRoll) {
+
+    public ArrayList<Integer[]> getAvailableValidMoves(int dieRoll) {
         // Black player moves from the bottom-right (index 24) to the top-right (index 1) -> (clockwise). In other words, the position index must be moving DOWN from 24...to 1...
         // White player moves from the top-right (index 1) to the bottom-right (index 24) -> (counter-clockwise). In other words, the position index must be moving UP from 1...to 24...
-        List<Integer[]> validMoves = new ArrayList<Integer[]>();
+        ArrayList<Integer[]> validMoves = new ArrayList<Integer[]>();
 
         // for all the occupied points, the pieces which can be moved are the ones whose colour match the player's colour (and are on top of their respective pile)
         ArrayList<Piece> movablePieces = getMovablePieces();
@@ -203,36 +218,46 @@ public class Game {
                 if (isLegalMove(p.getPosition(), endPosition)) {
                     validMoves.add(new Integer[]{p.getPosition(), endPosition}); // Store the valid move in the Map
                 }
-            } catch (IllegalArgumentException e){}
+            } catch (IllegalArgumentException ignored){}
         }
+
         return validMoves;
     }
+
     public ArrayList<Piece> getMovablePieces(){
         ArrayList<Piece> movablePieces = new ArrayList<Piece>();
+
         if (board.hasBarPieces(currentPlayer)){
             movablePieces.add(board.getBar(currentPlayer).getTopChecker());
-        } else {
+        }
+        else {
             for (Point p : board.getPoints()) {
-                if (!p.isOff()&p.isPlayers(currentPlayer)) {
+                if (!p.isOff() && p.isPlayers(currentPlayer)) {
                     movablePieces.add(p.getTopChecker());
                 }
             }
         }
         return movablePieces;
     }
+
     public String[] validMovesString(List<Integer[]> validMoves){
         String[] moves = new String[validMoves.size()];
+
         for (int i=0;i< validMoves.size();i++){
-            moves[i] = "From "+Integer.toString(validMoves.get(i)[0])+" to "+Integer.toString(validMoves.get(i)[1]);
+            moves[i] = "From "+ validMoves.get(i)[0] +" to "+ validMoves.get(i)[1];
         }
+
         return moves;
     }
+
     public static int calculate(int a, int b, boolean subtract) {
         return subtract ? a - b : a + b;
     }
+
     public String[] listCommands(List<String> exclude){
         return command.listCommands(exclude);
     }
+
     public static boolean bearOffAllowed(ArrayList<Piece> movablePieces, Player currentPlayer){
         // if every one of a player's movable pieces is in their home board, they're allowed to begin bearing off
         boolean bearOffAllowed = true;
@@ -250,6 +275,7 @@ public class Game {
         return bearOffAllowed;
     }
     public boolean hasDouble(){return currentPlayer.equals(cube.getOwner());}
+
     public void doubleBet(){
         Player newPlayer = cube.getOwner() == this.players[0] ? this.players[1] : this.players[0];
         if (chooseOption(newPlayer.getName()+", "+currentPlayer.getName()+" has offered to double the bet. Do you accept?",new String[]{"Yes","No"})==0) {

@@ -2,8 +2,8 @@ import java.util.Stack;
 
 public class OffBoard extends Point{
     private boolean returnWhite;
-    private Stack<Piece> piecesWhite = new Stack<>();
-    private Stack<Piece> piecesBlack = new Stack<>();
+    private final Stack<Piece> piecesWhite = new Stack<>();
+    private final Stack<Piece> piecesBlack = new Stack<>();
 
     public OffBoard(int positionWhite, int positionBlack, int col, int row) {
         super(positionWhite,positionBlack,col,row);
