@@ -56,7 +56,7 @@ public class Command {
 
         for (Commands command : Command.Commands.values()){
             // If the command is not in the exclude list, add it to the list of commands
-            if (!exclude.contains(command.toString().toLowerCase())){
+            if (!exclude.contains(command.toString().toUpperCase())){
                 commands.add(command.toString());
             }
         }

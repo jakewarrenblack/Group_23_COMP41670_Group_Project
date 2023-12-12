@@ -23,19 +23,9 @@ public class Main {
 
             while (myGame.isGameOngoing()) {
                 List<String> exclude = new ArrayList<>();
-                List<Integer[]> validMoves;
+                List<Game.Move> validMoves;
 
-                for (int i = 0; i < diceRolls.size(); i++) {
-                    validMoves = myGame.getAvailableValidMoves(diceRolls.get(i));
-
-                    String[] validMoveStrings = myGame.validMovesString(validMoves);
-
-                    int chosenMove = Game.chooseOption(currentPlayer.getName() + ", you rolled " + diceRolls.get(i).toString() + " with your " + rolls[i] + " dice. Choose your move: ", validMoveStrings);
-
-                    // run Command's acceptCommand method with the chosen move
-                    new Command(myGame).acceptCommand("move " + validMoves.get(chosenMove)[0] + " " + validMoves.get(chosenMove)[1]);
-                    myGame.print();
-                }
+                myGame.processRolls(diceRolls);
 
                 if (myGame.isGameWon()) {
                     myGame.updateLog(currentPlayer.getName() + " has won!");

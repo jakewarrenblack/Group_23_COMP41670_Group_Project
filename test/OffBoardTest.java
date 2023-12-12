@@ -228,4 +228,5 @@ class OffBoardTest {
         assertArrayEquals(barW,offBlackBarWhite.getCoords());
     }
 
+
 }

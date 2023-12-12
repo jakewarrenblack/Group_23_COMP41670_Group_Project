@@ -1,11 +1,11 @@
 public class Player  {
-    private final String name;
-    private int score;
-    private final int[] startPoints = new int[]{24,24,13,13,13,13,13,8,8,8,6,6,6,6,6};
+    protected final String name;
+    protected int score;
+    protected final int[] startPoints = new int[]{24,24,13,13,13,13,13,8,8,8,6,6,6,6,6};
 
-    private Piece[] pieces;
+    protected Piece[] pieces;
     public enum Color {BLACK, WHITE};
-    public final Color color;
+    protected final Color color;
 
     public Player(String name, Color color){
         if(name.isBlank()){
@@ -76,11 +76,20 @@ public class Player  {
     public int piecePosition(int index){return pieces[index].getPosition();}
     // TODO Find a way to avoid absolute value
     public boolean canMoveOff(){
-        int minPip = 26;
+        int minPip = 1;
         for (Piece p:pieces){
-            minPip = Math.min(minPip,p.getPip());
+            minPip = Math.max(minPip,p.getPip());
         }
-        return minPip<6;
+        return minPip<7;
+    }
+    // TODO avoid absolute value!
+    public boolean isBarred(int from){
+        int maxPip=0;
+        for (Piece p:pieces){
+            if (p.getPip()==25&p.getPosition()==from){return false;}
+            maxPip=Math.max(maxPip,p.getPip());
+        }
+        return maxPip==25;
     }
     // TODO Find a way to avoid absolute value
     public boolean hasWon(){

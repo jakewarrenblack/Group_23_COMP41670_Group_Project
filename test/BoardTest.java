@@ -161,11 +161,7 @@ class BoardTest {
         assertArrayEquals(new int[]{13,1},testBoard.getPoint(25).getCoords());
         testBoard.setColour(0, Player.Color.WHITE);
         assertArrayEquals(new int[]{13,13},testBoard.getPoint(0).getCoords());
-        // Now check we get an error if we try to set the colour of a normal on-board point
-        IndexOutOfBoundsException thrown = assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> {testBoard.setColour(1, Player.Color.WHITE);}
-        );
+
     }
     @Test
     void getPoint() {

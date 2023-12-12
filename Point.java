@@ -108,4 +108,5 @@ public class Point {
         if (isEmpty()){ return 0;}
         else {return this.pieces.peek().getColor().equals(Player.Color.WHITE) ? positionWhite:positionBlack;}
     }
+    public void setColor(Player.Color color){}
 }

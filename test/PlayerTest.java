@@ -45,7 +45,7 @@ class PlayerTest {
         testBoard.placePieces(testBlack);
         testBoard.addPiece(21,testBoard.removePiece(19));
         assertEquals(165,testBlack.pipScore());
-        // Move one black piece to the bard - black Pip score should go up to 168
+        // Move one black piece to the bar - black Pip score should go up to 168
         testBoard.setColour(0, Player.Color.BLACK);
         testBoard.addPiece(0,testBoard.removePiece(21));
         assertEquals(186,testBlack.pipScore());
@@ -71,5 +71,16 @@ class PlayerTest {
             testWhite.getPiece(i).setPosition(0);
         }
         assertTrue(testWhite.hasWon());
+    }
+    @Test
+    void isBarred(){
+        // Aren't barred in the start position
+        assertFalse(testWhite.isBarred(24));
+        // Aren't barred if they're trying to move the piece that's on the bar
+        testWhite.getPiece(14).setPosition(25);
+        assertFalse(testWhite.isBarred(25));
+        // Are barred if they try to move a piece that's not on the bar
+        testWhite.getPiece(0).setPosition(1);
+        assertTrue(testWhite.isBarred(1));
     }
 }

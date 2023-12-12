@@ -126,8 +126,11 @@ public class Game {
     }
 
     public void movePiece(int from, int to) {
+        //TODO Are we applying this legal move check twice?
         try {
             if (isLegalMove(from, to)) {
+                board.setColour(from,currentPlayer.getColor());
+                board.setColour(to,currentPlayer.getColor());
                 board.addPiece(to, board.removePiece(from));
                 log.updateLog(currentPlayer.getName() + " moved a piece from " + from + " to " + to);
             }
@@ -146,9 +149,12 @@ public class Game {
      * @throws IllegalArgumentException if the move is not legal. The exception's message provides details about why the move is not legal.
      */
     public boolean isLegalMove(int from, int to){
+        if(from<0|to<0|from>25|to>25){throw new IllegalArgumentException("There are only 26 valid points");}
         Point fromPoint = board.getPoint(from);
         Point toPoint = board.getPoint(to);
-
+        if(currentPlayer.isBarred(from)){
+            throw new IllegalArgumentException(currentPlayer.getName() + " must move their checkers from the bar first");
+        }
         if (!fromPoint.isPlayers(currentPlayer)) {
             throw new IllegalArgumentException(currentPlayer.getName() + "'s checkers are not on Point " + from);
         }
@@ -200,13 +206,79 @@ public class Game {
     public void updateLog(String message) {
         log.updateLog(message);
     }
+    public void processRolls(List<Integer> diceRolls){
+        List<Move> validMoves;
+        String[] validMoveString;
+        int chosenMove;
+        if (diceRolls.size()==2){
+            processDifferentDiceRolls(diceRolls);
+        } else {
+            processDoubleDiceRolls(diceRolls);
+        }
+    }
+    public void processDifferentDiceRolls(List<Integer> diceRolls){
+        ArrayList<Move> validMoves = getAllAvailableValidMoves(diceRolls);
+        String[] validMoveString = validMovesString(validMoves);
+        int chosenMove = chooseOption(currentPlayer.getName() +" you rolled "+diceRolls.get(0)+ " and "+diceRolls.get(1)+". Choose your first move: ",validMoveString);
+        command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
+        int otherRoll = diceRolls.get(0)==validMoves.get(chosenMove).getFrom()-validMoves.get(chosenMove).getTo()?diceRolls.get(1):diceRolls.get(0);
+        print();
+        validMoves = getAvailableValidMoves(otherRoll);
+        if(validMoves.isEmpty()){updateLog("You have no valid moves to make with your other die roll of "+otherRoll);}
+        else {
+            validMoveString = validMovesString(validMoves);
+            chosenMove = chooseOption(currentPlayer.getName() + " you rolled " + otherRoll + " with your other die. Choose your second move: ", validMoveString);
+            command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
+        }
+        print();
+    }
+    public void processDoubleDiceRolls(List<Integer> diceRolls){
+        int i=0;
+        ArrayList<Move> validMoves=getAvailableValidMoves(diceRolls.get(i));
+        while (!validMoves.isEmpty()){
+            i++;
+            String[] validMoveString=validMovesString(validMoves);
+            int chosenMove = chooseOption(currentPlayer.getName() +" you have the following options with dice number "+i+". Please choose: ",validMoveString );
+            command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
+        }
+        print();
+        if (i<diceRolls.size()){updateLog("You have no more valid moves");}
+    }
+    public ArrayList<Move> getAllAvailableValidMoves(List<Integer> dieRoll){
+        // If we have rolled two different values then the player cannot make a move
+        // with the smaller die value first if it would leave them with no legal moves
+        // with the larger die
+        ArrayList<Move> validMoves = getAvailableValidMoves(Math.min(dieRoll.get(0),dieRoll.get(1)));
+        ArrayList<Move> invalids = new ArrayList<Move>();
+        // Try all the apparently valid moves with the smaller dice value
+        // and remove any that leave us with no valid moves with the larger
+        int smallMoves = validMoves.size();
+        for (int i=0;i<smallMoves;i++){
+            // Make the move as a test
+            movePiece(validMoves.get(i).getFrom(),validMoves.get(i).getTo());
+            ArrayList<Move> testLarge = getAvailableValidMoves(Math.max(dieRoll.get(0),dieRoll.get(1)));
+            // If there are no valid moves with the larger dice roll, capture the move for later deletion
+            if (testLarge.isEmpty()){
+                invalids.add(validMoves.get(i));
+            }
+            // Reverse the test move
+            movePiece(validMoves.get(i).getTo(),validMoves.get(i).getFrom());
+        }
+        // Delete the moves with the smaller die that would leave you with no valid moves with the larger
+        for (int i=0;i<invalids.size();i++){
+            validMoves.remove(invalids.get(i));}
+        ArrayList<Move> largeMoves = getAvailableValidMoves(Math.max(dieRoll.get(0),dieRoll.get(1)));
+        for (Move move:largeMoves){
+            validMoves.add(move);
+        }
+        return validMoves;
+    }
 
 
-
-    public ArrayList<Integer[]> getAvailableValidMoves(int dieRoll) {
+    public ArrayList<Move> getAvailableValidMoves(int dieRoll) {
         // Black player moves from the bottom-right (index 24) to the top-right (index 1) -> (clockwise). In other words, the position index must be moving DOWN from 24...to 1...
         // White player moves from the top-right (index 1) to the bottom-right (index 24) -> (counter-clockwise). In other words, the position index must be moving UP from 1...to 24...
-        ArrayList<Integer[]> validMoves = new ArrayList<Integer[]>();
+        ArrayList<Move> validMoves = new ArrayList<Move>();
 
         // for all the occupied points, the pieces which can be moved are the ones whose colour match the player's colour (and are on top of their respective pile)
         ArrayList<Piece> movablePieces = getMovablePieces();
@@ -216,7 +288,7 @@ public class Game {
             int endPosition = calculate(p.getPosition(), dieRoll, currentPlayer.getColor() == Player.Color.WHITE);
             try {
                 if (isLegalMove(p.getPosition(), endPosition)) {
-                    validMoves.add(new Integer[]{p.getPosition(), endPosition}); // Store the valid move in the Map
+                    validMoves.add(new Move(p.getPosition(), endPosition)); // Store the valid move in the Map
                 }
             } catch (IllegalArgumentException ignored){}
         }
@@ -240,11 +312,11 @@ public class Game {
         return movablePieces;
     }
 
-    public String[] validMovesString(List<Integer[]> validMoves){
+    public String[] validMovesString(List<Move> validMoves){
         String[] moves = new String[validMoves.size()];
 
         for (int i=0;i< validMoves.size();i++){
-            moves[i] = "From "+ validMoves.get(i)[0] +" to "+ validMoves.get(i)[1];
+            moves[i] = "From "+ validMoves.get(i).getFrom() +" to "+ validMoves.get(i).getTo();
         }
 
         return moves;
@@ -285,6 +357,19 @@ public class Game {
             updateLog(newPlayer.getName()+" has rejected the offer to double the bet and loses the game");
             setGameState(Game.GameState.LOST);
         }
+    }
+    public static class Move{
+        private int from;
+        private int to;
+        public Move(int from,int to){
+            this.from=from;
+            this.to = to;
+        }
+        public boolean equals(Move other){
+            return this.from==other.from & this.to==other.to;
+        }
+        public int getFrom(){return from;}
+        public int getTo(){return to;}
     }
 }
 

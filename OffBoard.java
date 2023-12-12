@@ -76,4 +76,5 @@ public class OffBoard extends Point{
             col = (positionBlack == 0 ? this.col:6);}
         return new int[]{col, row};
     }
+
 }

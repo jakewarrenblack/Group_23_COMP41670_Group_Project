@@ -233,8 +233,6 @@ public class Board {
     public String getColour(int index){return points[index].getColour();}
 
     public void setColour(int index,Player.Color color){
-        // Only valid for off and bar
-        if (index<1|index>24){((OffBoard) points[index]).setColor(color);}
-        else {throw new IndexOutOfBoundsException("Cannot set colour of normal points");}
+        points[index].setColor(color);
     }
 }
