@@ -39,7 +39,7 @@ public class Game {
         return this.currentPlayer;
     }
 
-
+    public void setCurrentPlayer(Player player){this.currentPlayer=player;}
     public Player nextTurn() {
         // just switch between 0 and 1, whichever is NOT the current player
         this.currentPlayer = this.players[0] == this.currentPlayer ? this.players[1] : this.players[0];
@@ -152,7 +152,7 @@ public class Game {
         if (!fromPoint.isPlayers(currentPlayer)) {
             throw new IllegalArgumentException(currentPlayer.getName() + "'s checkers are not on Point " + from);
         }
-        else if (toPoint.isOff()){
+        else if (toPoint.isOff(currentPlayer.getColor())){
             if(!currentPlayer.canMoveOff()){
                 throw new IllegalArgumentException("You cannot move a piece off the board until all your checkers are in the final quadrant");
             }
@@ -232,7 +232,7 @@ public class Game {
         }
         else {
             for (Point p : board.getPoints()) {
-                if (!p.isOff() && p.isPlayers(currentPlayer)) {
+                if (!p.isOff(currentPlayer.getColor()) && p.isPlayers(currentPlayer)) {
                     movablePieces.add(p.getTopChecker());
                 }
             }

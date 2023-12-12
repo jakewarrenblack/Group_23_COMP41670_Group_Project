@@ -23,6 +23,7 @@ class GameTest {
         myGame.addPlayer(1,whitePlayer,false);
         myGame.placePieces(blackPlayer);
         myGame.placePieces(whitePlayer);
+        myGame.setCurrentPlayer(blackPlayer);
         System.setOut(new PrintStream(outputStreamCaptor));
     }
     @AfterEach
@@ -110,5 +111,20 @@ class GameTest {
         for (int i = 0; i < 4; i++) {
             assertEquals(blackMovable[i], result[i]);
         }
+    }
+    // TODO Scrub all tests above this one
+    @Test
+    void isLegalMove(){
+        // Illegal moves first
+        // Try a move from a point where the player has no checkers
+        IllegalArgumentException thrown = assertThrows(
+                IllegalArgumentException.class,
+                () -> {myGame.isLegalMove(20,21);});
+        // Try to move a piece off before all your pieces are in the final quadrant
+        thrown = assertThrows(
+                IllegalArgumentException.class,
+                () -> {myGame.isLegalMove(19,25);});
+
+
     }
 }

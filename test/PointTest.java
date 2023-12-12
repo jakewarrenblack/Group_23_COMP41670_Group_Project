@@ -93,7 +93,7 @@ class PointTest {
     }
     @Test
     void isOff(){
-        assertFalse(firstPoint.isOff());
+        assertFalse(firstPoint.isOff(testPlayerW.getColor()));
     }
     @Test
     void getPip(){

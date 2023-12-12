@@ -100,7 +100,7 @@ public class Point {
 
     public boolean isEmpty(){return pieces.isEmpty();}
 
-    public boolean isOff(){
+    public boolean isOff(Player.Color color){
         return false;
     }
 

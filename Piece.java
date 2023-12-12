@@ -15,9 +15,9 @@ public class Piece {
     // TODO Find way to do this without absolute value
     public void setPosition(int position){
         this.position = position;
-        if (player.getColor().equals(Player.Color.BLACK)&position>0&position<25){
-            this.pip=25-position;
-        } else {this.pip=position;}
+        if (this.getColor().equals(Player.Color.BLACK)){
+            this.pip=25-position;}
+        else {this.pip=position;}
     }
 //    public void setPip(int pip){this.pip=pip;}
 

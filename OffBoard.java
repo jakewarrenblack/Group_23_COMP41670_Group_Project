@@ -27,6 +27,8 @@ public class OffBoard extends Point{
      * @param piece The piece to add
      */
     public void addPiece(Piece piece) {
+        // Cannot add black piece to white off and vice verse
+        // Cannot add black piece to white bar and vice verse
         if(piece.getColor().equals(Player.Color.WHITE)==returnWhite) {
             super.addPiece(piece);
         } else {throw new IllegalArgumentException("This point is not focused on "+piece.getColor().name()+" and cannot accept this piece right now");}
@@ -47,8 +49,8 @@ public class OffBoard extends Point{
 
     public boolean isBlot(){return false;}
     //TODO figure out a way to do this without hard coding
-    public boolean isOff() {
-        if (returnWhite) {
+    public boolean isOff(Player.Color color) {
+        if (color.equals(Player.Color.WHITE)) {
             return positionWhite == 0;
         } else {
             return positionWhite == 25;

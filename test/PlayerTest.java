@@ -46,8 +46,8 @@ class PlayerTest {
         testBoard.addPiece(21,testBoard.removePiece(19));
         assertEquals(165,testBlack.pipScore());
         // Move one black piece to the bard - black Pip score should go up to 168
-        testBoard.setColour(25, Player.Color.BLACK);
-        testBoard.addPiece(25,testBoard.removePiece(21));
+        testBoard.setColour(0, Player.Color.BLACK);
+        testBoard.addPiece(0,testBoard.removePiece(21));
         assertEquals(186,testBlack.pipScore());
     }
     @Test

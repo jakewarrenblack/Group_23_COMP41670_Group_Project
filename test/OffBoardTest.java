@@ -33,17 +33,19 @@ class OffBoardTest {
     @Test
     void addPiece() {
         // Add a piece of the focus colour
+        offWhiteBarBlack.setColor(Player.Color.WHITE);
         offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
         assertAll(()->assertEquals(0,blackBar.size()),
                 ()->assertEquals(0,testPlayerW.getPiece(1).getPosition()),
-                ()->assertEquals(1,whiteOff.size()));
+                ()->assertEquals(1,whiteOff.size()),
+                ()->assertEquals(0,testPlayerW.getPiece(1).getPip()));
         // Now try to add one of the non-focus colour
         IllegalArgumentException thrown = assertThrows(
                 IllegalArgumentException.class,
                 () -> {offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));}
         );
         // Now change focus colour and try again
-        offWhiteBarBlack.setColor(false);
+        offWhiteBarBlack.setColor(Player.Color.BLACK);
         offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
         assertAll(()->assertEquals(1,blackBar.size()),
                 ()->assertEquals(0,testPlayerB.getPiece(1).getPosition()),
@@ -171,13 +173,13 @@ class OffBoardTest {
     @Test
     void isOff(){
         offWhiteBarBlack.setColor(Player.Color.BLACK);
-        assertFalse(offWhiteBarBlack.isOff());
+        assertFalse(offWhiteBarBlack.isOff(Player.Color.BLACK));
         offWhiteBarBlack.setColor(Player.Color.WHITE);
-        assertTrue(offWhiteBarBlack.isOff());
+        assertTrue(offWhiteBarBlack.isOff(Player.Color.WHITE));
         offBlackBarWhite.setColor(Player.Color.BLACK);
-        assertTrue(offBlackBarWhite.isOff());
+        assertTrue(offBlackBarWhite.isOff(Player.Color.BLACK));
         offBlackBarWhite.setColor(Player.Color.WHITE);
-        assertFalse(offBlackBarWhite.isOff());
+        assertFalse(offBlackBarWhite.isOff(Player.Color.WHITE));
     }
     @Test
     void getPip(){
