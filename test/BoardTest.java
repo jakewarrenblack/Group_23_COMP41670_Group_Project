@@ -123,7 +123,50 @@ class BoardTest {
                 " B  |  |  |  W  |     W  |  |  |  |  B         \n" +
                 "-12-+--+--+--+--7-BAR-6--+--+--+--+--1- OFF\n",outputStreamCaptor.toString());
     }
-
+    @Test
+    void removePiece(){
+        Player bPlayer = new Player("Test", Player.Color.BLACK);
+        Player wPlayer = new Player("Other", Player.Color.WHITE);
+        testBoard.placePieces(bPlayer);
+        testBoard.placePieces(wPlayer);
+        // Remove a piece from a normal point
+        // Expect to get the piece and be left with one piece on the point
+        Piece testPiece = testBoard.removePiece(24);
+        assertEquals(Player.Color.WHITE,testPiece.getColor());
+        assertEquals(1,testBoard.numPieces(24));
+        // Now do bars - expect to get the piece we've placed there back again
+        // and be left with no pieces on the bar
+        testBoard.setColour(25, Player.Color.WHITE);
+        testBoard.setColour(0, Player.Color.BLACK);
+        testBoard.addPiece(25,wPlayer.getPiece(0));
+        testBoard.addPiece(0,bPlayer.getPiece(0));
+        Piece wPiece = testBoard.removePiece(25);
+        Piece bPiece = testBoard.removePiece(0);
+        assertEquals(Player.Color.WHITE,wPiece.getColor());
+        assertEquals(0,testBoard.numPieces(25));
+        assertEquals(Player.Color.BLACK,bPiece.getColor());
+        assertEquals(0,testBoard.numPieces(0));
+        // Try it with off - expect to get null, cannot take pieces back on the board again
+        testBoard.setColour(25, Player.Color.BLACK);
+        testBoard.setColour(0, Player.Color.WHITE);
+        testBoard.addPiece(25,bPlayer.getPiece(1));
+        testBoard.addPiece(0,wPlayer.getPiece(1));
+        assertNull(testBoard.removePiece(25));
+        assertNull(testBoard.removePiece(0));
+    }
+    @Test
+    void setColour(){
+        // First check we get the right coordinates when setting colour of off and bar points
+        testBoard.setColour(25, Player.Color.BLACK);
+        assertArrayEquals(new int[]{13,1},testBoard.getPoint(25).getCoords());
+        testBoard.setColour(0, Player.Color.WHITE);
+        assertArrayEquals(new int[]{13,13},testBoard.getPoint(0).getCoords());
+        // Now check we get an error if we try to set the colour of a normal on-board point
+        IndexOutOfBoundsException thrown = assertThrows(
+                IndexOutOfBoundsException.class,
+                () -> {testBoard.setColour(1, Player.Color.WHITE);}
+        );
+    }
     @Test
     void getPoint() {
         assertEquals(10,testBoard.getPoint(10).getPosition());

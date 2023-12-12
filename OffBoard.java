@@ -31,7 +31,18 @@ public class OffBoard extends Point{
             super.addPiece(piece);
         } else {throw new IllegalArgumentException("This point is not focused on "+piece.getColor().name()+" and cannot accept this piece right now");}
     }
-
+    // TODO I'm sure there's a more elegant way to code this
+    public Piece removePiece(){
+        if(returnWhite){
+            if (positionWhite!=0){
+                return super.removePiece();
+            } else {return null;}
+        } else {
+            if (positionBlack!=0){
+                return super.removePiece();
+            } else {return null;}
+        }
+    }
     public boolean isFull() {return false;}
 
     public boolean isBlot(){return false;}

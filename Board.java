@@ -135,27 +135,30 @@ public class Board {
     protected void updateBoard() {
         int pointIndex = 0;
         for (Point point : points) {
+            // Normal on-board points only have one stack as they can hold only one colour of checkers
             int stacks = 1;
-
+            // Off/Bar points have 2 stacks as they can hold both
             if (pointIndex == 0 || pointIndex == points.length - 1) {
                 stacks = 2;
             }
 
             for (int stack = 0; stack < stacks; stack++) {
+                // If the point is an Off/Bar hybrid, set the focus colour first
                 if (stacks > 1) {
                     ((OffBoard) point).setColor(stack == 0);
                 }
-
-                int col = point.getCoords()[1];
-                int row = point.getCoords()[0];
+                // Column first, then row
+                int col = point.getCoords()[0];
+                int row = point.getCoords()[1];
+                // For the top half of the board we move down (increment=1)
+                // For the bottom half of the board we move up (increment=-1)
                 int increment = row == 1 ? 1 : -1;
-
                 for (int i = 0; i < 6; i++) {
                     for (int j = 0; point.numPieces() > j; j++) {
                         boardPrint[row + (j) * increment][col] = point.getColour();
                     }
                     for (int j = point.numPieces(); j < 6; j++) {
-                        boardPrint[row + (j) * increment][col] = emptySpace(pointIndex);
+                        boardPrint[row + (j * increment)][col] = emptySpace(pointIndex);
                     }
                 }
             }
@@ -226,5 +229,12 @@ public class Board {
     public boolean isOff(int index, Player player){
         int off = player.getColor()==Player.Color.WHITE ? layout.OFFWBARB.getWhite():layout.OFFBBARW.getWhite();
         return points[index].equals(points[off]);
+    }
+    public String getColour(int index){return points[index].getColour();}
+
+    public void setColour(int index,Player.Color color){
+        // Only valid for off and bar
+        if (index<1|index>24){((OffBoard) points[index]).setColor(color);}
+        else {throw new IndexOutOfBoundsException("Cannot set colour of normal points");}
     }
 }

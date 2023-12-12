@@ -83,7 +83,6 @@ class OffBoardTest {
         Piece noPieceW = offBlackBarWhite.removePiece();
         assertNull(noPieceW);
     }
-    // TODO All tests below here need to be scrubbed
     @Test
     void numPieces() {
         offWhiteBarBlack.setColor(Player.Color.WHITE);
