@@ -50,7 +50,7 @@ class CommandTest {
         game.roll();
         command.acceptCommand("DICE 5 4");
         game.roll();
-        assertEquals("The values of the dice have been set manually for the next roll\r\nB rolled 3, 3, 3, 3\r\nThe values of the dice have been set manually for the next roll\r\nB rolled 5, 4",outputStreamCaptor.toString().trim());
+        assertEquals("The values of the dice have been set manually for the next roll/r/nB rolled 3, 3, 3, 3/r/nThe values of the dice have been set manually for the next roll/r/nB rolled 5, 4",outputStreamCaptor.toString().trim());
     }
     @Test
     void test(){}
@@ -72,6 +72,11 @@ class CommandTest {
     void blank(){
         command.acceptCommand("");
         assertEquals("I do not recognise  as a command",outputStreamCaptor.toString().trim());
+    }
+    @Test
+    void testScript(){
+        game.placePieces(game.getCurrentPlayer());
+        Command.test(game,"C:/Users/User/OneDrive/MSc/41670 Software Engineering/Group_Project/res/TestScript.txt");
     }
 
     @AfterEach

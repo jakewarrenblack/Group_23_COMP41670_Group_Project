@@ -3,6 +3,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Command {
     enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST}
@@ -27,7 +30,7 @@ public class Command {
     }
 
     public boolean acceptCommand(String command){
-        String[] cmdTokens = command.split(" ");
+        String[] cmdTokens = command.split("\\s+");
         switch (cmdTokens[0].toUpperCase()) {
             case "ROLL" -> game.roll();
             case "QUIT" -> {
@@ -53,7 +56,14 @@ public class Command {
                 game.setDie(rolls);
                 game.updateLog("The values of the dice have been set manually for the next roll");
             }
-            case "TEST" -> game.updateLog("The Test command hasn't been implemented yet");
+            case "TEST" -> {
+                game.updateLog("Running test script");
+                try {
+                    Command.test(game);
+                    game.updateLog("Test script executed successfully");
+                } catch (IllegalArgumentException e){game.updateLog(e.getMessage());}
+
+            }
             default -> game.updateLog("I do not recognise " + cmdTokens[0] + " as a command");
         }
         return true;
@@ -70,6 +80,48 @@ public class Command {
         }
 
         return commands.toArray(new String[0]);
+    }
+    public static void test(Game game){
+        Scanner testMoves = importMoves();
+        Command command = new Command(game);
+        while (testMoves.hasNextLine()){
+            String line = testMoves.nextLine();
+            if (!command.acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
+        }
+    }
+    public static void test(Game game, String path){
+        Scanner testMoves = importMoves(path);
+        Command command = new Command(game);
+        while (testMoves.hasNextLine()){
+            String line = testMoves.nextLine();
+            if (!command.acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
+        }
+    }
+    public static Scanner importMoves(){
+        try {
+            JFileChooser chooser = new JFileChooser();
+            Scanner in;
+            if (chooser.showOpenDialog(null)==
+                JFileChooser.APPROVE_OPTION){
+                File selectedFile = chooser.getSelectedFile();
+                return new Scanner(selectedFile);
+            }
+        } catch (IOException ex){ex.printStackTrace();}
+        return null;
+    }
+    public static Scanner importMoves(String path){
+        InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(path);
+        if (inputStream != null) {
+            try (Scanner scanner = new Scanner(inputStream)) {
+                return scanner;
+            } catch (Exception e) {
+                System.out.println("Error reading file: " + e);
+                return null;
+            }
+        } else {
+            System.out.println("File not found: " + path);
+            return null;
+        }
     }
 }
 
