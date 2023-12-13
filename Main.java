@@ -31,18 +31,20 @@ public class Main {
                     myGame.updateLog(currentPlayer.getName() + " has won!");
                     myGame.setGameState(Game.GameState.WON);
                 }
-                myGame.nextTurn();
+                currentPlayer = myGame.nextTurn();
 
                 exclude.add("MOVE");
-                exclude.add("ROLL");
 
                 if(!myGame.hasDouble()){
                     exclude.add("DOUBLE");
                 }
-
                 String[] commands = myGame.listCommands(exclude);
-                int command = Game.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
-                new Command(myGame).acceptCommand(commands[command]);
+                int command = commands.length-1;
+                // Loop until the player chooses to roll
+                while (command!=0) {
+                    command = Game.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
+                    new Command(myGame).acceptCommand(commands[command]);
+                }
             }
         }
     }

@@ -130,7 +130,7 @@ public class Game {
         try {
             if (isLegalMove(from, to)) {
                 if (board.getPoint(to).isBlot()&!board.getPoint(to).isPlayers(currentPlayer)){
-                    board.moveToBar(to);
+                    board.moveToBar(to,log);
                 }
                 board.setColour(from,currentPlayer.getColor());
                 board.setColour(to,currentPlayer.getColor());
@@ -204,7 +204,7 @@ public class Game {
 
         log.updateLog(message);
     }
-
+    public void setDie(int[] rolls){die.setValues(rolls);}
     public void updateLog(String message) {
         log.updateLog(message);
     }
@@ -236,12 +236,13 @@ public class Game {
     }
     public void processDoubleDiceRolls(List<Integer> diceRolls){
         int i=0;
-        ArrayList<Move> validMoves=getAvailableValidMoves(diceRolls.get(i));
+        ArrayList<Move> validMoves=new ArrayList<Move>();
         while (!validMoves.isEmpty()){
-            i++;
+            validMoves=getAvailableValidMoves(diceRolls.get(i));
             String[] validMoveString=validMovesString(validMoves);
             int chosenMove = chooseOption(currentPlayer.getName() +" you have the following options with dice number "+i+". Please choose: ",validMoveString );
             command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
+            i++;
         }
         print();
         if (i<diceRolls.size()){updateLog("You have no more valid moves");}

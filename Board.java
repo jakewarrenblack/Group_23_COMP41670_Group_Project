@@ -236,12 +236,13 @@ public class Board {
         points[index].setColor(color);
     }
 
-    public void moveToBar(int blotPosition){
+    public void moveToBar(int blotPosition, Log log){
         if (points[blotPosition].isBlot()) {
             Piece blot = points[blotPosition].removePiece();
             int barIndex = blot.getColor() == Player.Color.WHITE ? 25 : 0;
             points[barIndex].setColor(blot.getColor());
             points[barIndex].addPiece(blot);
+            log.updateLog(blot.getPlayer().getName()+"'s piece was move from "+blotPosition+" to the bar");
         }
     }
 }

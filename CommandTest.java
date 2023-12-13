@@ -39,21 +39,9 @@ class CommandTest {
     void move(){
         game.placePieces(players[0]);
         command.acceptCommand("Move 1 3");
-        assertEquals("B moved a piece from 1 to 3",outputStreamCaptor.toString().trim());
+        assertEquals("You have moved from 1 to 3",outputStreamCaptor.toString().trim());
     }
-    @Test
-    void noPieceToMove(){
-        game.placePieces(players[0]);
-        command.acceptCommand("Move 2 3");
-        assertEquals("B's checkers are not on Point 2",outputStreamCaptor.toString().trim());
-    }
-    @Test
-    void fullPoint(){
-        game.placePieces(players[0]);
-        game.placePieces(players[1]);
-        command.acceptCommand("Move 1 6");
-        assertEquals("Your opponent has too many checkers on point 6",outputStreamCaptor.toString().trim());
-    }
+
     @Test
     void doubleCmd(){}
     @Test

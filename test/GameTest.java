@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -27,10 +28,18 @@ class GameTest {
         myGame.setCurrentPlayer(blackPlayer);
         System.setOut(new PrintStream(outputStreamCaptor));
     }
+
+    private void provideInput(String data) {
+        ByteArrayInputStream testIn = new ByteArrayInputStream(data.getBytes());
+        System.setIn(testIn);
+    }
+
     @AfterEach
     void tearDown() {
         System.setOut(standardOut);
     }
+
+
     @Test
     @DisplayName("Checks that game has been created")
     void testGame(){
@@ -240,5 +249,6 @@ class GameTest {
             contains=false;
         }
     }
+
 
 }

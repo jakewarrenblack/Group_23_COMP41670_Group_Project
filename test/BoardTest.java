@@ -171,12 +171,12 @@ class BoardTest {
         testBoard.placePieces(wPlayer);
         // First try moving a piece that isn't a blot
         Point barB = testBoard.getBar(bPlayer);
-        testBoard.moveToBar(1);
+        testBoard.moveToBar(1,new Log());
         barB.setColor(wPlayer.getColor());
         assertEquals(0,barB.numPieces());
         // Now try one that is a blot
         testBoard.addPiece(2,testBoard.removePiece(1));
-        testBoard.moveToBar(1);
+        testBoard.moveToBar(1,new Log());
         assertEquals(1,barB.numPieces());
         assertEquals(0,testBoard.numPieces(1));
 

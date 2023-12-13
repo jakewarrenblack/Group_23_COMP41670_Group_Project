@@ -29,7 +29,23 @@ class DieTest {
         assertAll(()->assertInstanceOf(ArrayList.class,rolls),
                 ()->assertTrue((int)rolls.get(0)>0&(int)rolls.get(0)<7));
     }
-
+    @Test
+    void setManual(){
+        int[] rolls = new int[]{1,2};
+        testDie.setValues(rolls);
+        List<Integer> currentValues = testDie.getCurrentValues();
+        assertAll(()->assertEquals(rolls[0],currentValues.get(0)),
+                ()->assertEquals(rolls[1],currentValues.get(1)));
+        testDie.setValues(rolls);
+        List<Integer> currentValues2 = testDie.roll();
+        assertAll(()->assertEquals(rolls[0],currentValues2.get(0)),
+                ()->assertEquals(rolls[1],currentValues2.get(1)));
+        int[] rolls2 =new int[]{3,3,3,3};
+        testDie.setValues(rolls2);
+        List<Integer> currentValues3 = testDie.roll();
+        assertAll(()->assertEquals(3,currentValues2.get(0)),
+                ()->assertEquals(4,currentValues2.size()));
+    }
     @Test
     void getCurrentValues() {
         List rolls = testDie.roll();

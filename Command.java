@@ -45,7 +45,14 @@ public class Command {
                 }
             }
             case "DOUBLE" -> game.doubleBet();
-            case "DICE" -> game.updateLog("The Dice command hasn't been implemented yet");
+            case "DICE" -> {
+                int[] rolls = new int[cmdTokens.length-1];
+                for (int i=0;i<rolls.length;i++){
+                    rolls[i]=Integer.parseInt(cmdTokens[i+1]);
+                }
+                game.setDie(rolls);
+                game.updateLog("The values of the dice have been set manually for the next roll");
+            }
             case "TEST" -> game.updateLog("The Test command hasn't been implemented yet");
             default -> game.updateLog("I do not recognise " + cmdTokens[0] + " as a command");
         }
