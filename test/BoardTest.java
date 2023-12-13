@@ -164,6 +164,24 @@ class BoardTest {
 
     }
     @Test
+    void moveToBar(){
+        Player bPlayer = new Player("Test", Player.Color.BLACK);
+        Player wPlayer = new Player("Other", Player.Color.WHITE);
+        testBoard.placePieces(bPlayer);
+        testBoard.placePieces(wPlayer);
+        // First try moving a piece that isn't a blot
+        Point barB = testBoard.getBar(bPlayer);
+        testBoard.moveToBar(1);
+        barB.setColor(wPlayer.getColor());
+        assertEquals(0,barB.numPieces());
+        // Now try one that is a blot
+        testBoard.addPiece(2,testBoard.removePiece(1));
+        testBoard.moveToBar(1);
+        assertEquals(1,barB.numPieces());
+        assertEquals(0,testBoard.numPieces(1));
+
+    }
+    @Test
     void getPoint() {
         assertEquals(10,testBoard.getPoint(10).getPosition());
     }

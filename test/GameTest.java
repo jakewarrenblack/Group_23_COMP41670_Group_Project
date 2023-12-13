@@ -158,6 +158,9 @@ class GameTest {
                     while (myGame.getBoard().getPoint(to).isFull()){
                         to++;
                     }
+                    if (i==12&j==5&to==20){
+                        System.out.println("Break");
+                    }
                     myGame.movePiece(i,to);
                     j--;
                 }
@@ -237,24 +240,5 @@ class GameTest {
             contains=false;
         }
     }
-    @Test
-    void getAllAvailableValidMovesReplica(){
-        // App crashes when black starts with roll of 1 and 2
-        ArrayList<Integer> rolls = new ArrayList<Integer>();
-        rolls.add(1);
-        rolls.add(2);
-        ArrayList<Game.Move> validMoves = myGame.getAllAvailableValidMoves(rolls);
-        Game.Move[] expected = new Game.Move[]{new Game.Move(1,2),new Game.Move(1,3),new Game.Move(12,14),new Game.Move(17,18),new Game.Move(17,19),new Game.Move(19,20),new Game.Move(19,21)};
-        assertEquals(expected.length,validMoves.size());
-        boolean contains=false;
-        for (int i=0;i<expected.length;i++){
-            int j=0;
-            while (!contains) {
-                contains = expected[i].equals(validMoves.get(j));
-                j++;
-            }
-            assertTrue(contains);
-            contains=false;
-        }
-    }
+
 }

@@ -129,6 +129,9 @@ public class Game {
         //TODO Are we applying this legal move check twice?
         try {
             if (isLegalMove(from, to)) {
+                if (board.getPoint(to).isBlot()&!board.getPoint(to).isPlayers(currentPlayer)){
+                    board.moveToBar(to);
+                }
                 board.setColour(from,currentPlayer.getColor());
                 board.setColour(to,currentPlayer.getColor());
                 board.addPiece(to, board.removePiece(from));
@@ -321,7 +324,7 @@ public class Game {
         String[] moves = new String[validMoves.size()];
 
         for (int i=0;i< validMoves.size();i++){
-            moves[i] = "From "+ validMoves.get(i).getFrom() +" to "+ validMoves.get(i).getTo();
+            moves[i] = "From "+ validMoves.get(i).getFromPip(board,currentPlayer) +" to "+ validMoves.get(i).getToPip(board,currentPlayer);
         }
 
         return moves;
@@ -366,6 +369,7 @@ public class Game {
     public static class Move{
         private int from;
         private int to;
+
         public Move(int from,int to){
             this.from=from;
             this.to = to;
@@ -375,6 +379,13 @@ public class Game {
         }
         public int getFrom(){return from;}
         public int getTo(){return to;}
+        public int getFromPip(Board board, Player player){
+            return board.getPoint(from).getPip(player);
+        }
+        public int getToPip(Board board, Player player){
+            return board.getPoint(to).getPip(player);
+        }
+
     }
 }
 

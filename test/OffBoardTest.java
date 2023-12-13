@@ -186,21 +186,19 @@ class OffBoardTest {
     @Test
     void getPip(){
         // Return 25 for BarBlack if Focus is Black, 0 if focus is White, vice verse
-        // Return 0 in any case if point is empty of the focus colour
         offWhiteBarBlack.setColor(Player.Color.BLACK);
-        assertEquals(0,offWhiteBarBlack.getPip());
         offWhiteBarBlack.addPiece(testPlayerB.getPiece(0));
         offBlackBarWhite.setColor(Player.Color.BLACK);
         offBlackBarWhite.addPiece(testPlayerB.getPiece(1));
-        assertEquals(25, offWhiteBarBlack.getPip());
-        assertEquals(0,offBlackBarWhite.getPip());
+        assertEquals(25, offWhiteBarBlack.getPip(testPlayerB));
+        assertEquals(0,offBlackBarWhite.getPip(testPlayerB));
         offWhiteBarBlack.setColor(Player.Color.WHITE);
-        assertEquals(0,offWhiteBarBlack.getPip());
+        assertEquals(0,offWhiteBarBlack.getPip(testPlayerW));
         offWhiteBarBlack.addPiece(testPlayerW.getPiece(0));
         offBlackBarWhite.setColor(Player.Color.WHITE);
         offBlackBarWhite.addPiece(testPlayerW.getPiece(1));
-        assertEquals(0, offWhiteBarBlack.getPip());
-        assertEquals(25,offBlackBarWhite.getPip());
+        assertEquals(0, offWhiteBarBlack.getPip(testPlayerW));
+        assertEquals(25,offBlackBarWhite.getPip(testPlayerW));
     }
     @Test
     void getTopChecker(){

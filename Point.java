@@ -104,9 +104,8 @@ public class Point {
         return false;
     }
 
-    public int getPip(){
-        if (isEmpty()){ return 0;}
-        else {return this.pieces.peek().getColor().equals(Player.Color.WHITE) ? positionWhite:positionBlack;}
+    public int getPip(Player player){
+        return player.getColor().equals(Player.Color.WHITE) ? positionWhite:positionBlack;
     }
     public void setColor(Player.Color color){}
 }

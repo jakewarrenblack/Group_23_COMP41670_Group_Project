@@ -97,12 +97,10 @@ class PointTest {
     }
     @Test
     void getPip(){
-        firstPoint.getPip();
-        assertEquals(0,firstPoint.getPip());
         firstPoint.addPiece(testPlayerW.getPiece(0));
         secondPoint.addPiece(testPlayerB.getPiece(0));
-        assertAll(()->assertEquals(1,firstPoint.getPip()),
-                ()->assertEquals(23,secondPoint.getPip()));
+        assertAll(()->assertEquals(1,firstPoint.getPip(testPlayerW)),
+                ()->assertEquals(23,secondPoint.getPip(testPlayerB)));
     }
     @Test
     void getTopChecker(){
