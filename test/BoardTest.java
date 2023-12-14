@@ -146,13 +146,14 @@ class BoardTest {
         assertEquals(0,testBoard.numPieces(25));
         assertEquals(Player.Color.BLACK,bPiece.getColor());
         assertEquals(0,testBoard.numPieces(0));
+        // 14 Dec 23: Removed this validation - this is duplicating validation done in the Game class
         // Try it with off - expect to get null, cannot take pieces back on the board again
-        testBoard.setColour(25, Player.Color.BLACK);
-        testBoard.setColour(0, Player.Color.WHITE);
-        testBoard.addPiece(25,bPlayer.getPiece(1));
-        testBoard.addPiece(0,wPlayer.getPiece(1));
-        assertNull(testBoard.removePiece(25));
-        assertNull(testBoard.removePiece(0));
+//        testBoard.setColour(25, Player.Color.BLACK);
+//        testBoard.setColour(0, Player.Color.WHITE);
+//        testBoard.addPiece(25,bPlayer.getPiece(1));
+//        testBoard.addPiece(0,wPlayer.getPiece(1));
+//        assertNull(testBoard.removePiece(25));
+//        assertNull(testBoard.removePiece(0));
     }
     @Test
     void setColour(){
@@ -185,7 +186,26 @@ class BoardTest {
     void getPoint() {
         assertEquals(10,testBoard.getPoint(10).getPosition());
     }
-
+    @Test
+    void getBar(){
+        Player playerB = new Player("Black", Player.Color.BLACK);
+        Player playerW = new Player("White", Player.Color.WHITE);
+        Point barB = testBoard.getBar(playerB);
+        Point barW = testBoard.getBar(playerW);
+        assertEquals(0,barB.getPosition());
+        assertEquals(25,barW.getPosition());
+    }
+    @Test
+    void hasBarPieces(){
+        Player playerB = new Player("Test", Player.Color.BLACK);
+        Player playerW = new Player("White", Player.Color.WHITE);
+        assertFalse(testBoard.hasBarPieces(playerB));
+        testBoard.addPiece(25,playerB.getPiece(1));
+        assertFalse(testBoard.hasBarPieces(playerB));
+        testBoard.addPiece(0,playerB.getPiece(0));
+        assertTrue(testBoard.hasBarPieces(playerB));
+        assertFalse(testBoard.hasBarPieces(playerW));
+    }
     @Test
     void getBoardPrint() {
     }

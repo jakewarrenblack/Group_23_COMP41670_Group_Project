@@ -10,10 +10,10 @@ class OffBoardTest {
     private OffBoard offBlackBarWhite;
     private Player testPlayerW;
     private Player testPlayerB;
-    private Stack whiteOff;
-    private Stack blackBar;
-    private Stack blackOff;
-    private Stack whiteBar;
+    private Point whiteOff;
+    private Point blackBar;
+    private Point blackOff;
+    private Point whiteBar;
 
     @BeforeEach
     void setUp(){
@@ -22,65 +22,66 @@ class OffBoardTest {
         testPlayerW = new Player("Test W", Player.Color.WHITE);
         testPlayerB = new Player("Test B", Player.Color.BLACK);
         offWhiteBarBlack.setColor(false);
-        blackBar = offWhiteBarBlack.activeStack();
+        blackBar = offWhiteBarBlack.activePoint();
         offWhiteBarBlack.setColor(true);
-        whiteOff = offWhiteBarBlack.activeStack();
+        whiteOff = offWhiteBarBlack.activePoint();
         offBlackBarWhite.setColor(false);
-        blackOff = offBlackBarWhite.activeStack();
+        blackOff = offBlackBarWhite.activePoint();
         offBlackBarWhite.setColor(true);
-        whiteBar = offBlackBarWhite.activeStack();
+        whiteBar = offBlackBarWhite.activePoint();
     }
     @Test
     void addPiece() {
-        // Add a piece of the focus colour
-        offWhiteBarBlack.setColor(Player.Color.WHITE);
+        // Add a white piece to the White off
         offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
-        assertAll(()->assertEquals(0,blackBar.size()),
+        assertAll(()->assertEquals(0,blackBar.numPieces()),
                 ()->assertEquals(0,testPlayerW.getPiece(1).getPosition()),
-                ()->assertEquals(1,whiteOff.size()),
+                ()->assertEquals(1,whiteOff.numPieces()),
                 ()->assertEquals(0,testPlayerW.getPiece(1).getPip()));
-        // Now try to add one of the non-focus colour
-        IllegalArgumentException thrown = assertThrows(
-                IllegalArgumentException.class,
-                () -> {offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));}
-        );
+        // Add a white piece to the White bar
+        offBlackBarWhite.addPiece(testPlayerW.getPiece(2));
+        assertAll(()->assertEquals(0,blackOff.numPieces()),
+                ()->assertEquals(25,testPlayerW.getPiece(2).getPosition()),
+                ()->assertEquals(1,whiteBar.numPieces()),
+                ()->assertEquals(25,testPlayerW.getPiece(2).getPip()));
         // Now change focus colour and try again
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
+
         offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
-        assertAll(()->assertEquals(1,blackBar.size()),
+        assertAll(()->assertEquals(1,blackBar.numPieces()),
                 ()->assertEquals(0,testPlayerB.getPiece(1).getPosition()),
                 ()->assertEquals(25,testPlayerB.getPiece(1).getPip()));
+        offBlackBarWhite.addPiece(testPlayerB.getPiece(2));
+        assertAll(()->assertEquals(1,blackOff.numPieces()),
+                ()->assertEquals(25,testPlayerB.getPiece(2).getPosition()),
+                ()->assertEquals(1,whiteBar.numPieces()),
+                ()->assertEquals(0,testPlayerB.getPiece(2).getPip()));
     }
 
     @Test
     void removePiece() {
         // Add a piece of each colour
-        offWhiteBarBlack.setColor(Player.Color.WHITE);
         offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
         offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
         // Now try to remove one. It should be black as that's the focus colour
         // The white piece should still be there
         Piece removed = offWhiteBarBlack.removePiece();
         assertAll(()->assertEquals(0, offWhiteBarBlack.numPieces()),
                 ()->assertEquals(Player.Color.BLACK,removed.getColor()),
-                ()->assertEquals(0,blackBar.size()),
-                ()->assertEquals(1,whiteOff.size()));
+                ()->assertEquals(0,blackBar.numPieces()),
+                ()->assertEquals(1,whiteOff.numPieces()));
         // Now try removing another piece - should remove null
         // as there are no black pieces left
         Piece noPiece = offWhiteBarBlack.removePiece();
         assertNull(noPiece);
         // Add a piece of each colour to the other OffBoard
-        offBlackBarWhite.setColor(Player.Color.BLACK);
         offBlackBarWhite.addPiece(testPlayerB.getPiece(2));
-        offBlackBarWhite.setColor(Player.Color.WHITE);
         offBlackBarWhite.addPiece(testPlayerW.getPiece(2));
         // Remove a piece. It should be white, the black one should still be there
         Piece removedW = offBlackBarWhite.removePiece();
         assertAll(()->assertEquals(0, offBlackBarWhite.numPieces()),
                 ()->assertEquals(Player.Color.WHITE,removedW.getColor()),
-                ()->assertEquals(0,whiteBar.size()),
-                ()->assertEquals(1,blackOff.size()));
+                ()->assertEquals(0,whiteBar.numPieces()),
+                ()->assertEquals(1,blackOff.numPieces()));
         // And if we try to remove another one it should return null
         Piece noPieceW = offBlackBarWhite.removePiece();
         assertNull(noPieceW);
@@ -134,14 +135,12 @@ class OffBoardTest {
     @Test
     void isPlayers(){
         // Return true if the player is the focus at the moment and there are pieces on the bar/off
-        offWhiteBarBlack.setColor(Player.Color.WHITE);
         offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
         assertTrue(offWhiteBarBlack.isPlayers(testPlayerW));
         assertFalse(offWhiteBarBlack.isPlayers(testPlayerB));
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
         offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
         assertTrue(offWhiteBarBlack.isPlayers(testPlayerB));
-        assertFalse(offWhiteBarBlack.isPlayers(testPlayerW));
+        assertFalse(offBlackBarWhite.isPlayers(testPlayerW));
     }
     @Test
     void isFull(){
@@ -174,13 +173,9 @@ class OffBoardTest {
     }
     @Test
     void isOff(){
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
         assertFalse(offWhiteBarBlack.isOff(Player.Color.BLACK));
-        offWhiteBarBlack.setColor(Player.Color.WHITE);
         assertTrue(offWhiteBarBlack.isOff(Player.Color.WHITE));
-        offBlackBarWhite.setColor(Player.Color.BLACK);
         assertTrue(offBlackBarWhite.isOff(Player.Color.BLACK));
-        offBlackBarWhite.setColor(Player.Color.WHITE);
         assertFalse(offBlackBarWhite.isOff(Player.Color.WHITE));
     }
     @Test

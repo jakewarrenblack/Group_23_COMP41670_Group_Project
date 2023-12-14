@@ -2,25 +2,43 @@ import java.util.Stack;
 
 public class OffBoard extends Point{
     private boolean returnWhite;
+    private Point activePoint;
+    private final Point pointWhite;
+
+    private final Point pointBlack;
     private final Stack<Piece> piecesWhite = new Stack<>();
     private final Stack<Piece> piecesBlack = new Stack<>();
 
     public OffBoard(int positionWhite, int positionBlack, int col, int row) {
         super(positionWhite,positionBlack,col,row);
-        returnWhite=true;
+        pointBlack = new Point(positionWhite,positionBlack,positionBlack == 0 ? this.col:6,1);
+        pointWhite = new Point(positionWhite,positionBlack,positionWhite == 0 ? this.col : 6,13);
+        returnWhite=false;
+        activePoint=pointBlack;
     }
     public void setColor(boolean isWhite){
         returnWhite=isWhite;
-        pieces=activeStack();
+        activePoint=activePoint();
     }
     public void setColor(Player.Color color){
         returnWhite=color== Player.Color.WHITE;
-        pieces=activeStack();
+        activePoint=activePoint();
+    }
+    public Point activePoint(){
+        return returnWhite?pointWhite:pointBlack;
     }
     public Stack<Piece> activeStack(){
         return returnWhite? piecesWhite:piecesBlack;
     }
-
+    /**
+     * The number of pieces currently placed on this point
+     *
+     * @return Integer value of number of pieces
+     */
+    public int numPieces() {
+        // Need to include error handling for point with no pieces
+        return activePoint.pieces.size();
+    }
     /**
      * Adds a piece to this point and updates the piece's position to the position of this point
      *
@@ -29,20 +47,21 @@ public class OffBoard extends Point{
     public void addPiece(Piece piece) {
         // Cannot add black piece to white off and vice verse
         // Cannot add black piece to white bar and vice verse
-        if(piece.getColor().equals(Player.Color.WHITE)==returnWhite) {
-            super.addPiece(piece);
-        } else {throw new IllegalArgumentException("This point is not focused on "+piece.getColor().name()+" and cannot accept this piece right now");}
+        setColor(piece.getColor());
+        activePoint.addPiece(piece);
     }
-    // TODO I'm sure there's a more elegant way to code this
-    public Piece removePiece(){
-        if(returnWhite){
-            if (positionWhite!=0){
-                return super.removePiece();
-            } else {return null;}
+
+    /**
+     * Removes the top piece from this point
+     *
+     * @return The piece which has been removed
+     */
+    public Piece removePiece() {
+
+        if (!activePoint.pieces.isEmpty()){
+            return activePoint.pieces.pop();
         } else {
-            if (positionBlack!=0){
-                return super.removePiece();
-            } else {return null;}
+            return null;
         }
     }
     public boolean isFull() {return false;}
@@ -50,31 +69,36 @@ public class OffBoard extends Point{
     public boolean isBlot(){return false;}
     //TODO figure out a way to do this without hard coding
     public boolean isOff(Player.Color color) {
-        if (color.equals(Player.Color.WHITE)) {
-            return positionWhite == 0;
-        } else {
-            return positionWhite == 25;
-        }
+        setColor(color);
+        return activePoint.col == 13;
     }
     public boolean isPlayers(Player chkPlayer) {
-        if (returnWhite) {
-            return chkPlayer.getColor().equals(Player.Color.WHITE)&!piecesWhite.isEmpty();
-        } else {
-            return chkPlayer.getColor().equals(Player.Color.BLACK)&!piecesBlack.isEmpty();
-        }
+        setColor(chkPlayer.getColor());
+        return !activePoint.isEmpty();
     }
     // TODO figure out a way to do this without hard coding
     public int[] getCoords() {
-        // Always column, row
-        int col = -1;
-        int row = -1;
-        if (returnWhite) {
-            row = 13;
-            col = (positionWhite == 0 ? this.col : 6);
-        } else {
-            row=1;
-            col = (positionBlack == 0 ? this.col:6);}
-        return new int[]{col, row};
+        return activePoint.getCoords();
+    }
+    public Piece getTopChecker() {
+        return activePoint.getTopChecker();
+    }
+    /**
+     * The colour of the pieces placed on this point
+     *
+     * @return String indicating the colour of the pieces on the point
+     */
+    public String getColour() {
+        // Need to include error handling for point with no pieces
+        String printCol = "  ";
+        if (!activePoint.pieces.isEmpty()) {
+            printCol = switch (activePoint.pieces.peek().getColor()) {
+                case BLACK -> " B ";
+                case WHITE -> " W ";
+            };
+        }
+        return printCol;
     }
 
+    public boolean isEmpty(){return activePoint.isEmpty();}
 }

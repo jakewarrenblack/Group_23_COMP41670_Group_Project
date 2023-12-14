@@ -110,12 +110,12 @@ public class Game {
         Scanner in = new Scanner(System.in);
         int opt = -1;
         System.out.println("Please select an option");
-        while (opt < 0 || opt > options.length) {
+        while (opt < 0 || opt >= options.length) {
             while (!in.hasNextInt()) {
                 System.out.println("You must enter a number corresponding to one of the options");
             }
             opt = in.nextInt() - 1;
-            if (opt < 0 || opt > options.length) {
+            if (opt < 0 || opt >= options.length) {
                 System.out.println("You must enter a number corresponding to one of the options");
             }
         }
@@ -154,14 +154,12 @@ public class Game {
     public void movePiece(int from, int to) {
         //TODO Are we applying this legal move check twice?
         try {
-            if (isLegalMove(from, to)) {
-                if (board.getPoint(to).isBlot()&!board.getPoint(to).isPlayers(currentPlayer)){
-                    board.moveToBar(to,log);
-                }
-                board.setColour(from,currentPlayer.getColor());
-                board.setColour(to,currentPlayer.getColor());
-                board.addPiece(to, board.removePiece(from));
+            if (board.getPoint(to).isBlot()&!board.getPoint(to).isPlayers(currentPlayer)){
+                board.moveToBar(to,log);
             }
+            board.setColour(from,currentPlayer.getColor());
+            board.setColour(to,currentPlayer.getColor());
+            board.addPiece(to, board.removePiece(from));
         }
         catch(IllegalArgumentException e){
             log.updateLog(e.getMessage());
@@ -317,7 +315,7 @@ public class Game {
             int endPosition = calculate(p.getPosition(), dieRoll, currentPlayer.getColor() == Player.Color.WHITE);
             try {
                 if (isLegalMove(p.getPosition(), endPosition)) {
-                    validMoves.add(new Move(p.getPosition(), endPosition)); // Store the valid move in the Map
+                    validMoves.add(new Move(p.getPosition(), endPosition,dieRoll)); // Store the valid move in the Map
                 }
             } catch (IllegalArgumentException ignored){}
         }
@@ -358,7 +356,11 @@ public class Game {
     }
 
     public static int calculate(int a, int b, boolean subtract) {
-        return subtract ? a - b : a + b;
+        if (subtract) {
+            return Math.max(0, a - b);
+        } else {
+            return Math.min(25, a + b);
+        }
     }
 
     public String[] listCommands(List<String> exclude){
@@ -396,13 +398,15 @@ public class Game {
     public static class Move{
         private int from;
         private int to;
+        private int roll;
 
-        public Move(int from,int to){
+        public Move(int from,int to, int roll){
             this.from=from;
             this.to = to;
+            this.roll = roll;
         }
         public boolean equals(Move other){
-            return this.from==other.from & this.to==other.to;
+            return this.from==other.from & this.to==other.to & this.roll==other.roll;
         }
         public int getFrom(){return from;}
         public int getTo(){return to;}

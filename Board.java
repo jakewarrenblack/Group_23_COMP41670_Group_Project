@@ -154,7 +154,9 @@ public class Board {
                 // For the bottom half of the board we move up (increment=-1)
                 int increment = row == 1 ? 1 : -1;
                 for (int i = 0; i < 6; i++) {
-                    for (int j = 0; point.numPieces() > j; j++) {
+                    // This will not display any checkers on a point in excess of 6
+                    // Likely to be a problem when taking checkers off at the end of the game
+                    for (int j = 0; point.numPieces() > j&j<6; j++) {
                         boardPrint[row + (j) * increment][col] = point.getColour();
                     }
                     for (int j = point.numPieces(); j < 6; j++) {
@@ -223,6 +225,7 @@ public class Board {
     }
 
     public boolean hasBarPieces(Player player){
+        getBar(player).setColor(player.getColor());
         return !getBar(player).isEmpty();
     }
 
