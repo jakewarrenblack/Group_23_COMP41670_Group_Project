@@ -39,6 +39,16 @@ public class Match {
 
         return players;
     }
+
+    public void setCurrentPlayer(int PlayerID) {
+        this.currentPlayer = players[PlayerID];
+        try {
+            game.setCurrentPlayer(this.currentPlayer);
+        } catch (IllegalArgumentException e) {
+            log.updateLog("Cannot set current player of game right now");
+        }
+    }
+
     public Game newGame(){
         this.game = new Game(die,log,players);
         this.game.setCurrentPlayer(currentPlayer);
@@ -57,13 +67,6 @@ public class Match {
         while (game.isGameOngoing()) {
             List<String> exclude = new ArrayList<>();
             List<Game.Move> validMoves;
-            game.processRolls(diceRolls);
-            if (game.isGameWon()) {
-                game.updateLog(currentPlayer.getName() + " has won!");
-                game.setScores(doubleValues[doubleFace]);
-                game.setGameState(Game.GameState.WON);
-            }
-            currentPlayer = game.nextTurn();
             exclude.add("MOVE");
             if(!currentPlayer.hasDouble()){
                 exclude.add("DOUBLE");
@@ -75,6 +78,13 @@ public class Match {
                 commandIndex = Game.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
                 command.acceptCommand(commands[commandIndex]);
             }
+            game.processRolls(diceRolls);
+            if (game.isGameWon()) {
+                game.updateLog(currentPlayer.getName() + " has won!");
+                game.setScores(doubleValues[doubleFace]);
+                game.setGameState(Game.GameState.WON);
+            }
+            currentPlayer = game.nextTurn();
             diceRolls=die.getCurrentValues();
         }
         gameIndex++;

@@ -1,4 +1,5 @@
 import javax.print.DocFlavor;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Command {
-    enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST}
+    enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST,}
     private Game game;
     private Match match;
     public Command(Match match) {
@@ -79,10 +80,13 @@ public class Command {
             case "TEST" -> {
                 game.updateLog("Running test script");
                 try {
-                    Command.test(game);
+                    test(game);
                     game.updateLog("Test script executed successfully");
                 } catch (IllegalArgumentException e){game.updateLog(e.getMessage());}
 
+            }
+            case "SET_PLAYER" -> {
+                match.setCurrentPlayer(Integer.parseInt(cmdTokens[1]));
             }
             default -> game.updateLog("I do not recognise " + cmdTokens[0] + " as a command");
         }
@@ -101,20 +105,26 @@ public class Command {
 
         return commands.toArray(new String[0]);
     }
-    public static void test(Game game){
+    public void test(Game game){
         Scanner testMoves = importMoves();
-        Command command = new Command(new Match(1));
         while (testMoves.hasNextLine()){
             String line = testMoves.nextLine();
-            if (!command.acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
+            if (!acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
         }
     }
-    public static void test(Game game, String path){
-        Scanner testMoves = importMoves(path);
-        Command command = new Command(new Match(1));
-        while (testMoves.hasNextLine()){
-            String line = testMoves.nextLine();
-            if (!command.acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
+    public void test(Game game, String path){
+        File f = new File(path);
+        Scanner scanner;
+        try {scanner = new Scanner(new FileReader(f));
+            while (scanner.hasNextLine()){
+                String line = scanner.nextLine();
+                if (line.equals("SET_PLAYER\t1\t")){
+                    System.out.println("Break");
+                }
+                if (!acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
+            }
+        } catch (Exception e) {
+            game.updateLog("Error reading file: " + e);
         }
     }
     public static Scanner importMoves(){
@@ -130,16 +140,11 @@ public class Command {
         return null;
     }
     public static Scanner importMoves(String path){
-        InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(path);
-        if (inputStream != null) {
-            try (Scanner scanner = new Scanner(inputStream)) {
-                return scanner;
-            } catch (Exception e) {
-                System.out.println("Error reading file: " + e);
-                return null;
-            }
-        } else {
-            System.out.println("File not found: " + path);
+        File f = new File(path);
+        try (Scanner scanner = new Scanner(new FileReader(f))) {
+            return scanner;
+        } catch (Exception e) {
+            System.out.println("Error reading file: " + e);
             return null;
         }
     }

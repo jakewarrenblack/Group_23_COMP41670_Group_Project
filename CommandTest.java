@@ -78,8 +78,11 @@ class CommandTest {
     }
     @Test
     void testScript(){
-        game.placePieces(game.getCurrentPlayer());
-        Command.test(game,"C:/Users/User/OneDrive/MSc/41670 Software Engineering/Group_Project/res/TestScript.txt");
+        game.placePieces(players[0]);
+        game.placePieces(players[1]);
+        command.test(game,"C:/Users/User/OneDrive/MSc/41670 Software Engineering/Group_Project/res/TestScript.txt");
+        assertTrue(players[0].canMoveOff());
+        assertTrue(players[1].canMoveOff());
     }
 
     @AfterEach
