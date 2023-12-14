@@ -16,19 +16,20 @@ public class Game {
 
     public Game(Die die) {
         this.gameState = GameState.ONGOING;
-        this.board = new Board();
+        this.board = new Board(1,1);
         this.players = new Player[2];
         this.die = die;
         this.log = new Log();
         this.cube=new Double();
     }
-    public Game(Die die,Log log,Player[] players) {
+    public Game(Die die,Log log,Player[] players, int gameNumber, int matchGames) {
         this.gameState = GameState.ONGOING;
-        this.board = new Board();
+        this.board = new Board(gameNumber,matchGames,,);
         this.players = players;
         this.die = die;
         this.log = log;
         this.cube=new Double();
+
     }
     public void setCommand(Command command){this.command=command;}
     public void setScores(int doubleValue){

@@ -14,7 +14,7 @@ class BoardTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     @BeforeEach
     void setUp(){
-        testBoard = new Board();
+        testBoard = new Board(1,1);
         testLog=new Log();
         System.setOut(new PrintStream(outputStreamCaptor));
     }
@@ -64,7 +64,7 @@ class BoardTest {
     void printBlank(){
         testBoard.print(Player.Color.WHITE,testLog.recentLog(10));
         assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+--24 OFF\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
-                " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
@@ -86,7 +86,7 @@ class BoardTest {
         outputStreamCaptor.reset();
         testBoard.print(Player.Color.WHITE,testLog.recentLog(10));
         assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+--24 OFF\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
-                " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 5\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 6\n" +
@@ -109,7 +109,7 @@ class BoardTest {
         testBoard.print(whitePlayer.getColor(), testLog.recentLog(10));
         assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+--24 OFF\n" +
                 " W  |  |  |  B  |     B  |  |  |  |  W    \n" +
-                " W  |  |  |  B  |     B  |  |  |  |  W    \n" +
+                " W  |  |  |  B  |     B  |  |  |  |  W         Game 1 of 1\n" +
                 " W  |  |  |  B  |     B  |  |  |  |  |    \n" +
                 " W  |  |  |  |  |     B  |  |  |  |  |         \n" +
                 " W  |  |  |  |  |     B  |  |  |  |  |         \n" +

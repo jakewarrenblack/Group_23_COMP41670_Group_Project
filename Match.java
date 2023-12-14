@@ -50,13 +50,13 @@ public class Match {
     }
 
     public Game newGame(){
-        this.game = new Game(die,log,players);
+        this.game = new Game(die,log,players,gameIndex,games);
         this.game.setCurrentPlayer(currentPlayer);
         return this.game;
     }
     public Game getGame(){return game;}
     public boolean Play(){
-        game=new Game(die,log,players);
+        game=new Game(die,log,players,gameIndex,games);
         command.newGame(game);
         for (int j = 0; j < 2; j++) {
             game.placePieces(this.players[j]);

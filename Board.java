@@ -5,6 +5,8 @@ public class Board {
     private Point[] bars = new Point[2];
     private Point[] offs = new Point[2];
 
+    private final String gameTracker;
+
     // We also need to have spaces for the bars and the off sections
     private String[][] boardPrint = new String[15][14];
     /* layout stores the positional information for the points on the board
@@ -58,19 +60,19 @@ public class Board {
 
 
 
-    public Board() {
+    public Board(int gameNumber, int matchGames, String playerBscore,String playerWscore) {
         for (int i = 1; i < 25; i++) {
             this.points[i] = new Point(layout.values()[i].getWhite(),layout.values()[i].getBlack(),layout.values()[i].getCol(),layout.values()[i].getRow());
         }
         this.points[0]=new OffBoard(layout.OFFWBARB.getWhite(), layout.OFFWBARB.getBlack(),layout.OFFWBARB.getCol(), layout.OFFWBARB.getRow());
         this.points[25]=new OffBoard(layout.OFFBBARW.getWhite(), layout.OFFBBARW.getBlack(),layout.OFFBBARW.getCol(), layout.OFFBBARW.getRow());
         // The top of the board
-        boardPrint[0] = new String[]{"-13", "-+-", "-+-", "-+-", "-+-", "18-", "BAR", "-19", "-+-", "-+-", "-+-", "-+-", "-24", " OFF"};
+        boardPrint[0] = new String[]{"-13", "-+-", "-+-", "-+-", "-+-", "18-", "BAR", "-19", "-+-", "-+-", "-+-", "-+-", "-24", " OFF","    "+playerBscore};
         // The bottom of the board
-        boardPrint[14] = new String[]{"-12", "-+-", "-+-", "-+-", "-+-", "-7-", "BAR", "-6-", "-+-", "-+-", "-+-", "-+-", "-1-", " OFF"};
+        boardPrint[14] = new String[]{"-12", "-+-", "-+-", "-+-", "-+-", "-7-", "BAR", "-6-", "-+-", "-+-", "-+-", "-+-", "-1-", " OFF","    "+playerWscore};
         // The middle row, separating the two halves of the board
         boardPrint[7] = new String[]{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "    "};
-
+        this.gameTracker = "Game "+gameNumber+" of "+matchGames;
     }
 
     /**
@@ -196,6 +198,7 @@ public class Board {
             for (String string : strings) {
                 System.out.print(string);
             }
+            if (i==2){System.out.print("     "+gameTracker);}
             if (i>3&i<=13){
                 System.out.print("     "+recentLog[i-4]);
             }
