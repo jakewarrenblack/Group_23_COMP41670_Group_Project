@@ -40,7 +40,7 @@ class PlayerTest {
         // Start positions - pip score should be 167
         assertAll(()->assertEquals(167,testWhite.pipScore()),
                 ()->assertEquals(167,testBlack.pipScore()));
-        Board testBoard = new Board(1,1);
+        Board testBoard = new Board(1,1,"Black score","White score");
         // Move one black piece from 19 to 21, black Pip score should go down to 165
         testBoard.placePieces(testBlack);
         testBoard.addPiece(21,testBoard.removePiece(19));

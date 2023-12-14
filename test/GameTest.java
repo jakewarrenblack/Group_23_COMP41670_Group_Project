@@ -20,7 +20,7 @@ class GameTest {
     void setUp() {
         blackPlayer = new Player("B", Player.Color.BLACK);
         whitePlayer = new Player("W", Player.Color.WHITE);
-        myGame = new Game(new Die());
+        myGame = new Game(new Die(),new Log(),new Player[]{blackPlayer,whitePlayer},1,1);
         myGame.addPlayer(0,blackPlayer,true);
         myGame.addPlayer(1,whitePlayer,false);
         myGame.placePieces(blackPlayer);
@@ -218,7 +218,7 @@ class GameTest {
         // 5 checkers on point 15
         // 6 checkers on point 20
         testPlayer contrivedP = new testPlayer("Contrived", Player.Color.BLACK);
-        Game contrived = new Game(new Die());
+        Game contrived = new Game(new Die(),new Log(),new Player[]{contrivedP,contrivedP},1,1);
         contrived.addPlayer(0,contrivedP,true);
         contrived.placePieces(contrivedP);
         ArrayList<Integer> rolls = new ArrayList<Integer>();

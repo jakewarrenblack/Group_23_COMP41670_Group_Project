@@ -36,6 +36,7 @@ public class Player  {
         return this.score;
     }
 
+    public String printScore(){return getName()+" match score: "+getScore();}
     public String getName(){
         return this.name;
     }

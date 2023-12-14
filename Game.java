@@ -16,16 +16,16 @@ public class Game {
 
     public Game(Die die) {
         this.gameState = GameState.ONGOING;
-        this.board = new Board(1,1);
         this.players = new Player[2];
+        this.board = new Board(1,1,players[0].printScore(),players[1].printScore());
         this.die = die;
         this.log = new Log();
         this.cube=new Double();
     }
     public Game(Die die,Log log,Player[] players, int gameNumber, int matchGames) {
         this.gameState = GameState.ONGOING;
-        this.board = new Board(gameNumber,matchGames,,);
         this.players = players;
+        this.board = new Board(gameNumber,matchGames,players[0].printScore(),players[1].printScore());
         this.die = die;
         this.log = log;
         this.cube=new Double();
