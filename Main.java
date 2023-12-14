@@ -5,46 +5,16 @@ public class Main {
 
     public static void main(String[] args) {
         Die die = new Die();
-        Game myGame = new Game(die);
-        Player currentPlayer;
-        myGame.addPlayers();
-
+        int games = Game.getInteger("How many games would you like to play?");
+        Match match = new Match(games);
+        match.addPlayers();
         // User has opted to quit
         if (Game.chooseOption("Would you like to begin the game?", new String[]{"Begin Game", "Quit"}) == 1) {
             System.out.println("Goodbye!");
-            myGame.setGameState(Game.GameState.LOST);
         }
-
         // Otherwise, user has opted to begin a game
         else {
-            currentPlayer = myGame.setInitialPlayer();
-            // game just started, set the initial dice roll value, which the player will have to use
-            List<Integer> diceRolls = die.getCurrentValues();
-
-            while (myGame.isGameOngoing()) {
-                List<String> exclude = new ArrayList<>();
-                List<Game.Move> validMoves;
-
-                myGame.processRolls(diceRolls);
-
-                if (myGame.isGameWon()) {
-                    myGame.updateLog(currentPlayer.getName() + " has won!");
-                    myGame.setGameState(Game.GameState.WON);
-                }
-                currentPlayer = myGame.nextTurn();
-
-                exclude.add("MOVE");
-
-                if(!myGame.hasDouble()){
-                    exclude.add("DOUBLE");
-                }
-                String[] commands = myGame.listCommands(exclude);
-                int command = commands.length-1;
-                // Loop until the player chooses to roll
-                while (command!=0) {
-                    command = Game.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
-                    new Command(myGame).acceptCommand(commands[command]);
-                }
+            while (!match.Play()){
             }
         }
     }

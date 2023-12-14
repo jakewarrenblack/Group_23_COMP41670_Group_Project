@@ -12,7 +12,7 @@ public class Game {
     private Player currentPlayer;
     private final Die die;
     private final Log log;
-    private final Command command;
+    private Command command;
 
     public Game(Die die) {
         this.gameState = GameState.ONGOING;
@@ -20,11 +20,21 @@ public class Game {
         this.players = new Player[2];
         this.die = die;
         this.log = new Log();
-        this.command = new Command(this);
         this.cube=new Double();
     }
-
-    public Player setInitialPlayer() {
+    public Game(Die die,Log log,Player[] players) {
+        this.gameState = GameState.ONGOING;
+        this.board = new Board();
+        this.players = players;
+        this.die = die;
+        this.log = log;
+        this.cube=new Double();
+    }
+    public void setCommand(Command command){this.command=command;}
+    public void setScores(int doubleValue){
+        for (Player player:players){player.setScore(player.pipScore()*doubleValue);}
+    }
+    public Player setInitialPlayer(){
         // the player to go first is determined by the dice roll
         while (Objects.equals(die.getCurrentValues().get(0), die.getCurrentValues().get(1))) {
             this.die.roll();
@@ -112,7 +122,7 @@ public class Game {
         return opt;
     }
 
-    public String getInput(String message) {
+    public static String getInput(String message) {
         Scanner in = new Scanner(System.in);
         String input = "";
         while (input.isEmpty()) {
@@ -124,7 +134,23 @@ public class Game {
         }
         return input;
     }
-
+    public static int getInteger(String message){
+        Scanner in = new Scanner(System.in);
+        String inputString = "";
+        int input=0;
+        while (input==0) {
+            System.out.println(message);
+            while (!in.hasNextInt()) {
+                String temp = in.next();
+                System.out.println(temp + " is not a number");
+            }
+            int temp = in.nextInt();
+            if (chooseOption("You have entered <" + temp + ">. Confirm?", new String[]{"Yes", "No"}) == 0) {
+                input = temp;
+            }
+        }
+        return input;
+    }
     public void movePiece(int from, int to) {
         //TODO Are we applying this legal move check twice?
         try {
@@ -236,13 +262,13 @@ public class Game {
     }
     public void processDoubleDiceRolls(List<Integer> diceRolls){
         int i=0;
-        ArrayList<Move> validMoves=new ArrayList<Move>();
-        while (!validMoves.isEmpty()){
-            validMoves=getAvailableValidMoves(diceRolls.get(i));
+        ArrayList<Move> validMoves=getAvailableValidMoves(diceRolls.get(i));
+        while (!validMoves.isEmpty()&i<diceRolls.size()){
             String[] validMoveString=validMovesString(validMoves);
             int chosenMove = chooseOption(currentPlayer.getName() +" you have the following options with dice number "+i+". Please choose: ",validMoveString );
             command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
             i++;
+            if (i<diceRolls.size()){validMoves=getAvailableValidMoves(diceRolls.get(i));}
         }
         print();
         if (i<diceRolls.size()){updateLog("You have no more valid moves");}

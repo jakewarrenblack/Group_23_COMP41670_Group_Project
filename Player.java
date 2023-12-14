@@ -2,7 +2,7 @@ public class Player  {
     protected final String name;
     protected int score;
     protected final int[] startPoints = new int[]{24,24,13,13,13,13,13,8,8,8,6,6,6,6,6};
-
+    protected boolean hasDouble;
     protected Piece[] pieces;
     public enum Color {BLACK, WHITE};
     protected final Color color;
@@ -14,6 +14,7 @@ public class Player  {
         this.name = name;
         this.color = color;
         this.score = 0;
+        this.hasDouble=true;
         this.pieces = new Piece[startPoints.length];
         for (int i=0;i<startPoints.length;i++){
             int position = startPoints[i];
@@ -21,9 +22,14 @@ public class Player  {
             pieces[i]=new Piece(this,position);
         }
     }
+    public void setDouble(boolean hasDouble){this.hasDouble=hasDouble;}
+
+    public boolean hasDouble() {
+        return hasDouble;
+    }
 
     public void setScore(int score){
-        this.score = score;
+        this.score += score;
     }
 
     public int getScore(){

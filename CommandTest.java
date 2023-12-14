@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CommandTest {
+    private Match match;
     private Game game;
     private Command command;
     private Player[] players;
@@ -17,10 +18,12 @@ class CommandTest {
     @BeforeEach
     void setUp() {
         players = new Player[]{new Player("B", Player.Color.BLACK),new Player("W", Player.Color.WHITE)};
-        game = new Game(new Die());
-        game.addPlayer(0,players[0],true);
-        game.addPlayer(1,players[1],false);
-        command = new Command(game);
+        match = new Match(1);
+        match.addPlayer(0,players[0],true);
+        match.addPlayer(1,players[1],false);
+        game = match.newGame();
+        command = new Command(match);
+        command.newGame(game);
         System.setOut(new PrintStream(outputStreamCaptor));
     }
     @Test
@@ -50,7 +53,7 @@ class CommandTest {
         game.roll();
         command.acceptCommand("DICE 5 4");
         game.roll();
-        assertEquals("The values of the dice have been set manually for the next roll/r/nB rolled 3, 3, 3, 3/r/nThe values of the dice have been set manually for the next roll/r/nB rolled 5, 4",outputStreamCaptor.toString().trim());
+        assertEquals("The values of the dice have been set manually for the next roll\r\nB rolled 3, 3, 3, 3\r\nThe values of the dice have been set manually for the next roll\r\nB rolled 5, 4",outputStreamCaptor.toString().trim());
     }
     @Test
     void test(){}

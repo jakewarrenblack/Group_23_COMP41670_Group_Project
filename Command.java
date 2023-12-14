@@ -1,6 +1,7 @@
 import javax.print.DocFlavor;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.*;
@@ -9,11 +10,16 @@ import java.io.IOException;
 
 public class Command {
     enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST}
-    private final Game game;
-    public Command(Game game) {
-        this.game = game;
+    private Game game;
+    private Match match;
+    public Command(Match match) {
+        this.match = match;
     }
 
+    public void newGame(Game game){
+        this.game=game;
+        game.setCommand(this);
+    }
     static void printTextFile(String filePath) {
         InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(filePath);
         if (inputStream != null) {
@@ -47,11 +53,25 @@ public class Command {
                     game.updateLog(e.getMessage());
                 }
             }
-            case "DOUBLE" -> game.doubleBet();
+            case "DOUBLE" -> match.doubleBet();
             case "DICE" -> {
-                int[] rolls = new int[cmdTokens.length-1];
-                for (int i=0;i<rolls.length;i++){
-                    rolls[i]=Integer.parseInt(cmdTokens[i+1]);
+                int[] rolls;
+                if(cmdTokens.length==1) {
+                    int firstRoll = Game.getInteger("Please enter the desired value for the first die");
+                    int secondRoll = Game.getInteger("Please enter the desired value for the second die");
+                    rolls = new int[2];
+                    if (firstRoll == secondRoll) {
+                        System.out.println("Since the two die rolls specified are equal your number of rolls will be doubled");
+                        rolls = new int[4];
+                        Arrays.fill(rolls, firstRoll);
+                    } else {
+                        rolls = new int[]{firstRoll, secondRoll};
+                    }
+                } else {
+                    rolls = new int[cmdTokens.length-1];
+                    for (int i=1;i<cmdTokens.length;i++){
+                        rolls[i-1]=Integer.parseInt(cmdTokens[i]);
+                    }
                 }
                 game.setDie(rolls);
                 game.updateLog("The values of the dice have been set manually for the next roll");
@@ -83,7 +103,7 @@ public class Command {
     }
     public static void test(Game game){
         Scanner testMoves = importMoves();
-        Command command = new Command(game);
+        Command command = new Command(new Match(1));
         while (testMoves.hasNextLine()){
             String line = testMoves.nextLine();
             if (!command.acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
@@ -91,7 +111,7 @@ public class Command {
     }
     public static void test(Game game, String path){
         Scanner testMoves = importMoves(path);
-        Command command = new Command(game);
+        Command command = new Command(new Match(1));
         while (testMoves.hasNextLine()){
             String line = testMoves.nextLine();
             if (!command.acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
