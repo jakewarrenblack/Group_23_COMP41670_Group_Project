@@ -9,7 +9,10 @@ public class Match {
     private final Command command;
     private final int[] doubleValues = new int[]{1,2,4,8,16,32,64};
 
+    Player[] players;
+
     public Match(int games){
+        this.players = new Player[2];
         this.games=games;
         this.gameIndex=0;
         this.doubleFace=0;
@@ -17,7 +20,10 @@ public class Match {
     }
 
     public Game newGame(){
-        this.game = new Game(gameIndex,games);
+        this.game = new Game(gameIndex,games, players);
+
+        this.players = game.getPlayers();
+
         return this.game;
     }
 

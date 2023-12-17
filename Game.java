@@ -12,15 +12,15 @@ public class Game {
     private Command command;
 
 
-    public Game(int gameNumber, int matchGames) {
+    // players are an optional parameter
+    // if they're provided, use them. otherwise, run addPlayers
+    public Game(int gameNumber, int matchGames, Player... players) {
         // Singleton pattern. No need to pass around instances of these, there can be only one of each for a given game.
         this.die = Die.getInstance();
         this.log = Log.getInstance();
         this.cube=new Double();
-
-        this.players = addPlayers();
+        this.players = players.length == 2 ? players : addPlayers();
         this.board = new Board(gameNumber,matchGames, this.players);
-
         board.print(currentPlayer.getColor(), log.recentLog(10));
     }
 
@@ -81,7 +81,7 @@ public class Game {
         }
     }
 
-    private Player[] addPlayers() {
+    public Player[] addPlayers() {
         Player[] players = new Player[2];
 
         for (int i = 0; i < 2; i++) {
