@@ -154,7 +154,7 @@ public class Match {
                 commandIndex = Command.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
                 command.acceptCommand(commands[commandIndex]);
             }
-            game.processRolls(diceRolls);
+            game.processRolls(diceRolls,currentPlayer);
             if (game.isGameWon()) {
                 updateLog(currentPlayer.getName() + " has won!");
                 game.finishGame();

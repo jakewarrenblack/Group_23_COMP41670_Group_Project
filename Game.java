@@ -154,7 +154,8 @@ public class Game {
      *
      * @param diceRolls the values of their dice rolls
      */
-    public void processRolls(List<Integer> diceRolls){
+    public void processRolls(List<Integer> diceRolls,Player currentPlayer){
+        this.currentPlayer=currentPlayer;
         if (diceRolls.size()==2){
             processDifferentDiceRolls(diceRolls);
         } else {
