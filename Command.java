@@ -42,7 +42,7 @@ public class Command {
             case "ROLL" -> game.roll();
             case "QUIT" -> {
                 System.out.println("Goodbye");
-                return false;
+                System.exit(0);
             }
             case "PIP" -> game.pipScore();
             case "HINT" -> printTextFile("res/hints.txt");
