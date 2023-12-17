@@ -1,14 +1,37 @@
 import java.util.Stack;
 
+/**
+ * At the beginning and end of the board there are Off Board spaces, which double as Bar spaces
+ * An off-board point contains a white point and a black point
+ * The point which interacts with other classes can be defined by the color of the player we're
+ * interested in
+ */
 public class OffBoard extends Point{
+    /**
+     * Whether the colour we're interested in at present is white
+     */
     private boolean returnWhite;
+    /**
+     * The active point at present. Can be the wh
+     */
     private Point activePoint;
+    /**
+     * The white point. If the position is 0, this will be the Off Board. If it's 25, this will be the Bar
+     */
     private final Point pointWhite;
-
+    /**
+     * The black point. If the position is 0, this will be the bar. If it's 25, this will be the off point
+     */
     private final Point pointBlack;
-    private final Stack<Piece> piecesWhite = new Stack<>();
-    private final Stack<Piece> piecesBlack = new Stack<>();
     // TODO Fix the absolute value on row
+
+    /**
+     * Construct a new OffBoard instance
+     * @param positionWhite The position of the Point on the board from the perspective of the WHITE player
+     * @param positionBlack The position of the Point on the board from the perspective of the BLACK player
+     * @param col The column the representation of the Point should be shown in when being printed to the console
+     * @param row The row the representation of the point should start from when being printed to the console
+     */
     public OffBoard(int positionWhite, int positionBlack, int col, int row) {
         super(positionWhite,positionBlack,col,row);
         int blackCol = positionBlack==0?col:(int)(col/2);
@@ -24,15 +47,24 @@ public class OffBoard extends Point{
         returnWhite=isWhite;
         activePoint=activePoint();
     }
+    /**
+     * Set the focus colour of the point
+     * Only really works for OffBoard Points - other points have colours
+     * defined by the pieces they hold
+     *
+     * @param color the colour on which to focus the point
+     */
     public void setColor(Player.Color color){
         returnWhite=color== Player.Color.WHITE;
         activePoint=activePoint();
     }
+
+    /**
+     * Set the active point based on the returnWhite boolean
+     * @return the white point if returnWhite is true, the black point otherwise
+     */
     public Point activePoint(){
         return returnWhite?pointWhite:pointBlack;
-    }
-    public Stack<Piece> activeStack(){
-        return returnWhite? piecesWhite:piecesBlack;
     }
     /**
      * The number of pieces currently placed on this point
@@ -68,22 +100,49 @@ public class OffBoard extends Point{
             return null;
         }
     }
-    public boolean isFull() {return false;}
 
+    /**
+     * Checks if the point is full. Off Board and Bar points are never full
+     * @return false
+     */
+    public boolean isFull() {return false;}
+    /**
+     * A blot is a point with only one piece on it
+     *
+     * @return always false as blots are not relevant to OffBoard points
+     */
     public boolean isBlot(){return false;}
     //TODO figure out a way to do this without hard coding
+
+    /**
+     * Checks if this point is the off board area for the player of interest
+     * @param color of the player of interest
+     * @return true if the column of the activePoint is 13
+     */
     public boolean isOff(Player.Color color) {
         setColor(color);
         return activePoint.col == 13;
     }
+    /**
+     * Checks if the activePoint holds Pieces of the player of interest
+     * @param chkPlayer
+     * @return true if the pieces belong to the player, false if they don't or there are no pieces
+     */
     public boolean isPlayers(Player chkPlayer) {
         setColor(chkPlayer.getColor());
         return !activePoint.isEmpty();
     }
-    // TODO figure out a way to do this without hard coding
+    /**
+     * The position of the activePoint in the board representation to be printed to the console
+     * @return an integer array. First entry is the column, second entry is the row
+     */
     public int[] getCoords() {
         return activePoint.getCoords();
     }
+    /**
+     * Return the piece currently on top of the activePoint
+     * @return a Piece instance
+     */
     public Piece getTopChecker() {
         return activePoint.getTopChecker();
     }
@@ -103,6 +162,9 @@ public class OffBoard extends Point{
         }
         return printCol;
     }
-
+    /**
+     * Checks if the activePoint holds any pieces
+     * @return true if there are no pieces, false otherwise
+     */
     public boolean isEmpty(){return activePoint.isEmpty();}
 }

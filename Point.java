@@ -28,6 +28,13 @@ public class Point {
      */
     protected Stack<Piece> pieces = new Stack<>();
 
+    /**
+     * Construce a new Point instance
+     * @param positionWhite The position of the Point on the board from the perspective of the WHITE player
+     * @param positionBlack The position of the Point on the board from the perspective of the BLACK player
+     * @param col The column the representation of the Point should be shown in when being printed to the console
+     * @param row The row the representation of the point should start from when being printed to the console
+     */
     public Point(int positionWhite, int positionBlack, int col, int row) {
         this.positionWhite = positionWhite;
         this.positionBlack = positionBlack;
@@ -126,6 +133,11 @@ public class Point {
     public int[] getCoords(){
         // Always col, row
         return new int[]{col, row};}
+
+    /**
+     * Checks if the point can hold more pieces
+     * @return true if there are six pieces on the point, false otherwise
+     */
     public boolean isFull(){return pieces.size()==6;}
 
     /**
