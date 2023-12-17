@@ -62,6 +62,9 @@ class PlayerTest {
             if ((i+1)%6==0){j++;}
         }
         assertTrue(testBlack.canMoveOff());
+        // What about when some pieces are already off?
+        testBlack.getPiece(1).setPosition(25);
+        assertTrue(testBlack.canMoveOff());
     }
     @Test
     void hasWon(){

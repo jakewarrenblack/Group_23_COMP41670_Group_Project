@@ -1,3 +1,5 @@
+import com.sun.source.tree.BreakTree;
+
 public class Player  {
     protected final String name;
     protected int score;
@@ -6,6 +8,10 @@ public class Player  {
     protected Piece[] pieces;
     public enum Color {BLACK, WHITE};
     protected final Color color;
+
+    private final int offPip = 0;
+    private final int homePip = 6;
+    private final int barPip = 25;
 
     public Player(String name, Color color){
         if(name.isBlank()){
@@ -81,29 +87,56 @@ public class Player  {
      * @return              The position of the point the piece is on
      */
     public int piecePosition(int index){return pieces[index].getPosition();}
-    // TODO Find a way to avoid absolute value
+
     public boolean canMoveOff(){
         int minPip = 1;
         for (Piece p:pieces){
             minPip = Math.max(minPip,p.getPip());
         }
-        return minPip<7;
+        return minPip<=homePip;
     }
-    // TODO avoid absolute value!
+
     public boolean isBarred(int from){
         int maxPip=0;
         for (Piece p:pieces){
             if (p.getPip()==25&p.getPosition()==from){return false;}
             maxPip=Math.max(maxPip,p.getPip());
         }
-        return maxPip==25;
+        return maxPip==barPip;
     }
-    // TODO Find a way to avoid absolute value
+
     public boolean hasWon(){
-        int minPip = 0;
+        int maxPip = 0;
         for (Piece p:pieces){
-            minPip=Math.max(minPip,p.getPip());
+            maxPip=Math.max(maxPip,p.getPip());
         }
-        return minPip<1;
+        return maxPip==offPip;
+    }
+
+    public boolean hasOff(){
+        int minPip = 25;
+        for (Piece p:pieces){
+            minPip=Math.min(minPip,p.getPip());
+        }
+        return minPip==offPip;
+    }
+    public boolean hasBar(){
+        int maxPip = 0;
+        for (Piece p:pieces){
+            maxPip=Math.max(maxPip,p.getPip());
+        }
+        return maxPip==barPip;
+    }
+    public int getGameScore(int doubleValue){
+        int score = pipScore()*doubleValue;
+        // If a player loses without bearing off any checkers, they are gammoned and their score is doubled
+        if (!hasOff()){
+            // If a player loses while they haven't born off any checkers and they still have a checker on the bar
+            // they are backgammoned and their score is quadrupled
+            if (hasBar()) {
+                score *= 4;
+            } else { score*=2;}
+        }
+        return score;
     }
 }

@@ -6,6 +6,7 @@ import java.util.*;
 public class Game {
     private final Board board;
     protected enum GameState {ONGOING, WON, LOST}
+    private boolean isOngoing = true;
     private final Double cube;
     private GameState gameState;
     private Player[] players;
@@ -15,7 +16,6 @@ public class Game {
     private Command command;
 
     public Game(Die die) {
-        this.gameState = GameState.ONGOING;
         this.players = new Player[2];
         this.board = new Board(1,1,players[0].printScore(),players[1].printScore());
         this.die = die;
@@ -23,7 +23,6 @@ public class Game {
         this.cube=new Double();
     }
     public Game(Die die,Log log,Player[] players, int gameNumber, int matchGames) {
-        this.gameState = GameState.ONGOING;
         this.players = players;
         this.board = new Board(gameNumber,matchGames,players[0].printScore(),players[1].printScore());
         this.die = die;
@@ -33,7 +32,7 @@ public class Game {
     }
     public void setCommand(Command command){this.command=command;}
     public void setScores(int doubleValue){
-        for (Player player:players){player.setScore(player.pipScore()*doubleValue);}
+        for (Player player:players){player.setScore(player.getGameScore(doubleValue));}
     }
     public Player setInitialPlayer(){
         // the player to go first is determined by the dice roll
@@ -65,11 +64,11 @@ public class Game {
 
     public boolean isGameWon() {
 
-        return this.gameState == GameState.WON;
+        return !this.isOngoing;
     }
 
     public boolean isGameOngoing() {
-        return this.gameState == GameState.ONGOING;
+        return this.isOngoing;
     }
 
     public void setGameState(GameState gameState) {
@@ -153,7 +152,6 @@ public class Game {
         return input;
     }
     public void movePiece(int from, int to) {
-        //TODO Are we applying this legal move check twice?
         try {
             if (board.getPoint(to).isBlot()&!board.getPoint(to).isPlayers(currentPlayer)){
                 board.moveToBar(to,log);
@@ -242,6 +240,7 @@ public class Game {
         } else {
             processDoubleDiceRolls(diceRolls);
         }
+        isOngoing=!currentPlayer.hasWon();
     }
     public void processDifferentDiceRolls(List<Integer> diceRolls){
         ArrayList<Move> validMoves = getAllAvailableValidMoves(diceRolls);
@@ -393,6 +392,7 @@ public class Game {
             updateLog("The doubling cube now shows " + cube.getDouble() + " and " + cube.getOwner().getName() + " has possession");
         } else {
             updateLog(newPlayer.getName()+" has rejected the offer to double the bet and loses the game");
+            // TODO change this to use the isOngoing boolean
             setGameState(Game.GameState.LOST);
         }
     }

@@ -2,12 +2,11 @@ import javax.swing.*;
 
 public class Board {
     private Point[] points = new Point[26];
-    private Point[] bars = new Point[2];
-    private Point[] offs = new Point[2];
 
     private final String gameTracker;
 
-    // We also need to have spaces for the bars and the off sections
+
+
     private String[][] boardPrint = new String[15][14];
     /* layout stores the positional information for the points on the board
      *  positionWhite stores the positions of each point from the perspective of the WHITE player
