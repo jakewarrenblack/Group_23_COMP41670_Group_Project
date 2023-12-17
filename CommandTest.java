@@ -19,8 +19,6 @@ class CommandTest {
     void setUp() {
         players = new Player[]{new Player("B", Player.Color.BLACK),new Player("W", Player.Color.WHITE)};
         match = new Match(1);
-        match.addPlayer(0,players[0],true);
-        match.addPlayer(1,players[1],false);
         game = match.newGame();
         command = new Command(match);
         command.newGame(game);
@@ -40,7 +38,7 @@ class CommandTest {
     void quit(){}
     @Test
     void move(){
-        game.placePieces(players[0]);
+        game.getBoard().placePieces(players[0]);
         command.acceptCommand("Move 1 3");
         assertEquals("You have moved from 1 to 3",outputStreamCaptor.toString().trim());
     }
@@ -78,8 +76,9 @@ class CommandTest {
     }
     @Test
     void testScript(){
-        game.placePieces(players[0]);
-        game.placePieces(players[1]);
+        game.getBoard().placePieces(players[0]);
+        game.getBoard().placePieces(players[1]);
+
         command.test(game,"C:/Users/User/OneDrive/MSc/41670 Software Engineering/Group_Project/res/TestScript.txt");
         assertTrue(players[0].canMoveOff());
         assertTrue(players[1].canMoveOff());

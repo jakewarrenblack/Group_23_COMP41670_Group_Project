@@ -7,7 +7,7 @@ public class Main {
         Die die = new Die();
         int games = Game.getInteger("How many games would you like to play?");
         Match match = new Match(games);
-        match.addPlayers();
+
         // User has opted to quit
         if (Game.chooseOption("Would you like to begin your first game?", new String[]{"Begin Game", "Quit"}) == 1) {
             System.out.println("Goodbye!");

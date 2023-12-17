@@ -4,44 +4,46 @@ import java.util.Arrays;
 
 public class Board {
     private Point[] points;
-
     private final String gameTracker;
-
     private String[][] boardPrint;
+    private final int numPoints = 24;
+    private final int pointSize = 6;
+    private final int gap = 1;
+    private final int border = 1;
+    private final Player[] players;
 
-    private int numPoints = 24;
-    private int pointSize = 6;
-    private int gap = 1;
-    private int border = 1;
-    private int barWhite = numPoints+1;
-    private int barBlack = 0;
-    private int offWhite = 0;
-    private int offBlack = numPoints+1;
 
-    public Board(int gameNumber, int matchGames, String playerBscore,String playerWscore) {
+    public Board(int gameNumber, int matchGames, Player[] players) {
         this.points=new Point[this.numPoints+2];
-        int midPoint = (int) numPoints/2;
-        int quarterPoint = (int) numPoints/4;
+        this.players = players;
+
+        int midPoint = numPoints /2;
         // The printout of the board must have enough rows for two sets of points, 2 boarders, and the gap in between
         // It must have enough columns for half of the points plus the bars and the off boards and a column for the log
         this.boardPrint = new String[gap+2*(border+pointSize)][midPoint+3];
         Arrays.stream(this.boardPrint).forEach(a -> Arrays.fill(a, ""));
         this.points = createPoints();
+
+        // This needs to happen *after* the points have been initialised
+        for(Player p: players){
+            this.placePieces(p);
+        }
+
         // Now set up the string array which will get printed to the console as the game state
         // Confusingly, although in respect of Points class column always comes first, then row
         // For the boardPrint string row comes first, then column
-        this.boardPrint=createPrintOut(this.boardPrint,playerBscore,playerWscore);
+        this.boardPrint=createPrintOut(this.boardPrint);
         this.gameTracker = "Game "+gameNumber+" of "+matchGames;
     }
 
     public Point[] createPoints(){
         Point[] points=new Point[numPoints+2];
-        int midPoint = (int) numPoints/2;
-        int quarterPoint = (int) numPoints/4;
+        int midPoint = numPoints /2;
+        int quarterPoint = numPoints /4;
         // First add the off board positions for white off/black bar and black off/white bar
         points[0] = new OffBoard(0,numPoints+1,midPoint+1,gap+pointSize*2);
         points[numPoints+1] = new OffBoard(numPoints+1,0,midPoint+1,border);
-        // Now add all the on board points
+        // Now add all the onboard points
         int col = midPoint+1;
         for (int i=1;i<=numPoints;i++){
             col+=colIncrement(i,midPoint,quarterPoint);
@@ -52,9 +54,9 @@ public class Board {
         }
         return points;
     }
-    public String[][] createPrintOut(String[][] printOut,String playerBscore,String playerWscore){
-        int midPoint = (int) numPoints/2;
-        int quarterPoint = (int) numPoints/4;
+    public String[][] createPrintOut(String[][] printOut){
+        int midPoint = numPoints /2;
+        int quarterPoint = numPoints /4;
         // Now set up the string array which will get printed to the console as the game state
         // Confusingly, although in respect of Points class column always comes first, then row
         // For the boardPrint string row comes first, then column
@@ -62,8 +64,8 @@ public class Board {
         printOut[gap+2*(border+pointSize)-1][midPoint+1]="OFF";
         printOut[0][quarterPoint]="BAR";
         printOut[gap+2*(border+pointSize)-1][quarterPoint]="BAR";
-        printOut[0][boardPrint[0].length-1]="    "+playerBscore;
-        printOut[gap+2*(border+pointSize)-1][printOut[gap+2*(border+pointSize)-1].length-1]="    "+playerWscore;
+        printOut[0][boardPrint[0].length-1]="    "+ this.players[0].getScore();
+        printOut[gap+2*(border+pointSize)-1][printOut[gap+2*(border+pointSize)-1].length-1]="    "+ this.players[1].getScore();
         for (int i=0;i<gap;i++) {
             String[] printGap = new String[midPoint + 2];
             Arrays.fill(printGap, "   ");
@@ -260,10 +262,14 @@ public class Board {
     }
 
     public OffBoard getBar(Player player){
+        int barWhite = numPoints + 1;
+        int barBlack = 0;
         return player.getColor()== Player.Color.WHITE ? (OffBoard) points[barWhite] : (OffBoard) points[barBlack];
     }
 
     public OffBoard getOff(Player player){
+        int offWhite = 0;
+        int offBlack = numPoints + 1;
         return player.getColor()==Player.Color.WHITE ? (OffBoard) points[offWhite] : (OffBoard) points[offBlack];
     }
 

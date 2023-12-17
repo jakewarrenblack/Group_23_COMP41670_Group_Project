@@ -14,7 +14,11 @@ class BoardTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     @BeforeEach
     void setUp(){
-        testBoard = new Board(1,1,"Black score","White score");
+        Player testBlackPlayer = new Player("Test", Player.Color.BLACK);
+        Player testWhitePlayer = new Player("Test", Player.Color.WHITE);
+        Player[] players = new Player[]{testBlackPlayer,testWhitePlayer};
+
+        testBoard = new Board(1,1, players);
         testLog=new Log();
         System.setOut(new PrintStream(outputStreamCaptor));
     }

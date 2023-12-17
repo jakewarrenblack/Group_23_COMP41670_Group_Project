@@ -172,9 +172,9 @@ class GameTest {
         // In the start position a throw of 6 will allow the black player to move from 1 to 7, from 12 to 18
         // from 17 to 23. They can't move their pieces on 6 because they can't move off board yet
         ArrayList<Game.Move> expected = new ArrayList<Game.Move>();
-        expected.add(new Game.Move(1,7,6));
-        expected.add(new Game.Move(12,18,6));
-        expected.add(new Game.Move(17,23,6));
+        expected.add(new Game.Move(1,7));
+        expected.add(new Game.Move(12,18));
+        expected.add(new Game.Move(17,23));
         ArrayList<Game.Move> moves = myGame.getAvailableValidMoves(6);
         assertEquals(expected.size(),moves.size());
         boolean contains=false;
@@ -192,10 +192,10 @@ class GameTest {
     void getAvailableValidMovesReplica(){
         // App crashes when black starts with roll of 1 and 2
         ArrayList<Game.Move> expected = new ArrayList<Game.Move>();
-        expected.add(new Game.Move(1,3,2));
-        expected.add(new Game.Move(12,14,2));
-        expected.add(new Game.Move(17,19,2));
-        expected.add(new Game.Move(19,21,2));
+        expected.add(new Game.Move(1,3));
+        expected.add(new Game.Move(12,14));
+        expected.add(new Game.Move(17,19));
+        expected.add(new Game.Move(19,21));
         ArrayList<Game.Move> moves = myGame.getAvailableValidMoves(2);
         assertEquals(expected.size(),moves.size());
         boolean contains=false;
@@ -225,7 +225,7 @@ class GameTest {
         rolls.add(3);
         rolls.add(5);
         ArrayList<Game.Move> validMoves = contrived.getAllAvailableValidMoves(rolls);
-        Game.Move[] expected = new Game.Move[]{new Game.Move(20,23,3),new Game.Move(15,18,3),new Game.Move(10,13,3),new Game.Move(12,17,5),new Game.Move(10,15,5)};
+        Game.Move[] expected = new Game.Move[]{new Game.Move(20,23),new Game.Move(15,18),new Game.Move(10,13),new Game.Move(12,17),new Game.Move(10,15)};
         assertEquals(expected.length,validMoves.size());
         boolean contains=false;
         for (int i=0;i<expected.length;i++){

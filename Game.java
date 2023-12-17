@@ -1,6 +1,3 @@
-import jdk.jshell.spi.ExecutionControl;
-
-import java.sql.Array;
 import java.util.*;
 
 public class Game {
@@ -8,28 +5,24 @@ public class Game {
     protected enum GameState {ONGOING, WON, LOST}
     private boolean isOngoing = true;
     private final Double cube;
-    private GameState gameState;
     private Player[] players;
     private Player currentPlayer;
     private final Die die;
     private final Log log;
     private Command command;
 
-    public Game(Die die) {
-        this.players = new Player[2];
-        this.board = new Board(1,1,players[0].printScore(),players[1].printScore());
-        this.die = die;
-        this.log = new Log();
-        this.cube=new Double();
-    }
-    public Game(Die die,Log log,Player[] players, int gameNumber, int matchGames) {
-        this.players = players;
-        this.board = new Board(gameNumber,matchGames,players[0].printScore(),players[1].printScore());
-        this.die = die;
-        this.log = log;
-        this.cube=new Double();
 
+    public Game(int gameNumber, int matchGames) {
+        this.players = addPlayers();
+        this.board = new Board(gameNumber,matchGames, this.players);
+
+        // Singleton pattern. No need to pass around instances of these, there can be only one of each for a given game.
+        this.die = Die.getInstance();
+        this.log = Log.getInstance();
+
+        this.cube=new Double();
     }
+
     public void setCommand(Command command){this.command=command;}
     public void setScores(int doubleValue){
         for (Player player:players){player.setScore(player.getGameScore(doubleValue));}
@@ -49,7 +42,9 @@ public class Game {
         return this.currentPlayer;
     }
 
-    public void setCurrentPlayer(Player player){this.currentPlayer=player;}
+    public void setCurrentPlayer(Player player){
+        this.currentPlayer=player;
+    }
     public Player nextTurn() {
         // just switch between 0 and 1, whichever is NOT the current player
         this.currentPlayer = this.players[0] == this.currentPlayer ? this.players[1] : this.players[0];
@@ -72,7 +67,6 @@ public class Game {
     }
 
     public void setGameState(GameState gameState) {
-        this.gameState = gameState;
     }
 
     public void addPlayer(int index, Player player, boolean isCurrentPlayer) {
@@ -82,24 +76,16 @@ public class Game {
         }
     }
 
-    public Player[] addPlayers() {
+    private Player[] addPlayers() {
         Player[] players = new Player[2];
 
         for (int i = 0; i < 2; i++) {
             Player.Color color = Player.Color.values()[i];
             players[i] = new Player(getInput("Please enter the name of the " + color + " player"), color);
         }
-        // Not sure if this should sit here or be in another method?
+
         this.players = players;
-        for (int i = 0; i < 2; i++) {
-            placePieces(this.players[i]);
-        }
-
         return players;
-    }
-
-    public void placePieces(Player player) {
-        board.placePieces(player);
     }
 
     public static int chooseOption(String message, String[] options) {
@@ -136,7 +122,6 @@ public class Game {
     }
     public static int getInteger(String message){
         Scanner in = new Scanner(System.in);
-        String inputString = "";
         int input=0;
         while (input==0) {
             System.out.println(message);
@@ -227,14 +212,14 @@ public class Game {
 
         log.updateLog(message);
     }
+
     public void setDie(int[] rolls){die.setValues(rolls);}
+
     public void updateLog(String message) {
         log.updateLog(message);
     }
+
     public void processRolls(List<Integer> diceRolls){
-        List<Move> validMoves;
-        String[] validMoveString;
-        int chosenMove;
         if (diceRolls.size()==2){
             processDifferentDiceRolls(diceRolls);
         } else {
@@ -242,6 +227,7 @@ public class Game {
         }
         isOngoing=!currentPlayer.hasWon();
     }
+
     public void processDifferentDiceRolls(List<Integer> diceRolls){
         ArrayList<Move> validMoves = getAllAvailableValidMoves(diceRolls);
         String[] validMoveString = validMovesString(validMoves);
@@ -258,6 +244,7 @@ public class Game {
         }
         print();
     }
+
     public void processDoubleDiceRolls(List<Integer> diceRolls){
         int i=0;
         ArrayList<Move> validMoves=getAvailableValidMoves(diceRolls.get(i));
@@ -271,6 +258,7 @@ public class Game {
         print();
         if (i<diceRolls.size()){updateLog("You have no more valid moves");}
     }
+
     public ArrayList<Move> getAllAvailableValidMoves(List<Integer> dieRoll){
         // If we have rolled two different values then the player cannot make a move
         // with the smaller die value first if it would leave them with no legal moves
@@ -315,7 +303,7 @@ public class Game {
             int endPosition = calculate(p.getPosition(), dieRoll, currentPlayer.getColor() == Player.Color.WHITE);
             try {
                 if (isLegalMove(p.getPosition(), endPosition)) {
-                    validMoves.add(new Move(p.getPosition(), endPosition,dieRoll)); // Store the valid move in the Map
+                    validMoves.add(new Move(p.getPosition(), endPosition)); // Store the valid move in the Map
                 }
             } catch (IllegalArgumentException ignored){}
         }
@@ -397,18 +385,19 @@ public class Game {
         }
     }
     public static class Move{
-        private int from;
-        private int to;
-        private int roll;
+        private final int from, to;
 
-        public Move(int from,int to, int roll){
+        public Move(int from,int to){
             this.from=from;
             this.to = to;
-            this.roll = roll;
         }
+
         public boolean equals(Move other){
-            return this.from==other.from & this.to==other.to & this.roll==other.roll;
+            // don't need to check individual attributes,
+            // we can just check if both objects are literally identical
+            return this == other;
         }
+
         public int getFrom(){return from;}
         public int getTo(){return to;}
         public int getFromPip(Board board, Player player){

@@ -60,7 +60,7 @@ public class Command {
                 if(cmdTokens.length==1) {
                     int firstRoll = Game.getInteger("Please enter the desired value for the first die");
                     int secondRoll = Game.getInteger("Please enter the desired value for the second die");
-                    rolls = new int[2];
+
                     if (firstRoll == secondRoll) {
                         System.out.println("Since the two die rolls specified are equal your number of rolls will be doubled");
                         rolls = new int[4];
@@ -84,9 +84,6 @@ public class Command {
                     game.updateLog("Test script executed successfully");
                 } catch (IllegalArgumentException e){game.updateLog(e.getMessage());}
 
-            }
-            case "SET_PLAYER" -> {
-                match.setCurrentPlayer(Integer.parseInt(cmdTokens[1]));
             }
             default -> game.updateLog("I do not recognise " + cmdTokens[0] + " as a command");
         }
