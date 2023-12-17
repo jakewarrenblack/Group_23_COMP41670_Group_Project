@@ -1,4 +1,3 @@
-import javax.print.DocFlavor;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.io.IOException;
 public class Command {
     enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST,}
     private Game game;
-    private Match match;
+    private final Match match;
     public Command(Match match) {
         this.match = match;
     }
@@ -21,6 +20,7 @@ public class Command {
         this.game=game;
         game.setCommand(this);
     }
+
     static void printTextFile(String filePath) {
         InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(filePath);
         if (inputStream != null) {
@@ -80,7 +80,7 @@ public class Command {
             case "TEST" -> {
                 game.updateLog("Running test script");
                 try {
-                    test(game);
+                    test();
                     game.updateLog("Test script executed successfully");
                 } catch (IllegalArgumentException e){game.updateLog(e.getMessage());}
 
@@ -102,13 +102,15 @@ public class Command {
 
         return commands.toArray(new String[0]);
     }
-    public void test(Game game){
+
+    public void test(){
         Scanner testMoves = importMoves();
         while (testMoves.hasNextLine()){
             String line = testMoves.nextLine();
             if (!acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
         }
     }
+
     public void test(Game game, String path){
         File f = new File(path);
         Scanner scanner;
@@ -124,6 +126,7 @@ public class Command {
             game.updateLog("Error reading file: " + e);
         }
     }
+
     public static Scanner importMoves(){
         try {
             JFileChooser chooser = new JFileChooser();
@@ -136,6 +139,7 @@ public class Command {
         } catch (IOException ex){ex.printStackTrace();}
         return null;
     }
+
     public static Scanner importMoves(String path){
         File f = new File(path);
         try (Scanner scanner = new Scanner(new FileReader(f))) {

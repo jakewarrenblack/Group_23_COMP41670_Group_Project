@@ -1,10 +1,8 @@
 import java.util.*;
 
 public class Main {
-    private static final String[] rolls = new String[]{"first", "second", "third", "fourth"};
 
     public static void main(String[] args) {
-        Die die = new Die();
         int games = Game.getInteger("How many games would you like to play?");
         Match match = new Match(games);
 
@@ -14,8 +12,7 @@ public class Main {
         }
         // Otherwise, user has opted to begin a game
         else {
-            while (!match.Play()){
-            }
+            match.play();
         }
     }
 }

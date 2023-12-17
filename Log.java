@@ -4,7 +4,7 @@ import java.util.ArrayList;
  * Prints to the screen messages sent to the players and then keeps a record of those messages
  */
 public class Log {
-    private final ArrayList<String> log;
+    private ArrayList<String> log = new ArrayList<>();
 
     // Like the dice, we only want one log, so we can use the singleton pattern
     private static Log instance = null;
@@ -23,7 +23,7 @@ public class Log {
      * Prints a message to the screen and then adds that message to the message log
      * @param entry
      */
-    public static void updateLog(String entry){
+    public void updateLog(String entry){
         System.out.println(entry);
         log.add(entry);
     }

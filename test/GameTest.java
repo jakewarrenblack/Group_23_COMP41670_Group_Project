@@ -20,11 +20,9 @@ class GameTest {
     void setUp() {
         blackPlayer = new Player("B", Player.Color.BLACK);
         whitePlayer = new Player("W", Player.Color.WHITE);
-        myGame = new Game(new Die(),new Log(),new Player[]{blackPlayer,whitePlayer},1,1);
+        myGame = new Game(1,1);
         myGame.addPlayer(0,blackPlayer,true);
         myGame.addPlayer(1,whitePlayer,false);
-        myGame.placePieces(blackPlayer);
-        myGame.placePieces(whitePlayer);
         myGame.setCurrentPlayer(blackPlayer);
         System.setOut(new PrintStream(outputStreamCaptor));
     }
@@ -218,9 +216,8 @@ class GameTest {
         // 5 checkers on point 15
         // 6 checkers on point 20
         testPlayer contrivedP = new testPlayer("Contrived", Player.Color.BLACK);
-        Game contrived = new Game(new Die(),new Log(),new Player[]{contrivedP,contrivedP},1,1);
+        Game contrived = new Game(1,1);
         contrived.addPlayer(0,contrivedP,true);
-        contrived.placePieces(contrivedP);
         ArrayList<Integer> rolls = new ArrayList<Integer>();
         rolls.add(3);
         rolls.add(5);
@@ -228,16 +225,15 @@ class GameTest {
         Game.Move[] expected = new Game.Move[]{new Game.Move(20,23),new Game.Move(15,18),new Game.Move(10,13),new Game.Move(12,17),new Game.Move(10,15)};
         assertEquals(expected.length,validMoves.size());
         boolean contains=false;
-        for (int i=0;i<expected.length;i++){
-            int j=0;
+
+        for (Game.Move move : expected) {
+            int j = 0;
             while (!contains) {
-                contains = expected[i].equals(validMoves.get(j));
+                contains = move.equals(validMoves.get(j));
                 j++;
             }
             assertTrue(contains);
-            contains=false;
+            contains = false;
         }
     }
-
-
 }

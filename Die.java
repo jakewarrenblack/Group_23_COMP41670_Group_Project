@@ -54,7 +54,7 @@ public class Die {
         this.setManual=true;
     }
 
-    public static List<Integer> getCurrentValues(){
+    public List<Integer> getCurrentValues(){
         this.setManual=false;
         return this.values;
     }

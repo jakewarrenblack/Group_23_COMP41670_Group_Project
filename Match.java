@@ -23,26 +23,30 @@ public class Match {
 
     public Game getGame(){return game;}
 
-    public boolean Play(){
+    public void play(){
         game=new Game(gameIndex,games);
+        command.newGame(game);
 
 
         // game just started, set the initial dice roll value, which the player will have to use
-        List<Integer> diceRolls = Die.getCurrentValues();
+        List<Integer> diceRolls = Die.getInstance().getCurrentValues();
         while (game.isGameOngoing()) {
             List<String> exclude = new ArrayList<>();
-            List<Game.Move> validMoves;
             exclude.add("MOVE");
+
             if(!game.getCurrentPlayer().hasDouble()){
                 exclude.add("DOUBLE");
             }
-            String[] commands = game.listCommands(exclude);
+
+            String[] commands = command.listCommands(exclude);
             int commandIndex = commands.length-1;
+
             // Loop until the player chooses to roll
             while (commandIndex!=0) {
                 commandIndex = Game.chooseOption(game.getCurrentPlayer().getName() + " what would you like to do next?", commands);
                 command.acceptCommand(commands[commandIndex]);
             }
+
             game.processRolls(diceRolls);
             if (game.isGameWon()) {
                 game.updateLog(game.getCurrentPlayer().getName() + " has won!");
@@ -51,22 +55,23 @@ public class Match {
             }
             game.nextTurn();
 
-            diceRolls= Die.getCurrentValues();
+            diceRolls= Die.getInstance().getCurrentValues();
         }
+
         gameIndex++;
-        Log.updateLog("Game "+gameIndex+" of "+games+" complete. " + players[0].getName()+" has a score of "+players[0].getScore()+" and "+players[1].getName()+" has a score of "+players[1].getScore());
-        return gameIndex==games;
+        Log.getInstance().updateLog("Game "+gameIndex+" of "+games+" complete. " + game.getPlayers()[0].getName() + " has a score of " + game.getPlayers()[0].getScore()+" and " + game.getPlayers()[1].getName() + " has a score of " + game.getPlayers()[1].getScore());
     }
 
     public void doubleBet(){
-        Player otherPlayer = currentPlayer == this.players[0] ? this.players[1] : this.players[0];
-        if (Game.chooseOption(otherPlayer.getName()+", "+currentPlayer.getName()+" has offered to double the bet. Do you accept?",new String[]{"Yes","No"})==0) {
+        Player otherPlayer = game.getCurrentPlayer() == game.getPlayers()[0] ? game.getPlayers()[1] : game.getPlayers()[0];
+
+        if (Game.chooseOption(otherPlayer.getName() + ", " + game.getCurrentPlayer().getName() + " has offered to double the bet. Do you accept?",new String[]{"Yes","No"})==0) {
             doubleFace = Math.min(6,doubleFace+1);
             otherPlayer.setDouble(true);
-            currentPlayer.setDouble(false);
-            log.updateLog("The doubling cube now shows " + doubleValues[doubleFace] + " and " + otherPlayer.getName() + " has possession");
+            game.getCurrentPlayer().setDouble(false);
+            Log.getInstance().updateLog("The doubling cube now shows " + doubleValues[doubleFace] + " and " + otherPlayer.getName() + " has possession");
         } else {
-            log.updateLog(otherPlayer.getName()+" has rejected the offer to double the bet and loses the game");
+            Log.getInstance().updateLog(otherPlayer.getName()+" has rejected the offer to double the bet and loses the game");
             game.setGameState(Game.GameState.LOST);
         }
     }
