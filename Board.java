@@ -2,22 +2,69 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * The board on which the Backgammon game is played
+ * Consists of 24 points, in two rows, each split in two by a bar
+ *
+ */
 public class Board {
+    /**
+     * An array of Points which can hold Pieces
+     */
     private Point[] points;
-
+    /**
+     * Where the game currently being played sits within the match series
+     */
     private final String gameTracker;
-
+    /**
+     * A string representation of the board showing the current game state
+     * which can be printed out to the console
+     */
     private String[][] boardPrint;
-
+    /**
+     * The number of standard points on the board
+     * Could conceivably be changed for "Super Backgammon"
+     * but in normal play should always be 24
+     */
     private int numPoints = 24;
+    /**
+     * How many pieces can be placed on a point
+     */
     private int pointSize = 6;
+    /**
+     * How many blank rows should be placed between the two series of points
+     * when displaying the board on the console
+     */
     private int gap = 2;
+    /**
+     * How big should the border around the points be when displaying the board on the console
+     */
     private int border = 1;
+    /**
+     * The index of the White bar in the Points array
+     */
     private int barWhite = numPoints+1;
+    /**
+     * The index of the Black bar in the points array
+     */
     private int barBlack = 0;
+    /**
+     * The index of the White Off Board in the points array
+     */
     private int offWhite = 0;
+    /**
+     * The index of the Black Off Board in the points array
+     */
     private int offBlack = numPoints+1;
 
+    /**
+     * Construct a new instance of Board
+     *
+     * @param gameNumber the position of the current game within the series comprising the match
+     * @param matchGames the number of games in the match series
+     * @param playerBscore the Black player's match score at the start of this game
+     * @param playerWscore the White player's match score at the start of this game
+     */
     public Board(int gameNumber, int matchGames, String playerBscore,String playerWscore) {
         this.points=new Point[this.numPoints+2];
         int midPoint = (int) numPoints/2;
@@ -34,6 +81,15 @@ public class Board {
         this.gameTracker = "Game "+gameNumber+" of "+matchGames;
     }
 
+    /**
+     * Create the Point instances which will comprise the board
+     * The points will be constructed with defined pip scores for black and white
+     * and a defined row and column start point for when the board is printed to the console
+     * These will be calculated based on the board's parameters
+     * and the position of the Point within the Points[] array
+     *
+     * @return and array of Point instances
+     */
     public Point[] createPoints(){
         Point[] points=new Point[numPoints+2];
         int midPoint = (int) numPoints/2;
@@ -52,6 +108,16 @@ public class Board {
         }
         return points;
     }
+
+    /**
+     * Pre-populate a String representation of the board which can be printed out to the console
+     *
+     * @param printOut
+     * @param playerBscore
+     * @param playerWscore
+     *
+     * @return a String array representing the game state which can be printed to the console
+     */
     public String[][] createPrintOut(String[][] printOut,String playerBscore,String playerWscore){
         int midPoint = (int) numPoints/2;
         int quarterPoint = (int) numPoints/4;
@@ -71,6 +137,17 @@ public class Board {
         }
         return printOut;
     }
+
+    /**
+     * Return the text which should appear above or below a point
+     * on the game state printed to the console so the points can be identified
+     * Only the first and last point in each board quarter should be shown
+     * The rest are represented by a plus sign
+     *
+     * @param position the position of the point on the board
+     * @param quarterPoint how many points are in a quarter
+     * @return A 3 character string which can be added to the boardPrint string array
+     */
     protected String colNames(int position,int quarterPoint){
         String name = "-+-";
         String colName = String.valueOf(position);
@@ -103,6 +180,18 @@ public class Board {
         return name;
     }
 
+    /**
+     * How much to change the column value by when creating each new Point instance
+     * On the bottom of the board need to reduce by 1, on the top increase by one
+     * Exception is when crossing the bar when the magnitude of the increment should be two
+     * And when moving from the bottom of the board to the top, when the column should stay constant
+     * while the row changes
+     *
+     * @param position the position of the point on the board
+     * @param midPoint how many points are in a half board
+     * @param quarterPoint how many points are in a quarter board
+     * @return integer representing the column change
+     */
     private int colIncrement(int position, int midPoint, int quarterPoint){
         // If we're on the first half of the points on the board we move from right to left
         int colIncrement = position<=midPoint?-1:1;
@@ -112,9 +201,6 @@ public class Board {
         colIncrement*=(position-1)%quarterPoint==0&(position-1)%midPoint!=0?2:1;
         return colIncrement;
     }
-
-
-
     /**
      * Removes a piece from a particular point
      * @param       index       The point from which the piece is to be taken
@@ -210,6 +296,13 @@ public class Board {
         }
     }
 
+    /**
+     * What to print on a point when there are no pieces there
+     * If it's a normal on-board point it shoudl be "|"
+     * If it's the bar or off it should be " "
+     * @param i
+     * @return a three character string which can be added to the boardPrint String array to print to console
+     */
     public String emptySpace(int i){
         if (i>0&i<points.length-1){
             return " | ";
@@ -256,33 +349,67 @@ public class Board {
         return points[index];
     }
 
+    /**
+     * Return the Point array comprising the board
+     * @return a Point[] array
+     */
     public Point[] getPoints(){
         return this.points;
     }
 
+    /**
+     * Return the bar of the specified player
+     * @param player whose bar board point we want to return
+     * @return the OffBoard instance containing the bar of the specified player
+     */
     public OffBoard getBar(Player player){
         return player.getColor()== Player.Color.WHITE ? (OffBoard) points[barWhite] : (OffBoard) points[barBlack];
     }
-
+    /**
+     * Return the off board area of the specified player
+     * @param player whose off-board point we want to return
+     * @return the OffBoard instance containing the off board area of the specified player
+     */
     public OffBoard getOff(Player player){
         return player.getColor()==Player.Color.WHITE ? (OffBoard) points[offWhite] : (OffBoard) points[offBlack];
     }
 
+    /**
+     * Does the specified player have any pieces on the bar
+     * @param player
+     * @return true if the player has pieces on the bar, false if not
+     */
     public boolean hasBarPieces(Player player){
         getBar(player).setColor(player.getColor());
         return !getBar(player).isEmpty();
     }
 
-    public boolean isOff(int index, Player player){
-        OffBoard off = getOff(player);
-        return points[index].equals(off);
-    }
+    /**
+     * The colour of the pieces on the specified point
+     * @param index the position of the Point on the Board
+     * @return a string indicating the colour of the Pieces on the Point
+     */
     public String getColour(int index){return points[index].getColour();}
 
+    /**
+     * Set the focus colour of the specified point
+     * Only really works for OffBoard Points - other points have colours
+     * defined by the pieces they hold
+     *
+     * @param index The position of the point on the board
+     * @param color the colour on which to focus the point
+     */
     public void setColour(int index,Player.Color color){
         points[index].setColor(color);
     }
 
+    /**
+     * If a player lands on a point holding a single piece of the opposite colour
+     * that piece is moved to the bard
+     *
+     * @param blotPosition The position of the point holding the blot to be moved to the bar
+     * @param log The current match's log so the notification of the move to bar can be logged
+     */
     public void moveToBar(int blotPosition, Log log){
         if (points[blotPosition].isBlot()) {
             Piece blot = points[blotPosition].removePiece();
