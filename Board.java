@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Board {
     private Point[] points = new Point[26];
@@ -62,6 +64,10 @@ public class Board {
         this.points=new Point[numPoints+2];
         int midPoint = (int) numPoints/2;
         int quarterPoint = (int) numPoints/4;
+        // The printout of the board must have enough rows for two sets of points, 2 boarders, and the gap in between
+        // It must have enough columns for half of the points plus the bars and the off boards and a column for the log
+        boardPrint = new String[gap+2*(border+pointSize)][midPoint+3];
+        Arrays.stream(boardPrint).forEach(a -> Arrays.fill(a, ""));
         int col = midPoint+1;
         // First add the off board positions for white off/black bar and black off/white bar
         this.points[0] = new OffBoard(0,numPoints+1,midPoint+1,gap+pointSize*2);
@@ -71,14 +77,54 @@ public class Board {
             col+=colIncrement(i,midPoint,quarterPoint);
             int row = i<=midPoint?gap+2*pointSize:border;
             this.points[i] = new Point(i,numPoints-i+1,col,row);
+            int printOutRow = row + (border * i<=midPoint?1:-1);
+            boardPrint[printOutRow][col]=colNames(i,quarterPoint);
+        }
+        // Confusingly, although in respect of Points class column always comes first, then row
+        // For the boardPrint string row comes first, then column
+        boardPrint[0][midPoint+1] = "OFF";
+        boardPrint[gap+2*(border+pointSize)-1][midPoint+1]="OFF";
+        boardPrint[0][quarterPoint]="BAR";
+        boardPrint[gap+2*(border+pointSize)-1][quarterPoint]="BAR";
+        boardPrint[0][boardPrint[0].length-1]="    "+playerBscore;
+        boardPrint[gap+2*(border+pointSize)-1][boardPrint[gap+2*(border+pointSize)-1].length-1]="    "+playerWscore;
+        for (int i=0;i<gap;i++) {
+            String[] printGap = new String[midPoint + 2];
+            Arrays.fill(printGap, "   ");
+            boardPrint[pointSize + border + i] = printGap;
         }
         this.gameTracker = "Game "+gameNumber+" of "+matchGames;
-        // The top of the board
-        boardPrint[0] = new String[]{"-13", "-+-", "-+-", "-+-", "-+-", "18-", "BAR", "-19", "-+-", "-+-", "-+-", "-+-", "-24", " OFF","    "+playerBscore};
-        // The bottom of the board
-        boardPrint[14] = new String[]{"-12", "-+-", "-+-", "-+-", "-+-", "-7-", "BAR", "-6-", "-+-", "-+-", "-+-", "-+-", "-1-", " OFF","    "+playerWscore};
-        // The middle row, separating the two halves of the board
-        boardPrint[7] = new String[]{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "    "};
+    }
+    protected String colNames(int position,int quarterPoint){
+        String name = "-+-";
+        String colName = String.valueOf(position);
+        if (position%quarterPoint==0) {
+            if ((position - 1) < (quarterPoint * 2)) {
+                if (colName.length() == 1) {
+                    name = "-" + colName + "-";
+                } else {
+                    name = "-" + colName;
+                }
+            } else {
+                if (colName.length() == 1) {
+                    name = "-" + colName + "-";
+                } else {
+                    name = colName + "-";
+                }
+            }
+        }
+        if ((position-1)%quarterPoint==0){
+            if ((position-1)<(quarterPoint*2)){
+                if (colName.length()==1){
+                    name = "-" + colName + "-";
+                } else {
+                    name = colName + "-";
+                }
+            } else {
+                name = "-"+colName;
+            }
+        }
+        return name;
     }
 
     private int colIncrement(int position, int midPoint, int quarterPoint){

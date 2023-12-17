@@ -23,20 +23,31 @@ class BoardTest {
     void constructor(){
         Board board = new Board(24,6,1,1,1,1,"Black score","White score");
         board.print(Player.Color.WHITE, testLog.recentLog(10));
-        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+--24 OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
-                "                                                \n" +
+                "                                               \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
-                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1- OFF    White score\n",outputStreamCaptor.toString());
+                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1-OFF    White score\n",outputStreamCaptor.toString());
+    }
+    @Test
+    void colNames(){
+        assertEquals("-1-",testBoard.colNames(1,6));
+        assertEquals("-6-",testBoard.colNames(6,6));
+        assertEquals("-7-",testBoard.colNames(7,6));
+        assertEquals("-12",testBoard.colNames(12,6));
+        assertEquals("-13",testBoard.colNames(13,6));
+        assertEquals("18-",testBoard.colNames(18,6));
+        assertEquals("-19",testBoard.colNames(19,6));
+        assertEquals("24-",testBoard.colNames(24,6));
     }
     @Test
     void placeWhitePieces(){
