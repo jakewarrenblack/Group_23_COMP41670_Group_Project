@@ -35,8 +35,8 @@ public class Die {
 
     public void setValues(int[] rolls){
         this.values.clear();
-        for (int i=0;i<rolls.length;i++){
-            this.values.add(rolls[i]);
+        for (int roll : rolls) {
+            this.values.add(roll);
         }
         this.setManual=true;
     }
