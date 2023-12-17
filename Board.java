@@ -57,7 +57,39 @@ public class Board {
 
     }
 
+    public Board(int numPoints,int pointSize,int gap,int border, int gameNumber,int matchGames, String playerBscore,String playerWscore){
+        // We need the number of points plus spaces for the off board areas
+        this.points=new Point[numPoints+2];
+        int midPoint = (int) numPoints/2;
+        int quarterPoint = (int) numPoints/4;
+        int col = midPoint+1;
+        // First add the off board positions for white off/black bar and black off/white bar
+        this.points[0] = new OffBoard(0,numPoints+1,midPoint+1,gap+pointSize*2);
+        this.points[numPoints+1] = new OffBoard(numPoints+1,0,midPoint+1,border);
+        // Now add all the on board points
+        for (int i=1;i<=numPoints;i++){
+            col+=colIncrement(i,midPoint,quarterPoint);
+            int row = i<=midPoint?gap+2*pointSize:border;
+            this.points[i] = new Point(i,numPoints-i+1,col,row);
+        }
+        this.gameTracker = "Game "+gameNumber+" of "+matchGames;
+        // The top of the board
+        boardPrint[0] = new String[]{"-13", "-+-", "-+-", "-+-", "-+-", "18-", "BAR", "-19", "-+-", "-+-", "-+-", "-+-", "-24", " OFF","    "+playerBscore};
+        // The bottom of the board
+        boardPrint[14] = new String[]{"-12", "-+-", "-+-", "-+-", "-+-", "-7-", "BAR", "-6-", "-+-", "-+-", "-+-", "-+-", "-1-", " OFF","    "+playerWscore};
+        // The middle row, separating the two halves of the board
+        boardPrint[7] = new String[]{"   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "   ", "    "};
+    }
 
+    private int colIncrement(int position, int midPoint, int quarterPoint){
+        // If we're on the first half of the points on the board we move from right to left
+        int colIncrement = position<=midPoint?-1:1;
+        // If we're at exactly the mid point the column stays the same as we switch from bottom to top
+        colIncrement*=position==midPoint+1?0:1;
+            // If we're at the quarter points we skip a column to accommodate the bar
+        colIncrement*=(position-1)%quarterPoint==0&(position-1)%midPoint!=0?2:1;
+        return colIncrement;
+    }
 
     public Board(int gameNumber, int matchGames, String playerBscore,String playerWscore) {
         for (int i = 1; i < 25; i++) {

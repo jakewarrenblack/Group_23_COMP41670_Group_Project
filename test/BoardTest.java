@@ -18,6 +18,26 @@ class BoardTest {
         testLog=new Log();
         System.setOut(new PrintStream(outputStreamCaptor));
     }
+
+    @Test
+    void constructor(){
+        Board board = new Board(24,6,1,1,1,1,"Black score","White score");
+        board.print(Player.Color.WHITE, testLog.recentLog(10));
+        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+--24 OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                "                                                \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1- OFF    White score\n",outputStreamCaptor.toString());
+    }
     @Test
     void placeWhitePieces(){
         Player testPlayer = new Player("Test", Player.Color.WHITE);
