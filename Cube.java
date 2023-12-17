@@ -1,12 +1,12 @@
-public class Double {
-    private final int[] values = new int[]{2,4,8,16,32,64};
+public class Cube {
+    private final int[] values = new int[]{1,2,4,8,16,32,64};
     private int doublings;
     private Player owner;
-    public Double(){
+    public Cube(){
         doublings=0;
     }
     public void doubleScore(Player newOwner){
-        Math.max(doublings++,5);
+        Math.max(doublings++,values.length);
         this.owner=newOwner;
     }
     public void setOwner(Player owner){

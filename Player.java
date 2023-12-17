@@ -139,4 +139,7 @@ public class Player  {
         }
         return score;
     }
+    public void loseGame(int doubleValue){
+        this.score+=getGameScore(doubleValue);
+    }
 }
