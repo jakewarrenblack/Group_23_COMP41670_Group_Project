@@ -8,11 +8,15 @@ public class OffBoard extends Point{
     private final Point pointBlack;
     private final Stack<Piece> piecesWhite = new Stack<>();
     private final Stack<Piece> piecesBlack = new Stack<>();
-
+    // TODO Fix the absolute value on row
     public OffBoard(int positionWhite, int positionBlack, int col, int row) {
         super(positionWhite,positionBlack,col,row);
-        pointBlack = new Point(positionWhite,positionBlack,positionBlack == 0 ? this.col:6,1);
-        pointWhite = new Point(positionWhite,positionBlack,positionWhite == 0 ? this.col : 6,13);
+        int blackCol = positionBlack==0?col:(int)(col/2);
+        int whiteCol = positionBlack==0?(int)(col/2):col;
+        int blackRow = 1;
+        int whiteRow = 14;
+        pointBlack=new Point(positionWhite,positionBlack,blackCol,blackRow);
+        pointWhite=new Point(positionWhite,positionBlack,whiteCol,whiteRow);
         returnWhite=false;
         activePoint=pointBlack;
     }

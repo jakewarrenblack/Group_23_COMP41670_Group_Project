@@ -78,9 +78,10 @@ class BoardTest {
         assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
-                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                "                                               \n" +
                 "                                               \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
@@ -100,9 +101,10 @@ class BoardTest {
         assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 5\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 6\n" +
-                " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 7\n" +
+                "                                               This is my test number 7\n" +
                 "                                               This is my test number 8\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 9\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 10\n" +
@@ -123,9 +125,10 @@ class BoardTest {
                 " W  |  |  |  B  |     B  |  |  |  |  W    \n" +
                 " W  |  |  |  B  |     B  |  |  |  |  W         Game 1 of 1\n" +
                 " W  |  |  |  B  |     B  |  |  |  |  |    \n" +
-                " W  |  |  |  |  |     B  |  |  |  |  |         \n" +
+                " W  |  |  |  |  |     B  |  |  |  |  |    \n" +
                 " W  |  |  |  |  |     B  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
+                "                                               \n" +
                 "                                               \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " B  |  |  |  |  |     W  |  |  |  |  |         \n" +
@@ -173,7 +176,7 @@ class BoardTest {
         testBoard.setColour(25, Player.Color.BLACK);
         assertArrayEquals(new int[]{13,1},testBoard.getPoint(25).getCoords());
         testBoard.setColour(0, Player.Color.WHITE);
-        assertArrayEquals(new int[]{13,13},testBoard.getPoint(0).getCoords());
+        assertArrayEquals(new int[]{13,14},testBoard.getPoint(0).getCoords());
 
     }
     @Test

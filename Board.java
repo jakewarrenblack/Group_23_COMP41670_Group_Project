@@ -11,7 +11,7 @@ public class Board {
 
     private int numPoints = 24;
     private int pointSize = 6;
-    private int gap = 1;
+    private int gap = 2;
     private int border = 1;
     private int barWhite = numPoints+1;
     private int barBlack = 0;
@@ -211,7 +211,7 @@ public class Board {
     }
 
     public String emptySpace(int i){
-        if (i>0&i<25){
+        if (i>0&i<points.length-1){
             return " | ";
         } else {
             return "   ";
@@ -226,21 +226,22 @@ public class Board {
      */
     public void print (Player.Color color, String[] recentLog) {
         updateBoard();
-
-        int[] printOrder = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-
-        if (color.equals(Player.Color.BLACK)) {
-            printOrder = new int[]{14, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0};
+        int[] printOrder = new int[boardPrint.length];
+        for (int i=0;i<boardPrint.length;i++){
+            printOrder[i]=i;
         }
-
-        for (int i : printOrder) {
-            String[] strings = boardPrint[i];
+        if (color.equals(Player.Color.BLACK)){
+            printOrder[0]=boardPrint.length-1;
+            printOrder[boardPrint.length-1]=0;
+        }
+        for (int i=0;i<printOrder.length;i++) {
+            String[] strings = boardPrint[printOrder[i]];
             for (String string : strings) {
                 System.out.print(string);
             }
             if (i==2){System.out.print("     "+gameTracker);}
-            if (i>3&i<=13){
-                System.out.print("     "+recentLog[i-4]);
+            if (i>(boardPrint.length-recentLog.length-2)&i<=boardPrint.length-2){
+                System.out.print("     "+recentLog[i-5]);
             }
             System.out.print("\n");
         }

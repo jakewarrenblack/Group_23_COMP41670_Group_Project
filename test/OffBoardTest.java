@@ -17,7 +17,7 @@ class OffBoardTest {
 
     @BeforeEach
     void setUp(){
-        offWhiteBarBlack = new OffBoard(0,25,13,13);
+        offWhiteBarBlack = new OffBoard(0,25,13,14);
         offBlackBarWhite = new OffBoard(25,0,13,1);
         testPlayerW = new Player("Test W", Player.Color.WHITE);
         testPlayerB = new Player("Test B", Player.Color.BLACK);
@@ -210,9 +210,9 @@ class OffBoardTest {
     void getCoords(){
         // Always column, row
         int[] offB = new int[]{13,1};
-        int[] offW = new int[]{13,13};
+        int[] offW = new int[]{13,14};
         int[] barB = new int[]{6,1};
-        int[] barW = new int[]{6,13};
+        int[] barW = new int[]{6,14};
         offBlackBarWhite.setColor(Player.Color.BLACK);
         offWhiteBarBlack.setColor(Player.Color.BLACK);
         assertArrayEquals(offB,offBlackBarWhite.getCoords());
