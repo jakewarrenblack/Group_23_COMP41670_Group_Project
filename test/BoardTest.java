@@ -14,7 +14,7 @@ class BoardTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     @BeforeEach
     void setUp(){
-        testBoard = new Board(1,1,"Black score","White score");
+        testBoard = new Board(24,6,1,1,1,1,"Black score","White score");
         testLog=new Log();
         System.setOut(new PrintStream(outputStreamCaptor));
     }
@@ -94,20 +94,20 @@ class BoardTest {
     @Test
     void printBlank(){
         testBoard.print(Player.Color.WHITE,testLog.recentLog(10));
-        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+--24 OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
-                "                                                \n" +
+                "                                               \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
-                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1- OFF    White score\n",outputStreamCaptor.toString());
+                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1-OFF    White score\n",outputStreamCaptor.toString());
     }
     @Test
     void printLogs(){
@@ -116,20 +116,20 @@ class BoardTest {
         }
         outputStreamCaptor.reset();
         testBoard.print(Player.Color.WHITE,testLog.recentLog(10));
-        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+--24 OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 5\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 6\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 7\n" +
-                "                                                This is my test number 8\n" +
+                "                                               This is my test number 8\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 9\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 10\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 11\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 12\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 13\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         This is my test number 14\n" +
-                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1- OFF    White score\n",outputStreamCaptor.toString());
+                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1-OFF    White score\n",outputStreamCaptor.toString());
     }
     @Test
     void testBoardWithPieces(){
@@ -138,21 +138,21 @@ class BoardTest {
         Player whitePlayer = new Player("Test", Player.Color.WHITE);
         testBoard.placePieces(whitePlayer);
         testBoard.print(whitePlayer.getColor(), testLog.recentLog(10));
-        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+--24 OFF    Black score\n" +
+        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n" +
                 " W  |  |  |  B  |     B  |  |  |  |  W    \n" +
                 " W  |  |  |  B  |     B  |  |  |  |  W         Game 1 of 1\n" +
                 " W  |  |  |  B  |     B  |  |  |  |  |    \n" +
                 " W  |  |  |  |  |     B  |  |  |  |  |         \n" +
                 " W  |  |  |  |  |     B  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
-                "                                                \n" +
+                "                                               \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " B  |  |  |  |  |     W  |  |  |  |  |         \n" +
                 " B  |  |  |  |  |     W  |  |  |  |  |         \n" +
                 " B  |  |  |  W  |     W  |  |  |  |  |         \n" +
                 " B  |  |  |  W  |     W  |  |  |  |  B         \n" +
                 " B  |  |  |  W  |     W  |  |  |  |  B         \n" +
-                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1- OFF    White score\n",outputStreamCaptor.toString());
+                "-12-+--+--+--+--7-BAR-6--+--+--+--+--1-OFF    White score\n",outputStreamCaptor.toString());
     }
     @Test
     void removePiece(){
