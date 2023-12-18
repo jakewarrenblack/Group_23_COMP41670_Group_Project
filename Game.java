@@ -74,11 +74,10 @@ public class Game {
         this.currentPlayer=player;
     }
 
-    public Player nextTurn() {
+    public void nextTurn() {
         // just switch between 0 and 1, whichever is NOT the current player
         this.currentPlayer = this.players[0] == this.currentPlayer ? this.players[1] : this.players[0];
         board.print(currentPlayer.getColor(), log.recentLog(10));
-        return this.currentPlayer;
     }
 
     public Player getCurrentPlayer() {

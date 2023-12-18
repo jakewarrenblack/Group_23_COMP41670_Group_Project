@@ -118,9 +118,9 @@ public class Match {
      * @return True if the number of games have been complete, False otherwise
      */
     public void play(){
-        game=new Game(gameIndex,games);
+        game= new Game(gameIndex,games);
         command.newGame(game);
-        currentPlayer = setInitialPlayer();
+
         Player otherPlayer = this.game.getPlayers()[0].equals(currentPlayer) ? this.game.getPlayers()[1] : this.game.getPlayers()[0];
 
 
@@ -155,6 +155,8 @@ public class Match {
                 currentPlayer = nextTurn();
                 otherPlayer = this.game.getPlayers()[0].equals(this.game.getCurrentPlayer()) ? this.game.getPlayers()[1] : this.game.getPlayers()[0];
                 diceRolls=die.getCurrentValues();
+
+                // FIXME: currentPlayer should *never* be null. Why is that happening?
                 commandIndex = Game.chooseOption(game.getCurrentPlayer().getName() + " what would you like to do next?", commands);
                 command.acceptCommand(commands[commandIndex]);
             }
