@@ -12,6 +12,23 @@ public class Cube {
     public void setOwner(Player owner){
         this.owner=owner;
     }
+    public boolean hasOwner(){return owner!=null;}
+    public boolean isOwnedBy(Player player) {
+        if (owner != null) {
+            return owner.equals(player);
+        } else {
+            return false;
+        }
+    }
     public Player getOwner(){return owner;}
     public int getDouble(){return values[doublings];}
+
+    public String doubleStatus(){
+        String status = "Double: "+String.valueOf(getDouble());
+        if (owner==null){
+            return status+" no owner";
+        } else {
+            return status+" "+owner.getName()+" in possession";
+        }
+    }
 }

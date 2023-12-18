@@ -80,7 +80,7 @@ class CommandTest {
     void testScript(){
         game.placePieces(players[0]);
         game.placePieces(players[1]);
-        command.test(game,"C:/Users/User/OneDrive/MSc/41670 Software Engineering/Group_Project/res/TestScript.txt");
+        command.test("C:/Users/User/OneDrive/MSc/41670 Software Engineering/Group_Project/res/TestScript.txt");
         assertTrue(players[0].canMoveOff());
         assertTrue(players[1].canMoveOff());
     }

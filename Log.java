@@ -4,11 +4,26 @@ import java.util.ArrayList;
  * Prints to the screen messages sent to the players and then keeps a record of those messages
  */
 public class Log {
-    private ArrayList<String> log;
-    public Log(){
-        log = new ArrayList<String>();
+    private ArrayList<String> log = new ArrayList<>();
+
+    // Like the dice, we only want one log, so we can use the singleton pattern
+    private static Log instance = null;
+    private Log(){
+        log = new ArrayList<>();
     }
 
+    public static Log getInstance() {
+        if (instance == null) {
+            instance = new Log();
+        }
+        return instance;
+    }
+
+    /**
+     * Clears all entries from the log
+     * For use in testing to reset log state
+     */
+    protected void clearLog(){this.log.clear();}
     /**
      * Prints a message to the screen and then adds that message to the message log
      * @param entry

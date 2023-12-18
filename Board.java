@@ -40,30 +40,15 @@ public class Board {
      * How big should the border around the points be when displaying the board on the console
      */
     private int border = 1;
-    /**
-     * The index of the White bar in the Points array
-     */
-    private int barWhite = numPoints+1;
-    /**
-     * The index of the Black bar in the points array
-     */
-    private int barBlack = 0;
-    /**
-     * The index of the White Off Board in the points array
-     */
-    private int offWhite = 0;
-    /**
-     * The index of the Black Off Board in the points array
-     */
-    private int offBlack = numPoints+1;
+
 
     /**
      * Construct a new instance of Board
      *
      * @param gameNumber the position of the current game within the series comprising the match
      * @param matchGames the number of games in the match series
-     * @param playerBscore the Black player's match score at the start of this game
-     * @param playerWscore the White player's match score at the start of this game
+     * @param playerBscore the Black player's match score at the start of this game. This is not the same as their pip score or game score in this game. The match score must be displayed on the console as per the brief
+     * @param playerWscore the White player's match score at the start of this game. This is not the same as their pip score or game score in this game. The match score must be displayed on the console as per the brief
      */
     public Board(int gameNumber, int matchGames, String playerBscore,String playerWscore) {
         this.points=new Point[this.numPoints+2];
@@ -77,6 +62,7 @@ public class Board {
         // Now set up the string array which will get printed to the console as the game state
         // Confusingly, although in respect of Points class column always comes first, then row
         // For the boardPrint string row comes first, then column
+        // The players' scores at the start of the game must be displayed on the board as per the brief
         this.boardPrint=createPrintOut(this.boardPrint,playerBscore,playerWscore);
         this.gameTracker = "Game "+gameNumber+" of "+matchGames;
     }
@@ -223,7 +209,7 @@ public class Board {
      */
     public void placePieces(Player player){
         for (int j=0;j<player.numPieces();j++){
-            points[player.piecePosition(j)].addPiece(player.getPiece(j));
+            points[player.startPosition(j)].addPiece(player.getPiece(j));
         }
     }
     /**
@@ -260,7 +246,7 @@ public class Board {
      */
 
 
-    protected void updateBoard() {
+    protected void updateBoard(String doubleStatus) {
         int pointIndex = 0;
         for (Point point : points) {
             // Normal on-board points only have one stack as they can hold only one colour of checkers
@@ -294,6 +280,7 @@ public class Board {
             }
             pointIndex++;
         }
+        boardPrint[1][boardPrint[1].length-1]="     "+doubleStatus;
     }
 
     /**
@@ -317,8 +304,8 @@ public class Board {
      * @param color         The colour of the current player
      * @param recentLog     The log of messages to display
      */
-    public void print (Player.Color color, String[] recentLog) {
-        updateBoard();
+    public void print (Player.Color color, String[] recentLog, String doubleStatus) {
+        updateBoard(doubleStatus);
         int[] printOrder = new int[boardPrint.length];
         for (int i=0;i<boardPrint.length;i++){
             printOrder[i]=i;
@@ -363,6 +350,8 @@ public class Board {
      * @return the OffBoard instance containing the bar of the specified player
      */
     public OffBoard getBar(Player player){
+        int barWhite = numPoints + 1;
+        int barBlack = 0;
         return player.getColor()== Player.Color.WHITE ? (OffBoard) points[barWhite] : (OffBoard) points[barBlack];
     }
     /**
@@ -371,6 +360,8 @@ public class Board {
      * @return the OffBoard instance containing the off board area of the specified player
      */
     public OffBoard getOff(Player player){
+        int offWhite = 0;
+        int offBlack = numPoints + 1;
         return player.getColor()==Player.Color.WHITE ? (OffBoard) points[offWhite] : (OffBoard) points[offBlack];
     }
 

@@ -4,7 +4,6 @@ public class Main {
     private static final String[] rolls = new String[]{"first", "second", "third", "fourth"};
 
     public static void main(String[] args) {
-        Die die = new Die();
         int games = Command.getInteger("How many games would you like to play?");
         Match match = new Match(games);
         match.addPlayers();

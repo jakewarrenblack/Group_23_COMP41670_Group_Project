@@ -42,16 +42,21 @@ public class Command {
             case "ROLL" -> match.roll();
             case "QUIT" -> {
                 System.out.println("Goodbye");
-                return false;
+                System.exit(0);
             }
-            case "PIP" -> game.pipScore();
+            case "PIP" -> match.pipScore();
             case "HINT" -> printTextFile("res/hints.txt");
             case "MOVE" -> {
-                try {
-                    game.movePiece(Integer.parseInt(cmdTokens[1]), Integer.parseInt(cmdTokens[2]));
-                    match.updateLog("You have moved from "+cmdTokens[1]+" to "+cmdTokens[2]);
-                } catch (IllegalArgumentException e) {
-                    match.updateLog(e.getMessage());
+                // If we receive a command of just "MOVE" with no co-ordinates this is the player
+                // deciding to use the pre-rolled dice from the player selection throws
+                // so do nothing
+                if (cmdTokens.length>1) {
+                    try {
+                        game.movePiece(Integer.parseInt(cmdTokens[1]), Integer.parseInt(cmdTokens[2]));
+                        match.updateLog("You have moved from " + cmdTokens[1] + " to " + cmdTokens[2]);
+                    } catch (IllegalArgumentException e) {
+                        match.updateLog(e.getMessage());
+                    }
                 }
             }
             case "DOUBLE" -> match.doubleBet();
@@ -80,7 +85,7 @@ public class Command {
             case "TEST" -> {
                 match.updateLog("Running test script");
                 try {
-                    test(game);
+                    test();
                     match.updateLog("Test script executed successfully");
                 } catch (IllegalArgumentException e){match.updateLog(e.getMessage());}
 
@@ -175,14 +180,14 @@ public class Command {
         }
         return input;
     }
-    public void test(Game game){
+    public void test(){
         Scanner testMoves = importMoves();
         while (testMoves.hasNextLine()){
             String line = testMoves.nextLine();
             if (!acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
         }
     }
-    public void test(Game game, String path){
+    public void test(String path){
         File f = new File(path);
         Scanner scanner;
         try {scanner = new Scanner(new FileReader(f));

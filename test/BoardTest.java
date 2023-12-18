@@ -15,7 +15,8 @@ class BoardTest {
     @BeforeEach
     void setUp(){
         testBoard = new Board(1,1,"Black score","White score");
-        testLog=new Log();
+        testLog=Log.getInstance();
+        testLog.clearLog();
         System.setOut(new PrintStream(outputStreamCaptor));
     }
 
@@ -74,8 +75,9 @@ class BoardTest {
     }
     @Test
     void printBlank(){
-        testBoard.print(Player.Color.WHITE,testLog.recentLog(10));
-        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+        testBoard.print(Player.Color.WHITE,testLog.recentLog(10),"");
+        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
@@ -97,8 +99,9 @@ class BoardTest {
             testLog.updateLog("This is my test number "+i);
         }
         outputStreamCaptor.reset();
-        testBoard.print(Player.Color.WHITE,testLog.recentLog(10));
-        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n |  |  |  |  |  |     |  |  |  |  |  |    \n" +
+        testBoard.print(Player.Color.WHITE,testLog.recentLog(10),"");
+        assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n" +
+                " |  |  |  |  |  |     |  |  |  |  |  |         \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |         Game 1 of 1\n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
                 " |  |  |  |  |  |     |  |  |  |  |  |    \n" +
@@ -120,9 +123,9 @@ class BoardTest {
         testBoard.placePieces(blackPlayer);
         Player whitePlayer = new Player("Test", Player.Color.WHITE);
         testBoard.placePieces(whitePlayer);
-        testBoard.print(whitePlayer.getColor(), testLog.recentLog(10));
+        testBoard.print(whitePlayer.getColor(), testLog.recentLog(10),"Double Status");
         assertEquals("-13-+--+--+--+-18-BAR-19-+--+--+--+-24-OFF    Black score\n" +
-                " W  |  |  |  B  |     B  |  |  |  |  W    \n" +
+                " W  |  |  |  B  |     B  |  |  |  |  W         Double Status\n" +
                 " W  |  |  |  B  |     B  |  |  |  |  W         Game 1 of 1\n" +
                 " W  |  |  |  B  |     B  |  |  |  |  |    \n" +
                 " W  |  |  |  |  |     B  |  |  |  |  |    \n" +
@@ -187,12 +190,12 @@ class BoardTest {
         testBoard.placePieces(wPlayer);
         // First try moving a piece that isn't a blot
         Point barB = testBoard.getBar(bPlayer);
-        testBoard.moveToBar(1,new Log());
+        testBoard.moveToBar(1,Log.getInstance());
         barB.setColor(wPlayer.getColor());
         assertEquals(0,barB.numPieces());
         // Now try one that is a blot
         testBoard.addPiece(2,testBoard.removePiece(1));
-        testBoard.moveToBar(1,new Log());
+        testBoard.moveToBar(1,Log.getInstance());
         assertEquals(1,barB.numPieces());
         assertEquals(0,testBoard.numPieces(1));
 

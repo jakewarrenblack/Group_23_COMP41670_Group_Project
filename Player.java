@@ -93,6 +93,16 @@ public class Player  {
     public int piecePosition(int index){return pieces[index].getPosition();}
 
     /**
+     * Where should a piece be placed at the start of a game
+     * @param index         The index of the piece
+     * @return              The position of the point the piece should be placed on
+     */
+    public int startPosition(int index){
+        int position = startPoints[index];
+        if (color.equals(Color.BLACK)){position = 25-position;}
+        return position;
+    }
+    /**
      * <b>Checks if the player can move off the board.</b>
      * <hr/>
      * This is determined by comparing the minimum pip value of all pieces to the home pip value.

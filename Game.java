@@ -12,26 +12,15 @@ public class Game {
      * Whether the game is finished
      */
     private boolean isOngoing = true;
-    private final Cube cube;
-
-    private Player[] players;
     private Player currentPlayer;
-    private final Die die;
     private final Log log;
     private Command command;
 
-    public Game(Die die,Log log,Player[] players, int gameNumber, int matchGames) {
-        this.players = players;
+    public Game(Player[] players, int gameNumber, int matchGames) {
         this.board = new Board(gameNumber,matchGames,players[0].printScore(),players[1].printScore());
-        this.die = die;
-        this.log = log;
-        this.cube=new Cube();
-
+        this.log = Log.getInstance();
     }
     public void setCommand(Command command){this.command=command;}
-    public void setScores(int doubleValue){
-        for (Player player:players){player.setScore(player.getGameScore(doubleValue));}
-    }
 
 
     public void setCurrentPlayer(Player player){this.currentPlayer=player;}
@@ -46,16 +35,11 @@ public class Game {
         return this.isOngoing;
     }
 
-    public void finishGame() {
+    public void finishGame(Player loser,int doubleValue) {
         this.isOngoing = false;
+        loser.loseGame(doubleValue);
     }
-    // TODO can probably delete this as duplicating functionality in Match
-    public void addPlayer(int index, Player player, boolean isCurrentPlayer) {
-        this.players[index] = player;
-        if (isCurrentPlayer) {
-            currentPlayer = player;
-        }
-    }
+
 
     /** Place the pieces of a player in the start positions on the board
      *
@@ -68,10 +52,9 @@ public class Game {
     /**
      * Move a piece from one point to another
      *
-     * @param from the index of the point to take the piece from
-     * @param to the index of the point to move the piece to
+     * @param from the index of the point the piece is being moved from
+     * @param to the index of the point the piece is being moved to
      */
-    // TODO maybe should happen in the Board class?
     public void movePiece(int from, int to) {
         try {
             if (board.getPoint(to).isBlot()&!board.getPoint(to).isPlayers(currentPlayer)){
@@ -128,20 +111,11 @@ public class Game {
     /**
      * Print a text representation of the current game to the screen
      */
-    public void print() {
-        board.print(currentPlayer.getColor(), log.recentLog(10));
+    public void print(String doubleStatus) {
+        board.print(currentPlayer.getColor(), log.recentLog(10),doubleStatus);
     }
 
-    /**
-     * Calculate the pip score of both players, print it to the screen and add it to the game log
-     */
-    // NB - this should happen here rather than in Match as it's the pip score of the current game, not the overall
-    // match score
-    public void pipScore() {
-        for (int i = 0; i < 2; i++) {
-            log.updateLog(players[i].getName() + " has a pip score of " + players[i].pipScore());
-        }
-    }
+
     // TODO would we need this if we moved most of the move validation functionality to the
     // Board class? Seems to only be used in the unit tests
     protected Board getBoard() {
@@ -154,14 +128,14 @@ public class Game {
      *
      * @param diceRolls the values of their dice rolls
      */
-    public void processRolls(List<Integer> diceRolls,Player currentPlayer){
+    public void processRolls(List<Integer> diceRolls,Player currentPlayer,String doubleStatus){
         this.currentPlayer=currentPlayer;
         if (diceRolls.size()==2){
-            processDifferentDiceRolls(diceRolls);
+            processDifferentDiceRolls(diceRolls,doubleStatus);
         } else {
-            processDoubleDiceRolls(diceRolls);
+            processDoubleDiceRolls(diceRolls,doubleStatus);
         }
-        isOngoing=!currentPlayer.hasWon();
+        isOngoing = !currentPlayer.hasWon();
     }
 
     /**
@@ -172,21 +146,21 @@ public class Game {
      *
      * @param diceRolls
      */
-    public void processDifferentDiceRolls(List<Integer> diceRolls){
+    public void processDifferentDiceRolls(List<Integer> diceRolls,String doubleStatus){
         ArrayList<Move> validMoves = getAllAvailableValidMoves(diceRolls);
         String[] validMoveString = validMovesString(validMoves);
+        board.print(currentPlayer.getColor(),log.recentLog(10),doubleStatus);
         int chosenMove = Command.chooseOption(currentPlayer.getName() +" you rolled "+diceRolls.get(0)+ " and "+diceRolls.get(1)+". Choose your first move: ",validMoveString);
         command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
         int otherRoll = diceRolls.get(0)==validMoves.get(chosenMove).getFrom()-validMoves.get(chosenMove).getTo()?diceRolls.get(1):diceRolls.get(0);
-        print();
         validMoves = getAvailableValidMoves(otherRoll);
         if(validMoves.isEmpty()){log.updateLog("You have no valid moves to make with your other die roll of "+otherRoll);}
         else {
+            board.print(currentPlayer.getColor(),log.recentLog(10),doubleStatus);
             validMoveString = validMovesString(validMoves);
             chosenMove = Command.chooseOption(currentPlayer.getName() + " you rolled " + otherRoll + " with your other die. Choose your second move: ", validMoveString);
             command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
         }
-        print();
     }
     /**
      * Allow the current player to choose between the different moves available to them
@@ -194,17 +168,17 @@ public class Game {
      *
      * @param diceRolls
      */
-    public void processDoubleDiceRolls(List<Integer> diceRolls){
+    public void processDoubleDiceRolls(List<Integer> diceRolls,String doubleStatus){
         int i=0;
         ArrayList<Move> validMoves=getAvailableValidMoves(diceRolls.get(i));
         while (!validMoves.isEmpty()&i<diceRolls.size()){
             String[] validMoveString=validMovesString(validMoves);
+            board.print(currentPlayer.getColor(),log.recentLog(10),doubleStatus);
             int chosenMove = Command.chooseOption(currentPlayer.getName() +" you have the following options with dice number "+i+". Please choose: ",validMoveString );
             command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
             i++;
             if (i<diceRolls.size()){validMoves=getAvailableValidMoves(diceRolls.get(i));}
         }
-        print();
         if (i<diceRolls.size()){log.updateLog("You have no more valid moves");}
     }
 
@@ -224,25 +198,24 @@ public class Game {
         ArrayList<Move> invalids = new ArrayList<Move>();
         // Try all the apparently valid moves with the smaller dice value
         // and remove any that leave us with no valid moves with the larger
-        int smallMoves = validMoves.size();
-        for (int i=0;i<smallMoves;i++){
+        for (Move validMove:validMoves){
             // Make the move as a test
-            movePiece(validMoves.get(i).getFrom(),validMoves.get(i).getTo());
+            movePiece(validMove.getFrom(),validMove.getTo());
             ArrayList<Move> testLarge = getAvailableValidMoves(Math.max(dieRoll.get(0),dieRoll.get(1)));
             // If there are no valid moves with the larger dice roll, capture the move for later deletion
             if (testLarge.isEmpty()){
-                invalids.add(validMoves.get(i));
+                invalids.add(validMove);
             }
             // Reverse the test move
-            movePiece(validMoves.get(i).getTo(),validMoves.get(i).getFrom());
+            movePiece(validMove.getTo(),validMove.getFrom());
         }
         // Delete the moves with the smaller die that would leave you with no valid moves with the larger
-        for (int i=0;i<invalids.size();i++){
-            validMoves.remove(invalids.get(i));}
-        ArrayList<Move> largeMoves = getAvailableValidMoves(Math.max(dieRoll.get(0),dieRoll.get(1)));
-        for (Move move:largeMoves){
-            validMoves.add(move);
+        for (Move invalid:invalids){
+            validMoves.remove(invalid);
         }
+        ArrayList<Move> largeMoves = getAvailableValidMoves(Math.max(dieRoll.get(0),dieRoll.get(1)));
+        validMoves.addAll(largeMoves);
+
         return validMoves;
     }
 
@@ -362,6 +335,8 @@ public class Game {
 
         /**
          * Two moves are only considered to be equal if their from, to, and roll values are equal
+         * I was initially relying on the equals() method but it caused some bugs towards the end of the game so
+         * I implemented this overriding method
          * @param other the other Move instance to compare
          * @return a boolean indicating whether the other Move is equal to this instance
          */

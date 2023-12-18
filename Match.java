@@ -28,7 +28,7 @@ public class Match {
     /**
      * The die that the players use to determine how far they can move on each turn
      */
-    private Die die;
+    private final Die die;
     /**
      * The two players competing in the match
      */
@@ -40,7 +40,7 @@ public class Match {
     /**
      * The doubling cube that determines how much each piece's score will be multiplied by at the end of the game
      */
-    private Cube doublingCube;
+    private final Cube doublingCube;
     /**
      * The player taking their turn at present
      */
@@ -49,14 +49,14 @@ public class Match {
     /**
      * Create a new match of however many games you want
      *
-     * @param games
+     * @param games The number of games to play in the match
      */
     public Match(int games){
         this.games=games;
         this.gameIndex=0;
-        this.die=new Die();
+        this.die=Die.getInstance();
         this.players=new Player[2];
-        this.log=new Log();
+        this.log=Log.getInstance();
         this.doublingCube=new Cube();
         this.command=new Command(this);
     }
@@ -117,21 +117,20 @@ public class Match {
      * @return the game object created
      */
     public Game newGame(){
-        this.game = new Game(die,log,players,gameIndex,games);
+        this.game = new Game(players,gameIndex,games);
         this.game.setCurrentPlayer(currentPlayer);
         return this.game;
     }
-    // TODO can this be deleted?
+
     public Game getGame(){return game;}
 
     /**
-     * Execute the matchplay
-     * Keep going until the number of games defined when the match was constructed have been completed
+     * Set up and play a new game
      *
-     * @return True if the number of games have been complete, False otherwise
+     * @return True if the specified number of games in the match series have been complete, False otherwise
      */
     public boolean Play(){
-        game=new Game(die,log,players,gameIndex,games);
+        game=new Game(players,gameIndex,games);
         command.newGame(game);
         for (int j = 0; j < 2; j++) {
             game.placePieces(this.players[j]);
@@ -140,35 +139,50 @@ public class Match {
         Player otherPlayer = players[0].equals(currentPlayer)?players[1]:players[0];
         // game just started, set the initial dice roll value, which the player will have to use
         List<Integer> diceRolls = die.getCurrentValues();
+        List<String> exclude = new ArrayList<>();
+        // You cannot roll the dice on your first turn - you need to use the dice rolls from deciding the initial players
+        exclude.add("ROLL");
+        // The player can execute commands until they choose MOVE
+        acceptCommand("MOVE",exclude);
+        game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus());
+        currentPlayer=nextTurn();
         while (game.isGameOngoing()) {
-            List<String> exclude = new ArrayList<>();
-            List<Game.Move> validMoves;
+            exclude.clear();
+            // You can only use the MOVE command on your first turn because you don't have to roll the dice
             exclude.add("MOVE");
-            if(!currentPlayer.hasDouble()){
+            // The DOUBLE command can be offered if no-one owns the doubling cube yet or if the current player owns it
+            if(doublingCube.hasOwner()&!doublingCube.isOwnedBy(currentPlayer)){
                 exclude.add("DOUBLE");
             }
-            String[] commands = command.listCommands(exclude);
-            int commandIndex = commands.length-1;
-            // Loop until the player chooses to roll
-            while (commandIndex!=0) {
-                commandIndex = Command.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
-                command.acceptCommand(commands[commandIndex]);
+            acceptCommand("ROLL",exclude);
+            // The other player may have lost the game if they rejected an offer to double
+            if(game.isGameOngoing()) {
+                // Once the player has rolled the dice, allow the game to process the dice rolls
+                game.processRolls(diceRolls, currentPlayer, doublingCube.doubleStatus());
+                if (game.isGameWon()) {
+                    updateLog(currentPlayer.getName() + " has won!");
+                    game.finishGame(otherPlayer, doublingCube.getDouble());
+                } else {
+                    currentPlayer = nextTurn();
+                    otherPlayer = players[0].equals(currentPlayer) ? players[1] : players[0];
+                    diceRolls = die.getCurrentValues();
+                }
             }
-            game.processRolls(diceRolls,currentPlayer);
-            if (game.isGameWon()) {
-                updateLog(currentPlayer.getName() + " has won!");
-                game.finishGame();
-                otherPlayer.loseGame(doublingCube.getDouble());
-            }
-            currentPlayer = nextTurn();
-            otherPlayer = players[0].equals(currentPlayer)?players[1]:players[0];
-            diceRolls=die.getCurrentValues();
         }
         gameIndex++;
         log.updateLog("Game "+gameIndex+" of "+games+" complete. "+players[0].getName()+" has a score of "+players[0].getScore()+" and "+players[1].getName()+" has a score of "+players[1].getScore());
         return gameIndex==games;
     }
 
+    private void acceptCommand(String target, List<String> exclude){
+        String[] commands = command.listCommands(exclude);
+        int commandIndex = commands.length-1;
+        // The player can continue executing commands until they choose the target command
+        while (!commands[commandIndex].equals(target)&game.isGameOngoing()) {
+            commandIndex = Command.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
+            command.acceptCommand(commands[commandIndex]);
+        }
+    }
     /**
      * Decide which player goes first
      * Both players roll a die. The player who rolls the highest number gets to go first
@@ -234,12 +248,17 @@ public class Match {
             log.updateLog("The doubling cube now shows " + doublingCube.getDouble() + " and " + otherPlayer.getName() + " has possession");
         } else {
             log.updateLog(otherPlayer.getName()+" has rejected the offer to double the bet and loses the game");
-            game.finishGame();
-            otherPlayer.loseGame(doublingCube.getDouble());
-
+            game.finishGame(otherPlayer,doublingCube.getDouble());
         }
     }
-
+    /**
+     * Calculate the pip score of both players, print it to the screen and add it to the game log
+     */
+    public void pipScore() {
+        for (int i = 0; i < 2; i++) {
+            log.updateLog(players[i].getName() + " has a pip score of " + players[i].pipScore());
+        }
+    }
     /**
      * Update the game log with a message to be delivered to the users
      * The log object will also print the message to the console

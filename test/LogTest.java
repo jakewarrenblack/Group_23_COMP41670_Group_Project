@@ -13,14 +13,9 @@ class LogTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     @BeforeEach
     void setUp(){
-        testLog = new Log();
+        testLog = Log.getInstance();
+        testLog.clearLog();
         System.setOut(new PrintStream(outputStreamCaptor));
-    }
-    @Test
-    void updateLog() {
-        testLog.updateLog("This is my test");
-        assertEquals("This is my test", outputStreamCaptor.toString()
-                .trim());
     }
     @Test
     void recentLogEmpty(){
@@ -30,6 +25,13 @@ class LogTest {
         }
         assertArrayEquals(tests,testLog.recentLog(10));
     }
+    @Test
+    void updateLog() {
+        testLog.updateLog("This is my test");
+        assertEquals("This is my test", outputStreamCaptor.toString()
+                .trim());
+    }
+
     @Test
     void recentLogHalfFull(){
         String[] tests = new String[10];
