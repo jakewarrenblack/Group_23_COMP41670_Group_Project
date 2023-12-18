@@ -17,4 +17,5 @@ public class testPlayer extends Player {
     }
     public int piecePosition(int index){return super.piecePosition(index);}
 
+    public int startPosition(int index){return startPoints[index];}
 }

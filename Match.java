@@ -178,6 +178,7 @@ public class Match {
         String[] commands = command.listCommands(exclude);
         int commandIndex = commands.length-1;
         // The player can continue executing commands until they choose the target command
+        // Some commands (like DOUBLE) can result in the game ending. if this happens don't accept any more commands
         while (!commands[commandIndex].equals(target)&game.isGameOngoing()) {
             commandIndex = Command.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
             command.acceptCommand(commands[commandIndex]);
