@@ -20,25 +20,71 @@ public class Game {
     private final Log log;
     private Command command;
 
-    public Game(Die die,Log log,Player[] players, int gameNumber, int matchGames) {
-        this.players = players;
-        this.board = new Board(gameNumber,matchGames,players[0].printScore(),players[1].printScore());
-        this.die = die;
-        this.log = log;
-        this.cube=new Cube();
+    public enum GameState {
+        ONGOING,
+        WON,
+        LOST
+    }
+
+
+    /**
+     * Create a new game
+     *
+     * @param gameNumber the number of the game in the match
+     * @param matchGames the number of games in the match
+     * @param players the players in the game
+     */
+    // players are an optional parameter
+    // if they're provided, use them. otherwise, run addPlayers
+    public Game(int gameNumber, int matchGames, Player... players) {
+        // Singleton pattern. No need to pass around instances of these, there can be only one of each for a given game.
+        this.die = Die.getInstance();
+        this.log = Log.getInstance();
+        this.cube = new Cube();
+        this.players = players.length == 2 ? players : addPlayers();
+        this.board = new Board(gameNumber,matchGames, this.players);
 
     }
-    public void setCommand(Command command){this.command=command;}
+
+    public void setCommand(Command command){
+        this.command=command;
+    }
+
     public void setScores(int doubleValue){
         for (Player player:players){player.setScore(player.getGameScore(doubleValue));}
     }
 
+    public void setInitialPlayer(){
+        // the player to go first is determined by the dice roll
+        while (Objects.equals(die.getCurrentValues().get(0), die.getCurrentValues().get(1))) {
+            this.die.roll();
+        }
 
-    public void setCurrentPlayer(Player player){this.currentPlayer=player;}
+        this.log.updateLog(this.players[0].getName() + " has rolled " + die.getCurrentValues().get(0) + ", " + this.players[1].getName() + " has rolled " + die.getCurrentValues().get(1));
 
+        // if leftDie has a greater value, player 0 starts, otherwise, player 1 starts
+        this.currentPlayer = this.players[die.getCurrentValues().get(0) > die.getCurrentValues().get(1) ? 0 : 1];
+
+        this.log.updateLog(this.currentPlayer.getName() + " will go first");
+
+        this.cube.setOwner(currentPlayer);
+    }
+
+    public void setCurrentPlayer(Player player){
+        this.currentPlayer=player;
+    }
+
+    public void nextTurn() {
+        // just switch between 0 and 1, whichever is NOT the current player
+        this.currentPlayer = this.players[0] == this.currentPlayer ? this.players[1] : this.players[0];
+        board.print(currentPlayer.getColor(), log.recentLog(10));
+    }
+
+    public Player getCurrentPlayer() {
+        return this.currentPlayer;
+    }
 
     public boolean isGameWon() {
-
         return !this.isOngoing;
     }
 
@@ -49,6 +95,11 @@ public class Game {
     public void finishGame() {
         this.isOngoing = false;
     }
+
+    public void setGameState(GameState gameState) {
+        this.isOngoing = gameState == GameState.ONGOING;
+    }
+
     // TODO can probably delete this as duplicating functionality in Match
     public void addPlayer(int index, Player player, boolean isCurrentPlayer) {
         this.players[index] = player;
@@ -57,21 +108,84 @@ public class Game {
         }
     }
 
-    /** Place the pieces of a player in the start positions on the board
+
+    /**
+     * Construct two players with names entered by the users
      *
-     * @param player whose pieces are to be placed on the board
+     * @return  an array of 2 Player objects
      */
-    public void placePieces(Player player) {
-        board.placePieces(player);
+    public Player[] addPlayers() {
+        Player[] players = new Player[2];
+
+        for (int i = 0; i < 2; i++) {
+            Player.Color color = Player.Color.values()[i];
+            players[i] = new Player(getInput("Please enter the name of the " + color + " player"), color);
+        }
+
+        this.players = players;
+
+        // Might as well do this here. It has to be done at some stage.
+        this.setInitialPlayer();
+
+        return players;
+    }
+
+    public static int chooseOption(String message, String[] options) {
+        System.out.println(message);
+        for (int i = 0; i < options.length; i++) {
+            System.out.println((i + 1) + ": " + options[i]);
+        }
+        Scanner in = new Scanner(System.in);
+        int opt = -1;
+        System.out.println("Please select an option");
+        while (opt < 0 || opt >= options.length) {
+            while (!in.hasNextInt()) {
+                System.out.println("You must enter a number corresponding to one of the options");
+            }
+            opt = in.nextInt() - 1;
+            if (opt < 0 || opt >= options.length) {
+                System.out.println("You must enter a number corresponding to one of the options");
+            }
+        }
+        return opt;
+    }
+
+    public static String getInput(String message) {
+        Scanner in = new Scanner(System.in);
+        String input = "";
+        while (input.isEmpty()) {
+            System.out.println(message);
+            String temp = in.nextLine();
+            if (chooseOption("You have entered <" + temp + ">. Confirm?", new String[]{"Yes", "No"}) == 0) {
+                input = temp;
+            }
+        }
+        return input;
+    }
+
+    public static int getInteger(String message){
+        Scanner in = new Scanner(System.in);
+        int input=0;
+        while (input==0) {
+            System.out.println(message);
+            while (!in.hasNextInt()) {
+                String temp = in.next();
+                System.out.println(temp + " is not a number");
+            }
+            int temp = in.nextInt();
+            if (chooseOption("You have entered <" + temp + ">. Confirm?", new String[]{"Yes", "No"}) == 0) {
+                input = temp;
+            }
+        }
+        return input;
     }
 
     /**
      * Move a piece from one point to another
      *
-     * @param from the index of the point to take the piece from
-     * @param to the index of the point to move the piece to
+     * @param from the index of the point the piece is being moved from
+     * @param to the index of the point the piece is being moved to
      */
-    // TODO maybe should happen in the Board class?
     public void movePiece(int from, int to) {
         try {
             if (board.getPoint(to).isBlot()&!board.getPoint(to).isPlayers(currentPlayer)){
@@ -148,14 +262,36 @@ public class Game {
         return this.board;
     }
 
+
     /**
      * Allow the current player to choose what to do with their dice rolls
      * If they roll a double they get to use each die twice - ie, they get to make 4 moves
      *
      * @param diceRolls the values of their dice rolls
      */
-    public void processRolls(List<Integer> diceRolls,Player currentPlayer){
-        this.currentPlayer=currentPlayer;
+    public void processRolls(List<Integer> diceRolls,Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public void roll() {
+        List<Integer> dice = die.roll();
+        String message=currentPlayer.getName() + " rolled " + dice.get(0);
+
+        for (int i=1;i<dice.size();i++){
+            message+=", " + dice.get(i);
+        }
+
+        log.updateLog(message);
+    }
+
+    public void setDie(int[] rolls){die.setValues(rolls);}
+
+    public void updateLog(String message) {
+        log.updateLog(message);
+    }
+
+    public void processRolls(List<Integer> diceRolls){
+
         if (diceRolls.size()==2){
             processDifferentDiceRolls(diceRolls);
         } else {
@@ -163,6 +299,7 @@ public class Game {
         }
         isOngoing=!currentPlayer.hasWon();
     }
+
 
     /**
      * Allow the current player to choose between the different moves available to them
@@ -172,22 +309,42 @@ public class Game {
      *
      * @param diceRolls
      */
-    public void processDifferentDiceRolls(List<Integer> diceRolls){
+
+    public void processDifferentDiceRolls(List<Integer> diceRolls) {
         ArrayList<Move> validMoves = getAllAvailableValidMoves(diceRolls);
         String[] validMoveString = validMovesString(validMoves);
-        int chosenMove = Command.chooseOption(currentPlayer.getName() +" you rolled "+diceRolls.get(0)+ " and "+diceRolls.get(1)+". Choose your first move: ",validMoveString);
-        command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
-        int otherRoll = diceRolls.get(0)==validMoves.get(chosenMove).getFrom()-validMoves.get(chosenMove).getTo()?diceRolls.get(1):diceRolls.get(0);
+
+        int chosenMove = chooseOption(currentPlayer.getName() + " you rolled " + diceRolls.get(0) + " and " + diceRolls.get(1) + ". Choose your first move: ", validMoveString);
+
+        command.acceptCommand("move " + validMoves.get(chosenMove).getFrom() + " " + validMoves.get(chosenMove).getTo());
+
+        int otherRoll = diceRolls.get(0) == validMoves.get(chosenMove).getFrom() - validMoves.get(chosenMove).getTo() ? diceRolls.get(1) : diceRolls.get(0);
+
         print();
+
         validMoves = getAvailableValidMoves(otherRoll);
-        if(validMoves.isEmpty()){log.updateLog("You have no valid moves to make with your other die roll of "+otherRoll);}
-        else {
+
+        if (validMoves.isEmpty()) {
+            log.updateLog("You have no valid moves to make with your other die roll of " + otherRoll);
+        } else {
             validMoveString = validMovesString(validMoves);
             chosenMove = Command.chooseOption(currentPlayer.getName() + " you rolled " + otherRoll + " with your other die. Choose your second move: ", validMoveString);
-            command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
+            command.acceptCommand("move " + validMoves.get(chosenMove).getFrom() + " " + validMoves.get(chosenMove).getTo());
+
+
+            if (validMoves.isEmpty()) {
+                updateLog("You have no valid moves to make with your other die roll of " + otherRoll);
+            } else {
+                validMoveString = validMovesString(validMoves);
+                chosenMove = chooseOption(currentPlayer.getName() + " you rolled " + otherRoll + " with your other die. Choose your second move: ", validMoveString);
+                command.acceptCommand("move " + validMoves.get(chosenMove).getFrom() + " " + validMoves.get(chosenMove).getTo());
+            }
+            print();
         }
-        print();
     }
+
+
+
     /**
      * Allow the current player to choose between the different moves available to them
      * from their dice roll
@@ -197,16 +354,23 @@ public class Game {
     public void processDoubleDiceRolls(List<Integer> diceRolls){
         int i=0;
         ArrayList<Move> validMoves=getAvailableValidMoves(diceRolls.get(i));
-        while (!validMoves.isEmpty()&i<diceRolls.size()){
+
+        while (!validMoves.isEmpty() && i<diceRolls.size()){
+
             String[] validMoveString=validMovesString(validMoves);
             int chosenMove = Command.chooseOption(currentPlayer.getName() +" you have the following options with dice number "+i+". Please choose: ",validMoveString );
             command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
             i++;
-            if (i<diceRolls.size()){validMoves=getAvailableValidMoves(diceRolls.get(i));}
+
+            if (i<diceRolls.size()){
+                validMoves=getAvailableValidMoves(diceRolls.get(i));
+            }
         }
+
         print();
         if (i<diceRolls.size()){log.updateLog("You have no more valid moves");}
     }
+
 
     /**
      * Identify all moves available to a player when they're rolled different values on their dice
@@ -216,6 +380,7 @@ public class Game {
      * @param dieRoll the values of the two dice rolled
      * @return an ArrayList of valid moves covering both dice
      */
+
     public ArrayList<Move> getAllAvailableValidMoves(List<Integer> dieRoll){
         // If we have rolled two different values then the player cannot make a move
         // with the smaller die value first if it would leave them with no legal moves
@@ -224,25 +389,25 @@ public class Game {
         ArrayList<Move> invalids = new ArrayList<Move>();
         // Try all the apparently valid moves with the smaller dice value
         // and remove any that leave us with no valid moves with the larger
-        int smallMoves = validMoves.size();
-        for (int i=0;i<smallMoves;i++){
+
+        for (Move validMove : validMoves) {
             // Make the move as a test
-            movePiece(validMoves.get(i).getFrom(),validMoves.get(i).getTo());
-            ArrayList<Move> testLarge = getAvailableValidMoves(Math.max(dieRoll.get(0),dieRoll.get(1)));
+            movePiece(validMove.getFrom(), validMove.getTo());
+            ArrayList<Move> testLarge = getAvailableValidMoves(Math.max(dieRoll.get(0), dieRoll.get(1)));
             // If there are no valid moves with the larger dice roll, capture the move for later deletion
-            if (testLarge.isEmpty()){
-                invalids.add(validMoves.get(i));
+            if (testLarge.isEmpty()) {
+                invalids.add(validMove);
             }
             // Reverse the test move
-            movePiece(validMoves.get(i).getTo(),validMoves.get(i).getFrom());
+            movePiece(validMove.getTo(), validMove.getFrom());
         }
         // Delete the moves with the smaller die that would leave you with no valid moves with the larger
-        for (int i=0;i<invalids.size();i++){
-            validMoves.remove(invalids.get(i));}
-        ArrayList<Move> largeMoves = getAvailableValidMoves(Math.max(dieRoll.get(0),dieRoll.get(1)));
-        for (Move move:largeMoves){
-            validMoves.add(move);
+        for (Move invalid : invalids) {
+            validMoves.remove(invalid);
         }
+
+        ArrayList<Move> largeMoves = getAvailableValidMoves(Math.max(dieRoll.get(0),dieRoll.get(1)));
+        validMoves.addAll(largeMoves);
         return validMoves;
     }
 
@@ -267,7 +432,7 @@ public class Game {
             int endPosition = calculate(p.getPosition(), dieRoll, currentPlayer.getColor() == Player.Color.WHITE);
             try {
                 if (isLegalMove(p.getPosition(), endPosition)) {
-                    validMoves.add(new Move(p.getPosition(), endPosition,dieRoll)); // Store the valid move in the Map
+                    validMoves.add(new Move(p.getPosition(), endPosition)); // Store the valid move in the Map
                 }
             } catch (IllegalArgumentException ignored){}
         }
@@ -335,39 +500,32 @@ public class Game {
         }
     }
 
+
     /**
      * Captures the details of a potential move
      */
-    public static class Move{
-        /**
-         * The index of the point the piece would be moving from
-         */
-        private int from;
-        /**
-         * The index of the point the piece would be moving to
-         */
-        private int to;
-        /**
-         * The value of the die roll which generated the move
-         * This needs to be tracked as if a move is bearing a piece off the difference
-         * between from and to may not be equal to the value of the die roll
-         */
-        private int roll;
 
-        public Move(int from,int to, int roll){
+    public static class Move{
+        private final int from, to;
+
+        public Move(int from,int to){
             this.from=from;
             this.to = to;
-            this.roll = roll;
         }
+
 
         /**
          * Two moves are only considered to be equal if their from, to, and roll values are equal
          * @param other the other Move instance to compare
          * @return a boolean indicating whether the other Move is equal to this instance
          */
+
         public boolean equals(Move other){
-            return this.from==other.from & this.to==other.to & this.roll==other.roll;
+            // don't need to check individual attributes,
+            // we can just check if both objects are literally identical
+            return this == other;
         }
+
         public int getFrom(){return from;}
         public int getTo(){return to;}
 
@@ -391,5 +549,9 @@ public class Game {
         }
 
     }
-}
 
+    public Player[] getPlayers(){
+        return this.players;
+    }
+
+}

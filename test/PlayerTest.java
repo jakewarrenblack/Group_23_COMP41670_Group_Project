@@ -4,12 +4,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
-    Player testWhite;
-    Player testBlack;
+    Player testWhite, testBlack;
+    Board testBoard;
     @BeforeEach
     void setUp(){
         testWhite = new Player("Test", Player.Color.WHITE);
         testBlack = new Player("Also Test", Player.Color.BLACK);
+        Player[] players = new Player[]{testWhite,testBlack};
+
+        testBoard = new Board(1,1, players);
     }
     @Test
     void setScore() {
@@ -40,7 +43,7 @@ class PlayerTest {
         // Start positions - pip score should be 167
         assertAll(()->assertEquals(167,testWhite.pipScore()),
                 ()->assertEquals(167,testBlack.pipScore()));
-        Board testBoard = new Board(1,1,"Black score","White score");
+
         // Move one black piece from 19 to 21, black Pip score should go down to 165
         testBoard.placePieces(testBlack);
         testBoard.addPiece(21,testBoard.removePiece(19));

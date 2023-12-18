@@ -13,7 +13,7 @@ class LogTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     @BeforeEach
     void setUp(){
-        testLog = new Log();
+        testLog = Log.getInstance();
         System.setOut(new PrintStream(outputStreamCaptor));
     }
     @Test

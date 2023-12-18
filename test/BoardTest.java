@@ -14,8 +14,12 @@ class BoardTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     @BeforeEach
     void setUp(){
-        testBoard = new Board(1,1,"Black score","White score");
-        testLog=new Log();
+        Player testBlackPlayer = new Player("Test", Player.Color.BLACK);
+        Player testWhitePlayer = new Player("Test", Player.Color.WHITE);
+        Player[] players = new Player[]{testBlackPlayer,testWhitePlayer};
+
+        testBoard = new Board(1,1, players);
+        testLog= Log.getInstance();
         System.setOut(new PrintStream(outputStreamCaptor));
     }
 
@@ -187,12 +191,12 @@ class BoardTest {
         testBoard.placePieces(wPlayer);
         // First try moving a piece that isn't a blot
         Point barB = testBoard.getBar(bPlayer);
-        testBoard.moveToBar(1,new Log());
+        testBoard.moveToBar(1, Log.getInstance());
         barB.setColor(wPlayer.getColor());
         assertEquals(0,barB.numPieces());
         // Now try one that is a blot
         testBoard.addPiece(2,testBoard.removePiece(1));
-        testBoard.moveToBar(1,new Log());
+        testBoard.moveToBar(1, Log.getInstance());
         assertEquals(1,barB.numPieces());
         assertEquals(0,testBoard.numPieces(1));
 
