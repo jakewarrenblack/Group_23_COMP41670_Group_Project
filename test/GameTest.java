@@ -20,11 +20,9 @@ class GameTest {
     void setUp() {
         blackPlayer = new Player("B", Player.Color.BLACK);
         whitePlayer = new Player("W", Player.Color.WHITE);
-        myGame = new Game(new Die(),new Log(),new Player[]{blackPlayer,whitePlayer},1,1);
+        myGame = new Game(1,1);
         myGame.addPlayer(0,blackPlayer,true);
         myGame.addPlayer(1,whitePlayer,false);
-        myGame.placePieces(blackPlayer);
-        myGame.placePieces(whitePlayer);
         myGame.setCurrentPlayer(blackPlayer);
         System.setOut(new PrintStream(outputStreamCaptor));
     }
@@ -172,9 +170,9 @@ class GameTest {
         // In the start position a throw of 6 will allow the black player to move from 1 to 7, from 12 to 18
         // from 17 to 23. They can't move their pieces on 6 because they can't move off board yet
         ArrayList<Game.Move> expected = new ArrayList<Game.Move>();
-        expected.add(new Game.Move(1,7,6));
-        expected.add(new Game.Move(12,18,6));
-        expected.add(new Game.Move(17,23,6));
+        expected.add(new Game.Move(1,7));
+        expected.add(new Game.Move(12,18));
+        expected.add(new Game.Move(17,23));
         ArrayList<Game.Move> moves = myGame.getAvailableValidMoves(6);
         assertEquals(expected.size(),moves.size());
         boolean contains=false;
@@ -192,10 +190,10 @@ class GameTest {
     void getAvailableValidMovesReplica(){
         // App crashes when black starts with roll of 1 and 2
         ArrayList<Game.Move> expected = new ArrayList<Game.Move>();
-        expected.add(new Game.Move(1,3,2));
-        expected.add(new Game.Move(12,14,2));
-        expected.add(new Game.Move(17,19,2));
-        expected.add(new Game.Move(19,21,2));
+        expected.add(new Game.Move(1,3));
+        expected.add(new Game.Move(12,14));
+        expected.add(new Game.Move(17,19));
+        expected.add(new Game.Move(19,21));
         ArrayList<Game.Move> moves = myGame.getAvailableValidMoves(2);
         assertEquals(expected.size(),moves.size());
         boolean contains=false;
@@ -218,26 +216,24 @@ class GameTest {
         // 5 checkers on point 15
         // 6 checkers on point 20
         testPlayer contrivedP = new testPlayer("Contrived", Player.Color.BLACK);
-        Game contrived = new Game(new Die(),new Log(),new Player[]{contrivedP,contrivedP},1,1);
+        Game contrived = new Game(1,1);
         contrived.addPlayer(0,contrivedP,true);
-        contrived.placePieces(contrivedP);
         ArrayList<Integer> rolls = new ArrayList<Integer>();
         rolls.add(3);
         rolls.add(5);
         ArrayList<Game.Move> validMoves = contrived.getAllAvailableValidMoves(rolls);
-        Game.Move[] expected = new Game.Move[]{new Game.Move(20,23,3),new Game.Move(15,18,3),new Game.Move(10,13,3),new Game.Move(12,17,5),new Game.Move(10,15,5)};
+        Game.Move[] expected = new Game.Move[]{new Game.Move(20,23),new Game.Move(15,18),new Game.Move(10,13),new Game.Move(12,17),new Game.Move(10,15)};
         assertEquals(expected.length,validMoves.size());
         boolean contains=false;
-        for (int i=0;i<expected.length;i++){
-            int j=0;
+
+        for (Game.Move move : expected) {
+            int j = 0;
             while (!contains) {
-                contains = expected[i].equals(validMoves.get(j));
+                contains = move.equals(validMoves.get(j));
                 j++;
             }
             assertTrue(contains);
-            contains=false;
+            contains = false;
         }
     }
-
-
 }

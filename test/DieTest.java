@@ -16,7 +16,7 @@ class DieTest {
     List<Integer> rolls;
     @BeforeEach
     void setUp() {
-        testDie = new Die();
+        testDie = Die.getInstance();
         System.setOut(new PrintStream(outputStreamCaptor));
     }
     @AfterEach

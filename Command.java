@@ -1,4 +1,3 @@
-import javax.print.DocFlavor;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ public class Command {
         this.game=game;
         game.setCommand(this);
     }
+
 
     /**
      * Read a text file and print contents to the console.
@@ -56,7 +56,7 @@ public class Command {
             case "ROLL" -> match.roll();
             case "QUIT" -> {
                 System.out.println("Goodbye");
-                return false;
+                System.exit(0);
             }
             case "PIP" -> game.pipScore();
             case "HINT" -> printTextFile("res/hints.txt");
@@ -72,8 +72,12 @@ public class Command {
             case "DICE" -> {
                 int[] rolls;
                 if(cmdTokens.length==1) {
-                    int firstRoll = getInteger("Please enter the desired value for the first die");
-                    int secondRoll = getInteger("Please enter the desired value for the second die");
+
+
+                    int firstRoll = Game.getInteger("Please enter the desired value for the first die");
+                    int secondRoll = Game.getInteger("Please enter the desired value for the second die");
+
+
                     if (firstRoll == secondRoll) {
                         System.out.println("Since the two die rolls specified are equal your number of rolls will be doubled");
                         rolls = new int[4];
@@ -93,7 +97,7 @@ public class Command {
             case "TEST" -> {
                 match.updateLog("Running test script");
                 try {
-                    test(game);
+                    test();
                     match.updateLog("Test script executed successfully");
                 } catch (IllegalArgumentException e){match.updateLog(e.getMessage());}
 
@@ -123,6 +127,7 @@ public class Command {
 
         return commands.toArray(new String[0]);
     }
+
 
     /**
      * Allow the user to select from a series of options
@@ -193,7 +198,8 @@ public class Command {
         return input;
     }
 
-    public void test(Game game){
+
+    public void test(){
         Scanner testMoves = importMoves();
         while (testMoves.hasNextLine()){
             String line = testMoves.nextLine();

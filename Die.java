@@ -5,12 +5,25 @@ import java.util.List;
 public class Die {
     private final List<Integer> values;
     private boolean setManual = false;
-    public Die(){
+
+    private static Die instance = null;
+
+
+    // this can use the singleton pattern. there can only be one die
+    // we don't need to pass the die around, we can just call Die.getInstance()
+    private Die(){
         // Initialise to 'empty' die faces
         this.values = new ArrayList<Integer>();
 
         // Roll to initialise when instantiated
         this.roll();
+    }
+
+    public static Die getInstance() {
+        if (instance == null) {
+            instance = new Die();
+        }
+        return instance;
     }
 
     // Roll, creating two die values -> return them both
