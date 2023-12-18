@@ -52,8 +52,8 @@ public class Board {
      */
     public Board(int gameNumber, int matchGames, String playerBscore,String playerWscore) {
         this.points=new Point[this.numPoints+2];
-        int midPoint = (int) numPoints/2;
-        int quarterPoint = (int) numPoints/4;
+        int midPoint = numPoints /2;
+
         // The printout of the board must have enough rows for two sets of points, 2 boarders, and the gap in between
         // It must have enough columns for half of the points plus the bars and the off boards and a column for the log
         this.boardPrint = new String[gap+2*(border+pointSize)][midPoint+3];
@@ -78,12 +78,12 @@ public class Board {
      */
     public Point[] createPoints(){
         Point[] points=new Point[numPoints+2];
-        int midPoint = (int) numPoints/2;
-        int quarterPoint = (int) numPoints/4;
+        int midPoint = numPoints /2;
+        int quarterPoint = numPoints /4;
         // First add the off board positions for white off/black bar and black off/white bar
         points[0] = new OffBoard(0,numPoints+1,midPoint+1,gap+pointSize*2);
         points[numPoints+1] = new OffBoard(numPoints+1,0,midPoint+1,border);
-        // Now add all the on board points
+        // Now add all the onboard points
         int col = midPoint+1;
         for (int i=1;i<=numPoints;i++){
             col+=colIncrement(i,midPoint,quarterPoint);

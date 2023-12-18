@@ -12,7 +12,8 @@ import java.io.IOException;
 public class Command {
     enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST,}
     private Game game;
-    private Match match;
+    private final Match match;
+
     public Command(Match match) {
         this.match = match;
     }
@@ -21,6 +22,11 @@ public class Command {
         this.game=game;
         game.setCommand(this);
     }
+
+    /**
+     * Read a text file and print contents to the console.
+     * @param filePath The path of the file to be read and printed. This should be a relative path from the classpath.
+     */
     static void printTextFile(String filePath) {
         InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(filePath);
         if (inputStream != null) {
@@ -36,6 +42,14 @@ public class Command {
         }
     }
 
+    /**
+     * This method processes a given command and performs the corresponding action.
+     * It's sole purpose is to allow the user to interact with the game.
+     * The actions can be: "ROLL", "QUIT", "PIP", "HINT", "MOVE", "DOUBLE", "DICE", "TEST", "SET_PLAYER".
+     *
+     * @param command The command to be processed.
+     * @return boolean Returns false if the "QUIT" command is processed, otherwise returns true.
+     */
     public boolean acceptCommand(String command){
         String[] cmdTokens = command.split("\\s+");
         switch (cmdTokens[0].toUpperCase()) {
@@ -65,7 +79,6 @@ public class Command {
                 if(cmdTokens.length==1) {
                     int firstRoll = getInteger("Please enter the desired value for the first die");
                     int secondRoll = getInteger("Please enter the desired value for the second die");
-                    rolls = new int[2];
                     if (firstRoll == secondRoll) {
                         System.out.println("Since the two die rolls specified are equal your number of rolls will be doubled");
                         rolls = new int[4];
@@ -98,6 +111,11 @@ public class Command {
         return true;
     }
 
+    /**
+     * List all the commands that the user can use, excluding those in the 'exclude' list
+     * @param exclude
+     * @return a List of Strings representing the possible commands
+     */
     public String[] listCommands(List<String> exclude){
         List<String> commands = new ArrayList<String>();
 
@@ -165,7 +183,6 @@ public class Command {
      */
     public static int getInteger(String message){
         Scanner in = new Scanner(System.in);
-        String inputString = "";
         int input=0;
         while (input==0) {
             System.out.println(message);
@@ -202,12 +219,13 @@ public class Command {
             match.updateLog("Error reading file: " + e);
         }
     }
+
     public static Scanner importMoves(){
         try {
             JFileChooser chooser = new JFileChooser();
-            Scanner in;
-            if (chooser.showOpenDialog(null)==
-                JFileChooser.APPROVE_OPTION){
+            chooser.setCurrentDirectory(new File("."));
+
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
                 File selectedFile = chooser.getSelectedFile();
                 return new Scanner(selectedFile);
             }
