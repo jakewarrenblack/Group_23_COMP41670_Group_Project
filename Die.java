@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The pair of dice which the players use in the games to see how far they can move their
+ * pieces on each turn
+ */
 public class Die {
     private final List<Integer> values;
     private boolean setManual = false;
@@ -26,7 +30,13 @@ public class Die {
         return instance;
     }
 
-    // Roll, creating two die values -> return them both
+    /**
+     * Roll a pair of dice and return the face values
+     * If the dice both have the same face value, return double the number
+     * If the face values of the dice have been set manually, return them and turn off the set manual flag
+     *
+     * @return List of Integers representing the face value of the dice rolled
+     */
     public List<Integer> roll(){
         if (!setManual) {
             this.values.clear();
@@ -46,6 +56,11 @@ public class Die {
         return this.values;
     }
 
+    /**
+     * Manually set the value to return the next time the dice are rolled
+     *
+     * @param rolls integer values to set the return
+     */
     public void setValues(int[] rolls){
         this.values.clear();
         for (int roll : rolls) {
@@ -54,6 +69,12 @@ public class Die {
         this.setManual=true;
     }
 
+    /**
+     * Give the value of the dice the last time they were rolled
+     * Or what they have been manually set to
+     *
+     * @return List of Integers representing the most recent dice roll
+     */
     public List<Integer> getCurrentValues(){
         this.setManual=false;
         return this.values;
