@@ -21,6 +21,22 @@ class BoardTest {
     }
 
     @Test
+    void createPoints(){
+        Point[] points = testBoard.createPoints();
+        assertEquals(26,points.length);
+        assertTrue(points[0] instanceof OffBoard);
+        for (int i=0;i<points.length;i++){
+            assertEquals(points.length-i-1,points[i].getPip(new Player("B", Player.Color.BLACK)));
+        }
+    }
+    @Test
+    void createPrintOut(){
+        String[][] printOut = testBoard.createPrintOut("Black Test","White Test");
+        assertEquals(16,printOut.length);
+        assertEquals(15,printOut[0].length);
+        assertEquals("    White Test",printOut[15][14]);
+    }
+    @Test
     void colNames(){
         assertEquals("-1-",testBoard.colNames(1,6));
         assertEquals("-6-",testBoard.colNames(6,6));
@@ -30,6 +46,45 @@ class BoardTest {
         assertEquals("18-",testBoard.colNames(18,6));
         assertEquals("-19",testBoard.colNames(19,6));
         assertEquals("24-",testBoard.colNames(24,6));
+    }
+    @Test
+    void colIncrement(){
+        assertEquals(-1,testBoard.colIncrement(0,12,6));
+        assertEquals(-2,testBoard.colIncrement(7,12,6));
+        assertEquals(0,testBoard.colIncrement(13,12,6));
+        assertEquals(1,testBoard.colIncrement(14,12,6));
+        assertEquals(2,testBoard.colIncrement(19,12,6));
+    }
+    @Test
+    void removePiece(){
+        Player bPlayer = new Player("Test", Player.Color.BLACK);
+        Player wPlayer = new Player("Other", Player.Color.WHITE);
+        testBoard.placePieces(bPlayer);
+        testBoard.placePieces(wPlayer);
+        // Remove a piece from a normal point
+        // Expect to get the piece and be left with one piece on the point
+        Piece testPiece = testBoard.removePiece(24);
+        assertEquals(Player.Color.WHITE,testPiece.getColor());
+        assertEquals(1,testBoard.numPieces(24));
+        // Now do bars - expect to get the piece we've placed there back again
+        // and be left with no pieces on the bar
+        testBoard.setColour(25, Player.Color.WHITE);
+        testBoard.setColour(0, Player.Color.BLACK);
+        testBoard.addPiece(25,wPlayer.getPiece(0));
+        testBoard.addPiece(0,bPlayer.getPiece(0));
+        Piece wPiece = testBoard.removePiece(25);
+        Piece bPiece = testBoard.removePiece(0);
+        assertEquals(Player.Color.WHITE,wPiece.getColor());
+        assertEquals(0,testBoard.numPieces(25));
+        assertEquals(Player.Color.BLACK,bPiece.getColor());
+        assertEquals(0,testBoard.numPieces(0));
+
+    }
+    @Test
+    void addPiece(){
+        Piece testPiece = new Piece(new Player("B",Player.Color.BLACK),1);
+        testBoard.addPiece(1,testPiece);
+        assertEquals(testPiece,testBoard.getPoint(1).getTopChecker());
     }
     @Test
     void placeWhitePieces(){
@@ -73,6 +128,22 @@ class BoardTest {
                 ()->assertEquals(" B ",testBoard.getColour(19)));
 
     }
+    @Test
+    void mumPieces(){
+        Player testPlayer = new Player("Test", Player.Color.BLACK);
+        testBoard.placePieces(testPlayer);
+        assertAll(()->assertEquals(2,testBoard.numPieces(1)),
+                ()->assertEquals(5,testBoard.numPieces(12)),
+                ()->assertEquals(3,testBoard.numPieces(17)),
+                ()->assertEquals(5,testBoard.numPieces(19)));
+    }
+    @Test
+    void emptySpace(){
+        assertEquals(" | ",testBoard.emptySpace(1));
+        assertEquals("   ",testBoard.emptySpace(0));
+        assertEquals("   ",testBoard.emptySpace(25));
+    }
+    // NB - the updateBoard method is only called from the print() method so is fully tested by this set of tests
     @Test
     void printBlank(){
         testBoard.print(Player.Color.WHITE,testLog.recentLog(10),"");
@@ -142,36 +213,37 @@ class BoardTest {
                 "-12-+--+--+--+--7-BAR-6--+--+--+--+--1-OFF    White score\n",outputStreamCaptor.toString());
     }
     @Test
-    void removePiece(){
-        Player bPlayer = new Player("Test", Player.Color.BLACK);
-        Player wPlayer = new Player("Other", Player.Color.WHITE);
-        testBoard.placePieces(bPlayer);
-        testBoard.placePieces(wPlayer);
-        // Remove a piece from a normal point
-        // Expect to get the piece and be left with one piece on the point
-        Piece testPiece = testBoard.removePiece(24);
-        assertEquals(Player.Color.WHITE,testPiece.getColor());
-        assertEquals(1,testBoard.numPieces(24));
-        // Now do bars - expect to get the piece we've placed there back again
-        // and be left with no pieces on the bar
-        testBoard.setColour(25, Player.Color.WHITE);
-        testBoard.setColour(0, Player.Color.BLACK);
-        testBoard.addPiece(25,wPlayer.getPiece(0));
-        testBoard.addPiece(0,bPlayer.getPiece(0));
-        Piece wPiece = testBoard.removePiece(25);
-        Piece bPiece = testBoard.removePiece(0);
-        assertEquals(Player.Color.WHITE,wPiece.getColor());
-        assertEquals(0,testBoard.numPieces(25));
-        assertEquals(Player.Color.BLACK,bPiece.getColor());
-        assertEquals(0,testBoard.numPieces(0));
-        // 14 Dec 23: Removed this validation - this is duplicating validation done in the Game class
-        // Try it with off - expect to get null, cannot take pieces back on the board again
-//        testBoard.setColour(25, Player.Color.BLACK);
-//        testBoard.setColour(0, Player.Color.WHITE);
-//        testBoard.addPiece(25,bPlayer.getPiece(1));
-//        testBoard.addPiece(0,wPlayer.getPiece(1));
-//        assertNull(testBoard.removePiece(25));
-//        assertNull(testBoard.removePiece(0));
+    void getPoint() {
+        assertEquals(10,testBoard.getPoint(10).getPosition());
+    }
+    @Test
+    void getBar(){
+        Player playerB = new Player("Black", Player.Color.BLACK);
+        Player playerW = new Player("White", Player.Color.WHITE);
+        Point barB = testBoard.getBar(playerB);
+        Point barW = testBoard.getBar(playerW);
+        assertEquals(0,barB.getPosition());
+        assertEquals(25,barW.getPosition());
+    }
+    @Test
+    void getOff(){
+        Player playerB = new Player("Black", Player.Color.BLACK);
+        Player playerW = new Player("White", Player.Color.WHITE);
+        Point offB = testBoard.getOff(playerB);
+        Point offW = testBoard.getOff(playerW);
+        assertEquals(0,offW.getPosition());
+        assertEquals(25,offB.getPosition());
+    }
+    @Test
+    void hasBarPieces(){
+        Player playerB = new Player("Test", Player.Color.BLACK);
+        Player playerW = new Player("White", Player.Color.WHITE);
+        assertFalse(testBoard.hasBarPieces(playerB));
+        testBoard.addPiece(25,playerB.getPiece(1));
+        assertFalse(testBoard.hasBarPieces(playerB));
+        testBoard.addPiece(0,playerB.getPiece(0));
+        assertTrue(testBoard.hasBarPieces(playerB));
+        assertFalse(testBoard.hasBarPieces(playerW));
     }
     @Test
     void setColour(){
@@ -200,33 +272,7 @@ class BoardTest {
         assertEquals(0,testBoard.numPieces(1));
 
     }
-    @Test
-    void getPoint() {
-        assertEquals(10,testBoard.getPoint(10).getPosition());
-    }
-    @Test
-    void getBar(){
-        Player playerB = new Player("Black", Player.Color.BLACK);
-        Player playerW = new Player("White", Player.Color.WHITE);
-        Point barB = testBoard.getBar(playerB);
-        Point barW = testBoard.getBar(playerW);
-        assertEquals(0,barB.getPosition());
-        assertEquals(25,barW.getPosition());
-    }
-    @Test
-    void hasBarPieces(){
-        Player playerB = new Player("Test", Player.Color.BLACK);
-        Player playerW = new Player("White", Player.Color.WHITE);
-        assertFalse(testBoard.hasBarPieces(playerB));
-        testBoard.addPiece(25,playerB.getPiece(1));
-        assertFalse(testBoard.hasBarPieces(playerB));
-        testBoard.addPiece(0,playerB.getPiece(0));
-        assertTrue(testBoard.hasBarPieces(playerB));
-        assertFalse(testBoard.hasBarPieces(playerW));
-    }
-    @Test
-    void getBoardPrint() {
-    }
+
     @AfterEach
     public void tearDown() {
         System.setOut(standardOut);
