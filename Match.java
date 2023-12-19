@@ -155,9 +155,9 @@ public class Match {
         List<String> exclude = new ArrayList<>();
 
 
-        String selectedTestOption;
+        String selectedTestOption = "";
 
-        String[] alphabet = {"a","b","c","d","e","f"};
+        String[] alphabet = {"a","b","c","d","e","f", "g"};
         if(moves.length > 0){
             for(String move : moves[0]){
                 // check if the command is a letter, and present somewhere in the alphabet array
@@ -186,7 +186,7 @@ public class Match {
 
 
         //TODO: the test file will have some option a/b/c/d/e/f, pass that in here to make the selection automatically
-        game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus());
+        game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus(), selectedTestOption);
         currentPlayer=nextTurn();
 
         while (game.isGameOngoing()) {
@@ -288,12 +288,28 @@ public class Match {
      * If the other player accepts the next face of the doubling cube is shown
      * If the other player declines they lose the game
      */
-    public void doubleBet(){
+    public void doubleBet(String...testCommand){
         Player otherPlayer = currentPlayer == this.players[0] ? this.players[1] : this.players[0];
-        if (Command.chooseOption(otherPlayer.getName()+", "+currentPlayer.getName()+" has offered to double the bet. Do you accept?",new String[]{"Yes","No"})==0) {
+
+
+        if(testCommand.length > 0){
+            if(testCommand[0].equals("accept")){
+                doublingCube.doubleScore(otherPlayer);
+                log.updateLog("The doubling cube now shows " + doublingCube.getDouble() + " and " + otherPlayer.getName() + " has possession");
+            }
+            else if(testCommand[0].equals("refuse")){
+                log.updateLog(otherPlayer.getName()+" has rejected the offer to double the bet and loses the game");
+                game.finishGame(otherPlayer,doublingCube.getDouble());
+            }
+            return;
+        }
+
+
+        if (Command.chooseOption(otherPlayer.getName() + ", " + currentPlayer.getName() + " has offered to double the bet. Do you accept?", new String[]{"Yes","No"})==0) {
             doublingCube.doubleScore(otherPlayer);
             log.updateLog("The doubling cube now shows " + doublingCube.getDouble() + " and " + otherPlayer.getName() + " has possession");
-        } else {
+        }
+        else {
             log.updateLog(otherPlayer.getName()+" has rejected the offer to double the bet and loses the game");
             game.finishGame(otherPlayer,doublingCube.getDouble());
         }

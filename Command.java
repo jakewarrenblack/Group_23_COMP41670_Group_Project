@@ -75,7 +75,7 @@ public class Command {
                     }
                 }
             }
-            case "DOUBLE" -> match.doubleBet();
+            case "DOUBLE", "ACCEPT", "REFUSE" -> match.doubleBet(Main.testMode ? cmdTokens[0] : "");
             case "DICE" -> {
                 int[] rolls;
                 if(cmdTokens.length==1) {
@@ -96,21 +96,6 @@ public class Command {
                 }
                 match.setDie(rolls);
                 match.updateLog("The values of the dice have been set manually for the next roll");
-            }
-            case "TEST" -> {
-                match.updateLog("Running test script");
-                try {
-                    moves = importMoves();
-                    // might make sense to parse the moves from the text file,
-                    // and recursively call acceptCommand() for each move
-                    // (this would allow the user to use the same commands as in the console)
-
-
-
-
-                    match.updateLog("Test script executed successfully");
-                } catch (IllegalArgumentException e){match.updateLog(e.getMessage());}
-
             }
             case "SET_PLAYER" -> {
                 match.setCurrentPlayer(Integer.parseInt(cmdTokens[1]));
@@ -145,6 +130,12 @@ public class Command {
      * @return an integer representing the position of the chosen option within the list of options given
      */
     public static int chooseOption(String message, String[] options) {
+        // in test mode, always agree to the first option
+        // unless the user has passed 'refuse'. that means they want to refuse doubling the bet, so go for option 2.
+        if (Main.testMode) {
+            return 0;
+        }
+
         System.out.println(message);
 
         for (int i = 0; i < options.length; i++) {

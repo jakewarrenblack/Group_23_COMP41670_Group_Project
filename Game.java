@@ -127,10 +127,6 @@ public class Game {
     }
 
 
-
-
-
-
     /**
      * Allow the current player to choose what to do with their dice rolls
      * If they roll a double they get to use each die twice - ie, they get to make 4 moves
@@ -153,9 +149,7 @@ public class Game {
      * @param diceRolls
      */
     public void processDiceRolls(List<Integer> diceRolls, String doubleStatus, String... selectedTestOption) {
-        int i = 0;
-
-        while (i < diceRolls.size()) {
+        for(int i=0; i<diceRolls.size(); i++){
             ArrayList<Move> validMoves = getAvailableValidMoves(diceRolls.get(i));
 
             if (!validMoves.isEmpty()) {
@@ -163,16 +157,20 @@ public class Game {
                 board.print(currentPlayer.getColor(), log.recentLog(10), doubleStatus);
 
                 int chosenMove = Command.chooseOption(currentPlayer.getName() + " you rolled " + diceRolls.get(i) + ". Choose your move: ", validMoveString);
+
+                // use the option we got from the text file. this will have been converted from a letter to a number (in string format)
+                if (selectedTestOption.length > 0) {
+                    chosenMove = Integer.parseInt(selectedTestOption[0]);
+                }
+
                 command.acceptCommand("move " + validMoves.get(chosenMove).getFrom() + " " + validMoves.get(chosenMove).getTo());
             } else {
                 log.updateLog("You have no valid moves to make with your die roll of " + diceRolls.get(i));
             }
 
-            i++;
-        }
-
-        if (i < diceRolls.size()) {
-            log.updateLog("You have no more valid moves");
+            if (i < diceRolls.size()) {
+                log.updateLog("You have no more valid moves");
+            }
         }
     }
 
