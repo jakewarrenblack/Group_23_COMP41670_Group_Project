@@ -17,6 +17,12 @@ class PointTest {
         testPlayerB = new Player("Test B", Player.Color.BLACK);
     }
     @Test
+    void getTopChecker(){
+        assertNull(firstPoint.getTopChecker());
+        firstPoint.addPiece(testPlayerW.getPiece(0));
+        assertEquals(testPlayerW.getPiece(0),firstPoint.getTopChecker());
+    }
+    @Test
     void addPiece() {
         firstPoint.addPiece(testPlayerW.getPiece(1));
         assertAll(()->assertEquals(1,firstPoint.numPieces()),
@@ -68,6 +74,10 @@ class PointTest {
         assertFalse(secondPoint.isPlayers(testPlayerW));
     }
     @Test
+    void getCoords(){
+        assertArrayEquals(new int[]{14,12},firstPoint.getCoords());
+    }
+    @Test
     void isFull(){
         assertFalse(firstPoint.isFull());
         for (int i=0;i<5;i++) {
@@ -102,15 +112,7 @@ class PointTest {
         assertAll(()->assertEquals(1,firstPoint.getPip(testPlayerW)),
                 ()->assertEquals(23,secondPoint.getPip(testPlayerB)));
     }
-    @Test
-    void getTopChecker(){
-        assertNull(firstPoint.getTopChecker());
-        firstPoint.addPiece(testPlayerW.getPiece(0));
-        assertEquals(testPlayerW.getPiece(0),firstPoint.getTopChecker());
-    }
-    @Test
-    void getCoords(){
-        assertArrayEquals(new int[]{14,12},firstPoint.getCoords());
-    }
+
+
 
 }
