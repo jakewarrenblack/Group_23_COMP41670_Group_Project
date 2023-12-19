@@ -27,11 +27,6 @@ class PieceTest {
     }
 
     @Test
-    void getColor() {
-        Piece testPiece = new Piece(testPlayer,1);
-        assertEquals(Player.Color.BLACK,testPiece.getColor());
-    }
-    @Test
     void getPip(){
         Piece blackPiece = new Piece(testPlayer,1);
         Piece blackPiece2 = new Piece(testPlayer,5);
@@ -49,5 +44,16 @@ class PieceTest {
                 ()->assertEquals(6,whitePiece2.getPip()),
                 ()->assertEquals(25,whitePieceBar.getPip()),
                 ()->assertEquals(0,whitePieceOff.getPip()));
+    }
+
+    @Test
+    void getColor() {
+        Piece testPiece = new Piece(testPlayer,1);
+        assertEquals(Player.Color.BLACK,testPiece.getColor());
+    }
+    @Test
+    void getPlayer(){
+        assertEquals(testPlayer,new Piece(testPlayer,1).getPlayer());
+        assertEquals(testPlayer2,new Piece(testPlayer2,1).getPlayer());
     }
 }
