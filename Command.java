@@ -171,8 +171,11 @@ public class Command {
         while (opt < 0 || opt >= options.length) {
             while (!in.hasNextInt()) {
                 System.out.println("You must enter a number corresponding to one of the options");
+                // Consume the invalid input to prevent an infinite loop
+                in.next();
             }
             opt = in.nextInt() - 1;
+
             if (opt < 0 || opt >= options.length) {
                 System.out.println("You must enter a number corresponding to one of the options");
             }
@@ -226,6 +229,10 @@ public class Command {
 
 
     public static ArrayList<String> importMoves(){
+        return getStrings();
+    }
+
+    static ArrayList<String> getStrings() {
         ArrayList<String> moves = new ArrayList<>();
 
         try {

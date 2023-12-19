@@ -5,26 +5,7 @@ import java.util.*;
 
 public class Main {
     public static ArrayList<String> importMoves(){
-        ArrayList<String> moves = new ArrayList<>();
-
-        try {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new File("."));
-
-            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
-                File selectedFile = chooser.getSelectedFile();
-
-                Scanner s = new Scanner(selectedFile);
-
-                while(s.hasNextLine()){
-                    String line = s.nextLine();
-                    moves.add(line);
-                }
-
-                return moves;
-            }
-        } catch (IOException ex){ex.printStackTrace();}
-        return null;
+        return Command.getStrings();
     }
 
     // need a global override for every time chooseOption runs, to automatically agree to the first option
