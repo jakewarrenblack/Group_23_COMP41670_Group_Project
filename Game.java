@@ -78,9 +78,13 @@ public class Game {
      * @throws IllegalArgumentException if the move is not legal. The exception's message provides details about why the move is not legal.
      */
     public boolean isLegalMove(int from, int to){
-        if(from<0|to<0|from>25|to>25){throw new IllegalArgumentException("There are only 26 valid points");}
+        if(from<0|to<0|from>25|to>25){
+            throw new IllegalArgumentException("There are only 26 valid points");
+        }
+
         Point fromPoint = board.getPoint(from);
         Point toPoint = board.getPoint(to);
+
         if(currentPlayer.isBarred(from)){
             throw new IllegalArgumentException(currentPlayer.getName() + " must move their checkers from the bar first");
         }
@@ -149,12 +153,22 @@ public class Game {
     public void processDifferentDiceRolls(List<Integer> diceRolls,String doubleStatus){
         ArrayList<Move> validMoves = getAllAvailableValidMoves(diceRolls);
         String[] validMoveString = validMovesString(validMoves);
+
         board.print(currentPlayer.getColor(),log.recentLog(10),doubleStatus);
+
+        // in test mode, the file provides a letter
+        // we need to translate between the letters and our number values to automatically select some move
         int chosenMove = Command.chooseOption(currentPlayer.getName() +" you rolled "+diceRolls.get(0)+ " and "+diceRolls.get(1)+". Choose your first move: ",validMoveString);
+
         command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
-        int otherRoll = diceRolls.get(0)==validMoves.get(chosenMove).getFrom()-validMoves.get(chosenMove).getTo()?diceRolls.get(1):diceRolls.get(0);
+
+        int otherRoll = diceRolls.get(0)==validMoves.get(chosenMove).getFrom()-validMoves.get(chosenMove).getTo() ? diceRolls.get(1) : diceRolls.get(0);
+
         validMoves = getAvailableValidMoves(otherRoll);
-        if(validMoves.isEmpty()){log.updateLog("You have no valid moves to make with your other die roll of "+otherRoll);}
+
+        if(validMoves.isEmpty()){
+            log.updateLog("You have no valid moves to make with your other die roll of "+otherRoll);
+        }
         else {
             board.print(currentPlayer.getColor(),log.recentLog(10),doubleStatus);
             validMoveString = validMovesString(validMoves);

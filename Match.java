@@ -81,7 +81,15 @@ public class Match {
      *
      * @return  an array of 2 Player objects
      */
-    public Player[] addPlayers() {
+    public Player[] addPlayers(String...providedPlayers) {
+        if(providedPlayers.length > 0){
+            for(int i = 0; i < providedPlayers.length; i++){
+                this.players[i] = new Player(providedPlayers[i], Player.Color.values()[i]);
+            }
+
+            return players;
+        }
+
         Player[] players = new Player[2];
 
         for (int i = 0; i < 2; i++) {
@@ -129,31 +137,49 @@ public class Match {
      *
      * @return True if the specified number of games in the match series have been complete, False otherwise
      */
-    public boolean Play(){
+    public boolean play(List<String>...moves){
         game=new Game(players,gameIndex,games);
         command.newGame(game);
+
         for (int j = 0; j < 2; j++) {
             game.placePieces(this.players[j]);
         }
+
         currentPlayer = setInitialPlayer();
-        Player otherPlayer = players[0].equals(currentPlayer)?players[1]:players[0];
+
+        Player otherPlayer = players[0].equals(currentPlayer) ? players[1] : players[0];
+
         // game just started, set the initial dice roll value, which the player will have to use
         List<Integer> diceRolls = die.getCurrentValues();
         List<String> exclude = new ArrayList<>();
+
+
+        if(moves.length > 0){
+            for(String move : moves[0]){
+                command.acceptCommand(move);
+            }
+        }
+
+
         // You cannot roll the dice on your first turn - you need to use the dice rolls from deciding the initial players
         exclude.add("ROLL");
+
         // The player can execute commands until they choose MOVE
         acceptCommand("MOVE",exclude);
+
         game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus());
         currentPlayer=nextTurn();
+
         while (game.isGameOngoing()) {
             exclude.clear();
             // You can only use the MOVE command on your first turn because you don't have to roll the dice
             exclude.add("MOVE");
+
             // The DOUBLE command can be offered if no-one owns the doubling cube yet or if the current player owns it
-            if(doublingCube.hasOwner()&!doublingCube.isOwnedBy(currentPlayer)){
+            if(doublingCube.hasOwner() && !doublingCube.isOwnedBy(currentPlayer)){
                 exclude.add("DOUBLE");
             }
+
             acceptCommand("ROLL",exclude);
             // The other player may have lost the game if they rejected an offer to double
             if(game.isGameOngoing()) {
@@ -169,6 +195,7 @@ public class Match {
                 }
             }
         }
+
         gameIndex++;
         log.updateLog("Game "+gameIndex+" of "+games+" complete. "+players[0].getName()+" has a score of "+players[0].getScore()+" and "+players[1].getName()+" has a score of "+players[1].getScore());
         return gameIndex==games;
