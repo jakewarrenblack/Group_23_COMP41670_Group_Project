@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,7 +82,15 @@ public class Match {
      *
      * @return  an array of 2 Player objects
      */
-    public Player[] addPlayers() {
+    public Player[] addPlayers(String...providedPlayers) {
+        if(providedPlayers.length > 0){
+            for(int i = 0; i < providedPlayers.length; i++){
+                this.players[i] = new Player(providedPlayers[i], Player.Color.values()[i]);
+            }
+
+            return players;
+        }
+
         Player[] players = new Player[2];
 
         for (int i = 0; i < 2; i++) {
@@ -129,31 +138,67 @@ public class Match {
      *
      * @return True if the specified number of games in the match series have been complete, False otherwise
      */
-    public boolean Play(){
+    public boolean play(List<String>...moves){
         game=new Game(players,gameIndex,games);
         command.newGame(game);
+
         for (int j = 0; j < 2; j++) {
             game.placePieces(this.players[j]);
         }
+
         currentPlayer = setInitialPlayer();
-        Player otherPlayer = players[0].equals(currentPlayer)?players[1]:players[0];
+
+        Player otherPlayer = players[0].equals(currentPlayer) ? players[1] : players[0];
+
         // game just started, set the initial dice roll value, which the player will have to use
         List<Integer> diceRolls = die.getCurrentValues();
         List<String> exclude = new ArrayList<>();
+
+
+        String selectedTestOption = "";
+
+        String[] alphabet = {"a","b","c","d","e","f", "g"};
+        if(moves.length > 0){
+            for(String move : moves[0]){
+                // check if the command is a letter, and present somewhere in the alphabet array
+                if (move.length() == 1 && Arrays.asList(alphabet).contains(move)) {
+                    // when this is the case, we also need to manually trigger the MOVE command
+
+                    // if so, convert it to a number
+                    int num = Arrays.asList(alphabet).indexOf(move);
+                    // and add 1 to it, to get the correct number
+                    num++;
+                    // then convert it back to a string
+                    selectedTestOption = Integer.toString(num);
+                }
+                else{
+                    command.acceptCommand(move);
+                }
+            }
+        }
+
+
         // You cannot roll the dice on your first turn - you need to use the dice rolls from deciding the initial players
         exclude.add("ROLL");
+
         // The player can execute commands until they choose MOVE
         acceptCommand("MOVE",exclude);
-        game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus());
+
+
+        //TODO: the test file will have some option a/b/c/d/e/f, pass that in here to make the selection automatically
+        game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus(), selectedTestOption);
         currentPlayer=nextTurn();
+
         while (game.isGameOngoing()) {
             exclude.clear();
             // You can only use the MOVE command on your first turn because you don't have to roll the dice
             exclude.add("MOVE");
+
             // The DOUBLE command can be offered if no-one owns the doubling cube yet or if the current player owns it
-            if(doublingCube.hasOwner()&!doublingCube.isOwnedBy(currentPlayer)){
+            if(doublingCube.hasOwner() && !doublingCube.isOwnedBy(currentPlayer)){
                 exclude.add("DOUBLE");
             }
+
             acceptCommand("ROLL",exclude);
             // The other player may have lost the game if they rejected an offer to double
             if(game.isGameOngoing()) {
@@ -169,6 +214,7 @@ public class Match {
                 }
             }
         }
+
         gameIndex++;
         log.updateLog("Game "+gameIndex+" of "+games+" complete. "+players[0].getName()+" has a score of "+players[0].getScore()+" and "+players[1].getName()+" has a score of "+players[1].getScore());
         return gameIndex==games;
@@ -242,12 +288,28 @@ public class Match {
      * If the other player accepts the next face of the doubling cube is shown
      * If the other player declines they lose the game
      */
-    public void doubleBet(){
+    public void doubleBet(String...testCommand){
         Player otherPlayer = currentPlayer == this.players[0] ? this.players[1] : this.players[0];
-        if (Command.chooseOption(otherPlayer.getName()+", "+currentPlayer.getName()+" has offered to double the bet. Do you accept?",new String[]{"Yes","No"})==0) {
+
+
+        if(testCommand.length > 0){
+            if(testCommand[0].equals("accept")){
+                doublingCube.doubleScore(otherPlayer);
+                log.updateLog("The doubling cube now shows " + doublingCube.getDouble() + " and " + otherPlayer.getName() + " has possession");
+            }
+            else if(testCommand[0].equals("refuse")){
+                log.updateLog(otherPlayer.getName()+" has rejected the offer to double the bet and loses the game");
+                game.finishGame(otherPlayer,doublingCube.getDouble());
+            }
+            return;
+        }
+
+
+        if (Command.chooseOption(otherPlayer.getName() + ", " + currentPlayer.getName() + " has offered to double the bet. Do you accept?", new String[]{"Yes","No"})==0) {
             doublingCube.doubleScore(otherPlayer);
             log.updateLog("The doubling cube now shows " + doublingCube.getDouble() + " and " + otherPlayer.getName() + " has possession");
-        } else {
+        }
+        else {
             log.updateLog(otherPlayer.getName()+" has rejected the offer to double the bet and loses the game");
             game.finishGame(otherPlayer,doublingCube.getDouble());
         }

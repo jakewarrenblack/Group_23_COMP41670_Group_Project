@@ -1,5 +1,3 @@
-import javax.print.DocFlavor;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +11,8 @@ public class Command {
     enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST,}
     private Game game;
     private final Match match;
+
+    private ArrayList<String> moves = new ArrayList<>();
 
     public Command(Match match) {
         this.match = match;
@@ -48,9 +48,11 @@ public class Command {
      * The actions can be: "ROLL", "QUIT", "PIP", "HINT", "MOVE", "DOUBLE", "DICE", "TEST", "SET_PLAYER".
      *
      * @param command The command to be processed.
-     * @return boolean Returns false if the "QUIT" command is processed, otherwise returns true.
      */
-    public boolean acceptCommand(String command){
+    public void acceptCommand(String command){
+
+
+
         String[] cmdTokens = command.split("\\s+");
         switch (cmdTokens[0].toUpperCase()) {
             case "ROLL" -> match.roll();
@@ -73,7 +75,7 @@ public class Command {
                     }
                 }
             }
-            case "DOUBLE" -> match.doubleBet();
+            case "DOUBLE", "ACCEPT", "REFUSE" -> match.doubleBet(Main.testMode ? cmdTokens[0] : "");
             case "DICE" -> {
                 int[] rolls;
                 if(cmdTokens.length==1) {
@@ -95,20 +97,11 @@ public class Command {
                 match.setDie(rolls);
                 match.updateLog("The values of the dice have been set manually for the next roll");
             }
-            case "TEST" -> {
-                match.updateLog("Running test script");
-                try {
-                    test();
-                    match.updateLog("Test script executed successfully");
-                } catch (IllegalArgumentException e){match.updateLog(e.getMessage());}
-
-            }
             case "SET_PLAYER" -> {
                 match.setCurrentPlayer(Integer.parseInt(cmdTokens[1]));
             }
             default -> match.updateLog("I do not recognise " + cmdTokens[0] + " as a command");
         }
-        return true;
     }
 
     /**
@@ -137,22 +130,35 @@ public class Command {
      * @return an integer representing the position of the chosen option within the list of options given
      */
     public static int chooseOption(String message, String[] options) {
+        // in test mode, always agree to the first option
+        // unless the user has passed 'refuse'. that means they want to refuse doubling the bet, so go for option 2.
+        if (Main.testMode) {
+            return 0;
+        }
+
         System.out.println(message);
+
         for (int i = 0; i < options.length; i++) {
             System.out.println((i + 1) + ": " + options[i]);
         }
+
         Scanner in = new Scanner(System.in);
         int opt = -1;
         System.out.println("Please select an option");
+
         while (opt < 0 || opt >= options.length) {
             while (!in.hasNextInt()) {
                 System.out.println("You must enter a number corresponding to one of the options");
+                // Consume the invalid input to prevent an infinite loop
+                in.next();
             }
             opt = in.nextInt() - 1;
+
             if (opt < 0 || opt >= options.length) {
                 System.out.println("You must enter a number corresponding to one of the options");
             }
         }
+
         return opt;
     }
 
@@ -172,6 +178,7 @@ public class Command {
                 input = temp;
             }
         }
+
         return input;
     }
 
@@ -197,49 +204,33 @@ public class Command {
         }
         return input;
     }
-    public void test(){
-        Scanner testMoves = importMoves();
-        while (testMoves.hasNextLine()){
-            String line = testMoves.nextLine();
-            if (!acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
-        }
-    }
-    public void test(String path){
-        File f = new File(path);
-        Scanner scanner;
-        try {scanner = new Scanner(new FileReader(f));
-            while (scanner.hasNextLine()){
-                String line = scanner.nextLine();
-                if (line.equals("SET_PLAYER\t1\t")){
-                    System.out.println("Break");
-                }
-                if (!acceptCommand(line)){throw new IllegalArgumentException(line+" is not a valid command");}
-            }
-        } catch (Exception e) {
-            match.updateLog("Error reading file: " + e);
-        }
+
+
+    public static ArrayList<String> importMoves(){
+        return getStrings();
     }
 
-    public static Scanner importMoves(){
+    static ArrayList<String> getStrings() {
+        ArrayList<String> moves = new ArrayList<>();
+
         try {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File("."));
 
             if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
                 File selectedFile = chooser.getSelectedFile();
-                return new Scanner(selectedFile);
+
+                Scanner s = new Scanner(selectedFile);
+
+                while(s.hasNextLine()){
+                    String line = s.nextLine();
+                    moves.add(line);
+                }
+
+                return moves;
             }
         } catch (IOException ex){ex.printStackTrace();}
         return null;
-    }
-    public static Scanner importMoves(String path){
-        File f = new File(path);
-        try (Scanner scanner = new Scanner(new FileReader(f))) {
-            return scanner;
-        } catch (Exception e) {
-            System.out.println("Error reading file: " + e);
-            return null;
-        }
     }
 }
 
