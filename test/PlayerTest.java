@@ -12,13 +12,18 @@ class PlayerTest {
         testBlack = new Player("Also Test", Player.Color.BLACK);
     }
     @Test
-    void setScore() {
-    }
-
-    @Test
     void getScore() {
+        //NB - this test also covers getGameScore and loseGame methods
+        assertEquals(0,testWhite.getScore());
+        testBlack.loseGame(2);
+        // Player at the start of game hasn't born off any pieces so is "gammoned"
+        // doubling of 2 means 167 * 2 * 2 = 668 score
+        assertEquals(668,testBlack.getScore());
     }
-
+    @Test
+    void printScore(){
+        assertEquals("Test match score: 0",testWhite.printScore());
+    }
     @Test
     void getName() {
         assertAll(()->assertEquals("Test",testWhite.getName()),
@@ -33,8 +38,12 @@ class PlayerTest {
 
     @Test
     void getPiece() {
+        assertEquals(24,testWhite.getPiece(0).getPosition());
     }
-
+    @Test
+    void numPieces(){
+        assertEquals(15,testBlack.numPieces());
+    }
     @Test
     void pipScore() {
         // Start positions - pip score should be 167
@@ -49,6 +58,16 @@ class PlayerTest {
         testBoard.setColour(0, Player.Color.BLACK);
         testBoard.addPiece(0,testBoard.removePiece(21));
         assertEquals(186,testBlack.pipScore());
+    }
+    @Test
+    void piecePosition(){
+        assertEquals(24,testWhite.piecePosition(0));
+        assertEquals(1,testBlack.piecePosition(0));
+    }
+    @Test
+    void startPosition(){
+        assertEquals(24,testWhite.startPosition(0));
+        assertEquals(19,testBlack.startPosition(14));
     }
     @Test
     void canMoveOff(){
@@ -67,15 +86,6 @@ class PlayerTest {
         assertTrue(testBlack.canMoveOff());
     }
     @Test
-    void hasWon(){
-        // Has won when all checkers are in the off position
-        for (int i=0;i<testWhite.numPieces();i++){
-            assertFalse(testWhite.hasWon());
-            testWhite.getPiece(i).setPosition(0);
-        }
-        assertTrue(testWhite.hasWon());
-    }
-    @Test
     void isBarred(){
         // Aren't barred in the start position
         assertFalse(testWhite.isBarred(24));
@@ -85,5 +95,28 @@ class PlayerTest {
         // Are barred if they try to move a piece that's not on the bar
         testWhite.getPiece(0).setPosition(1);
         assertTrue(testWhite.isBarred(1));
+    }
+    @Test
+    void hasWon(){
+        // Has won when all checkers are in the off position
+        for (int i=0;i<testWhite.numPieces();i++){
+            assertFalse(testWhite.hasWon());
+            testWhite.getPiece(i).setPosition(0);
+        }
+        assertTrue(testWhite.hasWon());
+    }
+    @Test
+    void hasOff(){
+        // True when some pieces are in the off position
+        assertFalse(testWhite.hasOff());
+        testWhite.getPiece(0).setPosition(0);
+        assertTrue(testWhite.hasOff());
+    }
+    @Test
+    void hasBar(){
+        // True when some pieces are on the bar
+        assertFalse(testWhite.hasBar());
+        testWhite.getPiece(0).setPosition(25);
+        assertTrue(testWhite.hasBar());
     }
 }

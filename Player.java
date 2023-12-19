@@ -28,16 +28,6 @@ public class Player  {
             pieces[i]=new Piece(this,position);
         }
     }
-    public void setDouble(boolean hasDouble){this.hasDouble=hasDouble;}
-
-    public boolean hasDouble() {
-        return hasDouble;
-    }
-
-    public void setScore(int score){
-        this.score += score;
-    }
-
     public int getScore(){
         return this.score;
     }
@@ -62,9 +52,6 @@ public class Player  {
     public Piece getPiece(int index){
         return pieces[index];
     }
-
-    protected Piece[] getPieces(){return this.pieces;}
-
 
     /**
      * How many pieces does the player have?
@@ -118,7 +105,7 @@ public class Player  {
     }
 
     /**
-     * <b>Checks if the player is barred from a specific position.</b>
+     * <b>Checks if the player has any pieces on the bar and returns true if the player is trying to move another piece.</b>
      * <hr/>
      * This is determined by comparing the maximum pip value of all pieces to the bar pip value.
      * @param from the position to check.
