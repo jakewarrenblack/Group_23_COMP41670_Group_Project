@@ -168,7 +168,7 @@ public class Game {
                 }
                 else{
                     // use the option we got from the text file. this will have been converted from a letter to a number (in string format)
-                    if (selectedTestOption.length > 0) {
+                    if (!selectedTestOption[0].isEmpty()) {
                         chosenMove = Integer.parseInt(selectedTestOption[0]);
                     }
 
