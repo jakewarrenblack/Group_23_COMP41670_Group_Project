@@ -51,20 +51,7 @@ public class Command {
      */
     public void acceptCommand(String command){
 
-        String[] alphabet = {"a","b","c","d","e","f"};
 
-        // check if the command is a letter, and present somewhere in the alphabet array
-        if (command.length() == 1 && Arrays.asList(alphabet).contains(command.toLowerCase())) {
-            // when this is the case, we also need to manually trigger the MOVE command
-
-
-            // if so, convert it to a number
-            int num = Arrays.asList(alphabet).indexOf(command.toLowerCase());
-            // and add 1 to it, to get the correct number
-            num++;
-            // then convert it back to a string
-            command = Integer.toString(num);
-        }
 
         String[] cmdTokens = command.split("\\s+");
         switch (cmdTokens[0].toUpperCase()) {

@@ -126,19 +126,21 @@ public class Game {
         return this.board;
     }
 
+
+
+
+
+
     /**
      * Allow the current player to choose what to do with their dice rolls
      * If they roll a double they get to use each die twice - ie, they get to make 4 moves
      *
      * @param diceRolls the values of their dice rolls
      */
-    public void processRolls(List<Integer> diceRolls,Player currentPlayer,String doubleStatus){
+    public void processRolls(List<Integer> diceRolls,Player currentPlayer,String doubleStatus, String... selectedTestOption){
         this.currentPlayer=currentPlayer;
-        if (diceRolls.size()==2){
-            processDifferentDiceRolls(diceRolls,doubleStatus);
-        } else {
-            processDoubleDiceRolls(diceRolls,doubleStatus);
-        }
+        processDiceRolls(diceRolls,doubleStatus, selectedTestOption);
+
         isOngoing = !currentPlayer.hasWon();
     }
 
@@ -150,50 +152,28 @@ public class Game {
      *
      * @param diceRolls
      */
-    public void processDifferentDiceRolls(List<Integer> diceRolls,String doubleStatus){
-        ArrayList<Move> validMoves = getAllAvailableValidMoves(diceRolls);
-        String[] validMoveString = validMovesString(validMoves);
+    public void processDiceRolls(List<Integer> diceRolls, String doubleStatus, String... selectedTestOption) {
+        int i = 0;
 
-        board.print(currentPlayer.getColor(),log.recentLog(10),doubleStatus);
+        while (i < diceRolls.size()) {
+            ArrayList<Move> validMoves = getAvailableValidMoves(diceRolls.get(i));
 
-        // in test mode, the file provides a letter
-        // we need to translate between the letters and our number values to automatically select some move
-        int chosenMove = Command.chooseOption(currentPlayer.getName() +" you rolled "+diceRolls.get(0)+ " and "+diceRolls.get(1)+". Choose your first move: ",validMoveString);
+            if (!validMoves.isEmpty()) {
+                String[] validMoveString = validMovesString(validMoves);
+                board.print(currentPlayer.getColor(), log.recentLog(10), doubleStatus);
 
-        command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
+                int chosenMove = Command.chooseOption(currentPlayer.getName() + " you rolled " + diceRolls.get(i) + ". Choose your move: ", validMoveString);
+                command.acceptCommand("move " + validMoves.get(chosenMove).getFrom() + " " + validMoves.get(chosenMove).getTo());
+            } else {
+                log.updateLog("You have no valid moves to make with your die roll of " + diceRolls.get(i));
+            }
 
-        int otherRoll = diceRolls.get(0)==validMoves.get(chosenMove).getFrom()-validMoves.get(chosenMove).getTo() ? diceRolls.get(1) : diceRolls.get(0);
-
-        validMoves = getAvailableValidMoves(otherRoll);
-
-        if(validMoves.isEmpty()){
-            log.updateLog("You have no valid moves to make with your other die roll of "+otherRoll);
-        }
-        else {
-            board.print(currentPlayer.getColor(),log.recentLog(10),doubleStatus);
-            validMoveString = validMovesString(validMoves);
-            chosenMove = Command.chooseOption(currentPlayer.getName() + " you rolled " + otherRoll + " with your other die. Choose your second move: ", validMoveString);
-            command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
-        }
-    }
-    /**
-     * Allow the current player to choose between the different moves available to them
-     * from their dice roll
-     *
-     * @param diceRolls
-     */
-    public void processDoubleDiceRolls(List<Integer> diceRolls,String doubleStatus){
-        int i=0;
-        ArrayList<Move> validMoves=getAvailableValidMoves(diceRolls.get(i));
-        while (!validMoves.isEmpty()&i<diceRolls.size()){
-            String[] validMoveString=validMovesString(validMoves);
-            board.print(currentPlayer.getColor(),log.recentLog(10),doubleStatus);
-            int chosenMove = Command.chooseOption(currentPlayer.getName() +" you have the following options with dice number "+i+". Please choose: ",validMoveString );
-            command.acceptCommand("move "+validMoves.get(chosenMove).getFrom()+" "+validMoves.get(chosenMove).getTo());
             i++;
-            if (i<diceRolls.size()){validMoves=getAvailableValidMoves(diceRolls.get(i));}
         }
-        if (i<diceRolls.size()){log.updateLog("You have no more valid moves");}
+
+        if (i < diceRolls.size()) {
+            log.updateLog("You have no more valid moves");
+        }
     }
 
     /**

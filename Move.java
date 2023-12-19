@@ -79,12 +79,8 @@ public class Move {
         }
 
         //  Check not moving off the board (presuming bearing off is not yet permitted)
-        if (!this.bearOffAllowed && this.endPoint > 23 || this.endPoint < 0) { // FIXME: Is this 23 or 24? Maybe this is fine, just calling attention to it
-            // Player is trying to move off the board prematurely
-            return false;
-        }
-
-        return true;
+        // Player is trying to move off the board prematurely
+        return (this.bearOffAllowed || this.endPoint <= 23) && this.endPoint >= 0;
     }
 
     /**
@@ -97,9 +93,7 @@ public class Move {
             Point destinationPoint = myGame.getBoard().getPoint(this.endPoint);
 
             // Check if the destination point is occupied by 2 or more enemy pieces
-            if (destinationPoint.numPieces() >= 2 && destinationPoint.getTopChecker().getColor() != this.player.getColor()) {
-                return true;
-            }
+            return destinationPoint.numPieces() >= 2 && destinationPoint.getTopChecker().getColor() != this.player.getColor();
         }
 
         return false;

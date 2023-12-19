@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -154,9 +155,25 @@ public class Match {
         List<String> exclude = new ArrayList<>();
 
 
+        String selectedTestOption;
+
+        String[] alphabet = {"a","b","c","d","e","f"};
         if(moves.length > 0){
             for(String move : moves[0]){
-                command.acceptCommand(move);
+                // check if the command is a letter, and present somewhere in the alphabet array
+                if (move.length() == 1 && Arrays.asList(alphabet).contains(move)) {
+                    // when this is the case, we also need to manually trigger the MOVE command
+
+                    // if so, convert it to a number
+                    int num = Arrays.asList(alphabet).indexOf(move);
+                    // and add 1 to it, to get the correct number
+                    num++;
+                    // then convert it back to a string
+                    selectedTestOption = Integer.toString(num);
+                }
+                else{
+                    command.acceptCommand(move);
+                }
             }
         }
 
@@ -167,6 +184,8 @@ public class Match {
         // The player can execute commands until they choose MOVE
         acceptCommand("MOVE",exclude);
 
+
+        //TODO: the test file will have some option a/b/c/d/e/f, pass that in here to make the selection automatically
         game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus());
         currentPlayer=nextTurn();
 
