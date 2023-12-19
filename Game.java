@@ -158,12 +158,23 @@ public class Game {
 
                 int chosenMove = Command.chooseOption(currentPlayer.getName() + " you rolled " + diceRolls.get(i) + ". Choose your move: ", validMoveString);
 
-                // use the option we got from the text file. this will have been converted from a letter to a number (in string format)
-                if (selectedTestOption.length > 0) {
-                    chosenMove = Integer.parseInt(selectedTestOption[0]);
+
+                // **They cannot use the smaller roll first if that would mean they're unable to use the larger roll on this turn**
+                int otherRoll = diceRolls.get(0)==validMoves.get(chosenMove).getFrom()-validMoves.get(chosenMove).getTo()?diceRolls.get(1):diceRolls.get(0);
+                validMoves = getAvailableValidMoves(otherRoll);
+
+                if(validMoves.isEmpty()){
+                    log.updateLog("You have no valid moves to make with your other die roll of "+otherRoll);
+                }
+                else{
+                    // use the option we got from the text file. this will have been converted from a letter to a number (in string format)
+                    if (selectedTestOption.length > 0) {
+                        chosenMove = Integer.parseInt(selectedTestOption[0]);
+                    }
+
+                    command.acceptCommand("move " + validMoves.get(chosenMove).getFrom() + " " + validMoves.get(chosenMove).getTo());
                 }
 
-                command.acceptCommand("move " + validMoves.get(chosenMove).getFrom() + " " + validMoves.get(chosenMove).getTo());
             } else {
                 log.updateLog("You have no valid moves to make with your die roll of " + diceRolls.get(i));
             }
