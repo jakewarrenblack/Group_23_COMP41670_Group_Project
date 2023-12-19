@@ -112,6 +112,11 @@ public class OffBoard extends Point{
      * @return always false as blots are not relevant to OffBoard points
      */
     public boolean isBlot(){return false;}
+    /**
+     * Checks if the activePoint holds any pieces
+     * @return true if there are no pieces, false otherwise
+     */
+    public boolean isEmpty(){return activePoint.isEmpty();}
     //TODO figure out a way to do this without hard coding
 
     /**
@@ -162,9 +167,5 @@ public class OffBoard extends Point{
         }
         return printCol;
     }
-    /**
-     * Checks if the activePoint holds any pieces
-     * @return true if there are no pieces, false otherwise
-     */
-    public boolean isEmpty(){return activePoint.isEmpty();}
+
 }

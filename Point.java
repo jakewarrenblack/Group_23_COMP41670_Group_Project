@@ -29,7 +29,7 @@ public class Point {
     protected Stack<Piece> pieces = new Stack<>();
 
     /**
-     * Construce a new Point instance
+     * Construct a new Point instance
      * @param positionWhite The position of the Point on the board from the perspective of the WHITE player
      * @param positionBlack The position of the Point on the board from the perspective of the BLACK player
      * @param col The column the representation of the Point should be shown in when being printed to the console

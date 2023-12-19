@@ -31,6 +31,32 @@ class OffBoardTest {
         whiteBar = offBlackBarWhite.activePoint();
     }
     @Test
+    void setColor(){
+        offWhiteBarBlack.setColor(false);
+        assertEquals(blackBar,offWhiteBarBlack.activePoint());
+        offWhiteBarBlack.setColor(Player.Color.WHITE);
+        assertEquals(whiteOff,offWhiteBarBlack.activePoint());
+    }
+    @Test
+    void numPieces() {
+        offWhiteBarBlack.setColor(Player.Color.WHITE);
+        // Should be no pieces to start
+        assertEquals(0, offWhiteBarBlack.numPieces());
+        // Then add some pieces
+        for (int i=0;i<5;i++) {
+            offWhiteBarBlack.addPiece(testPlayerW.getPiece(i));
+        }
+        assertEquals(5, offWhiteBarBlack.numPieces());
+        // Change focus colour
+        offWhiteBarBlack.setColor(Player.Color.BLACK);
+        assertEquals(0,offWhiteBarBlack.numPieces());
+        for (int i=0;i<4;i++) {
+            offWhiteBarBlack.addPiece(testPlayerB.getPiece(i));
+        }
+        assertEquals(4,offWhiteBarBlack.numPieces());
+
+    }
+    @Test
     void addPiece() {
         // Add a white piece to the White off
         offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
@@ -86,62 +112,8 @@ class OffBoardTest {
         Piece noPieceW = offBlackBarWhite.removePiece();
         assertNull(noPieceW);
     }
-    @Test
-    void numPieces() {
-        offWhiteBarBlack.setColor(Player.Color.WHITE);
-        // Should be no pieces to start
-        assertEquals(0, offWhiteBarBlack.numPieces());
-        // Then add some pieces
-        for (int i=0;i<5;i++) {
-            offWhiteBarBlack.addPiece(testPlayerW.getPiece(i));
-        }
-        assertEquals(5, offWhiteBarBlack.numPieces());
-        // Change focus colour
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
-        assertEquals(0,offWhiteBarBlack.numPieces());
-        for (int i=0;i<4;i++) {
-            offWhiteBarBlack.addPiece(testPlayerB.getPiece(i));
-        }
-        assertEquals(4,offWhiteBarBlack.numPieces());
 
-    }
-    @Test
-    void getPosition() {
-        // Position is the same, whatever the focus colour
-        offWhiteBarBlack.setColor(Player.Color.WHITE);
-        offBlackBarWhite.setColor(Player.Color.WHITE);
-        assertAll(()->assertEquals(0, offWhiteBarBlack.getPosition()),
-                ()->assertEquals(25, offBlackBarWhite.getPosition()));
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
-        offBlackBarWhite.setColor(Player.Color.BLACK);
-        assertAll((()->assertEquals(25,offBlackBarWhite.getPosition())),
-                ()->assertEquals(0,offWhiteBarBlack.getPosition()));
-    }
 
-    @Test
-    void getColour() {
-        // If there are no pieces, expect blank string
-        assertEquals("  ", offWhiteBarBlack.getColour());
-        // If there are white pieces and focus is white, expect W
-        offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
-        assertEquals(" W ", offWhiteBarBlack.getColour());
-        // If there are no black pieces and focus is black, expect blank string
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
-        assertEquals("  ",offWhiteBarBlack.getColour());
-        // If focus is black and there are black pieces, expect B
-        offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
-        assertEquals(" B ", offWhiteBarBlack.getColour());
-    }
-    @Test
-    void isPlayers(){
-        // Return true if the player is the focus at the moment and there are pieces on the bar/off
-        offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
-        assertTrue(offWhiteBarBlack.isPlayers(testPlayerW));
-        assertFalse(offWhiteBarBlack.isPlayers(testPlayerB));
-        offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
-        assertTrue(offWhiteBarBlack.isPlayers(testPlayerB));
-        assertFalse(offBlackBarWhite.isPlayers(testPlayerW));
-    }
     @Test
     void isFull(){
         // Return false - you can put as many of your pieces on this as you like
@@ -179,32 +151,14 @@ class OffBoardTest {
         assertFalse(offBlackBarWhite.isOff(Player.Color.WHITE));
     }
     @Test
-    void getPip(){
-        // Return 25 for BarBlack if Focus is Black, 0 if focus is White, vice verse
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
-        offWhiteBarBlack.addPiece(testPlayerB.getPiece(0));
-        offBlackBarWhite.setColor(Player.Color.BLACK);
-        offBlackBarWhite.addPiece(testPlayerB.getPiece(1));
-        assertEquals(25, offWhiteBarBlack.getPip(testPlayerB));
-        assertEquals(0,offBlackBarWhite.getPip(testPlayerB));
-        offWhiteBarBlack.setColor(Player.Color.WHITE);
-        assertEquals(0,offWhiteBarBlack.getPip(testPlayerW));
-        offWhiteBarBlack.addPiece(testPlayerW.getPiece(0));
-        offBlackBarWhite.setColor(Player.Color.WHITE);
-        offBlackBarWhite.addPiece(testPlayerW.getPiece(1));
-        assertEquals(0, offWhiteBarBlack.getPip(testPlayerW));
-        assertEquals(25,offBlackBarWhite.getPip(testPlayerW));
-    }
-    @Test
-    void getTopChecker(){
-        offWhiteBarBlack.setColor(Player.Color.WHITE);
-        // If it's empty, return null
-        assertNull(offWhiteBarBlack.getTopChecker());
-        // If there's a piece there return the top piece
-        offWhiteBarBlack.addPiece(testPlayerW.getPiece(0));
-        assertEquals(testPlayerW.getPiece(0), offWhiteBarBlack.getTopChecker());
-        offWhiteBarBlack.setColor(Player.Color.BLACK);
-        assertNull(offWhiteBarBlack.getTopChecker());
+    void isPlayers(){
+        // Return true if the player is the focus at the moment and there are pieces on the bar/off
+        offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
+        assertTrue(offWhiteBarBlack.isPlayers(testPlayerW));
+        assertFalse(offWhiteBarBlack.isPlayers(testPlayerB));
+        offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
+        assertTrue(offWhiteBarBlack.isPlayers(testPlayerB));
+        assertFalse(offBlackBarWhite.isPlayers(testPlayerW));
     }
     @Test
     void getCoords(){
@@ -222,6 +176,64 @@ class OffBoardTest {
         assertArrayEquals(offW,offWhiteBarBlack.getCoords());
         assertArrayEquals(barW,offBlackBarWhite.getCoords());
     }
+    @Test
+    void getTopChecker(){
+        offWhiteBarBlack.setColor(Player.Color.WHITE);
+        // If it's empty, return null
+        assertNull(offWhiteBarBlack.getTopChecker());
+        // If there's a piece there return the top piece
+        offWhiteBarBlack.addPiece(testPlayerW.getPiece(0));
+        assertEquals(testPlayerW.getPiece(0), offWhiteBarBlack.getTopChecker());
+        offWhiteBarBlack.setColor(Player.Color.BLACK);
+        assertNull(offWhiteBarBlack.getTopChecker());
+    }
+    @Test
+    void getColour() {
+        // If there are no pieces, expect blank string
+        assertEquals("  ", offWhiteBarBlack.getColour());
+        // If there are white pieces and focus is white, expect W
+        offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
+        assertEquals(" W ", offWhiteBarBlack.getColour());
+        // If there are no black pieces and focus is black, expect blank string
+        offWhiteBarBlack.setColor(Player.Color.BLACK);
+        assertEquals("  ",offWhiteBarBlack.getColour());
+        // If focus is black and there are black pieces, expect B
+        offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
+        assertEquals(" B ", offWhiteBarBlack.getColour());
+    }
+    @Test
+    void getPip(){
+        // Return 25 for BarBlack if Focus is Black, 0 if focus is White, vice verse
+        offWhiteBarBlack.setColor(Player.Color.BLACK);
+        offWhiteBarBlack.addPiece(testPlayerB.getPiece(0));
+        offBlackBarWhite.setColor(Player.Color.BLACK);
+        offBlackBarWhite.addPiece(testPlayerB.getPiece(1));
+        assertEquals(25, offWhiteBarBlack.getPip(testPlayerB));
+        assertEquals(0,offBlackBarWhite.getPip(testPlayerB));
+        offWhiteBarBlack.setColor(Player.Color.WHITE);
+        assertEquals(0,offWhiteBarBlack.getPip(testPlayerW));
+        offWhiteBarBlack.addPiece(testPlayerW.getPiece(0));
+        offBlackBarWhite.setColor(Player.Color.WHITE);
+        offBlackBarWhite.addPiece(testPlayerW.getPiece(1));
+        assertEquals(0, offWhiteBarBlack.getPip(testPlayerW));
+        assertEquals(25,offBlackBarWhite.getPip(testPlayerW));
+    }
+
+
+    @Test
+    void getPosition() {
+        // Position is the same, whatever the focus colour
+        offWhiteBarBlack.setColor(Player.Color.WHITE);
+        offBlackBarWhite.setColor(Player.Color.WHITE);
+        assertAll(()->assertEquals(0, offWhiteBarBlack.getPosition()),
+                ()->assertEquals(25, offBlackBarWhite.getPosition()));
+        offWhiteBarBlack.setColor(Player.Color.BLACK);
+        offBlackBarWhite.setColor(Player.Color.BLACK);
+        assertAll((()->assertEquals(25,offBlackBarWhite.getPosition())),
+                ()->assertEquals(0,offWhiteBarBlack.getPosition()));
+    }
+
+
 
 
 }
