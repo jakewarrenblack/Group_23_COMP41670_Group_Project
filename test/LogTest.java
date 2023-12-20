@@ -18,6 +18,12 @@ class LogTest {
         System.setOut(new PrintStream(outputStreamCaptor));
     }
     @Test
+    void updateLog() {
+        testLog.updateLog("This is my test");
+        assertEquals("This is my test", outputStreamCaptor.toString()
+                .trim());
+    }
+    @Test
     void recentLogEmpty(){
         String[] tests = new String[10];
         for (int i=0;i<10;i++){
@@ -25,12 +31,7 @@ class LogTest {
         }
         assertArrayEquals(tests,testLog.recentLog(10));
     }
-    @Test
-    void updateLog() {
-        testLog.updateLog("This is my test");
-        assertEquals("This is my test", outputStreamCaptor.toString()
-                .trim());
-    }
+
 
     @Test
     void recentLogHalfFull(){

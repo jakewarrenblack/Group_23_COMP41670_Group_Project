@@ -63,7 +63,7 @@ public class Board {
         // Confusingly, although in respect of Points class column always comes first, then row
         // For the boardPrint string row comes first, then column
         // The players' scores at the start of the game must be displayed on the board as per the brief
-        this.boardPrint=createPrintOut(this.boardPrint,playerBscore,playerWscore);
+        this.boardPrint=createPrintOut(playerBscore,playerWscore);
         this.gameTracker = "Game "+gameNumber+" of "+matchGames;
     }
 
@@ -98,30 +98,29 @@ public class Board {
     /**
      * Pre-populate a String representation of the board which can be printed out to the console
      *
-     * @param printOut
      * @param playerBscore
      * @param playerWscore
      *
      * @return a String array representing the game state which can be printed to the console
      */
-    public String[][] createPrintOut(String[][] printOut,String playerBscore,String playerWscore){
+    public String[][] createPrintOut(String playerBscore,String playerWscore){
         int midPoint = (int) numPoints/2;
         int quarterPoint = (int) numPoints/4;
         // Now set up the string array which will get printed to the console as the game state
         // Confusingly, although in respect of Points class column always comes first, then row
         // For the boardPrint string row comes first, then column
-        printOut[0][midPoint+1] = "OFF";
-        printOut[gap+2*(border+pointSize)-1][midPoint+1]="OFF";
-        printOut[0][quarterPoint]="BAR";
-        printOut[gap+2*(border+pointSize)-1][quarterPoint]="BAR";
-        printOut[0][boardPrint[0].length-1]="    "+playerBscore;
-        printOut[gap+2*(border+pointSize)-1][printOut[gap+2*(border+pointSize)-1].length-1]="    "+playerWscore;
+        boardPrint[0][midPoint+1] = "OFF";
+        boardPrint[gap+2*(border+pointSize)-1][midPoint+1]="OFF";
+        boardPrint[0][quarterPoint]="BAR";
+        boardPrint[gap+2*(border+pointSize)-1][quarterPoint]="BAR";
+        boardPrint[0][this.boardPrint[0].length-1]="    "+playerBscore;
+        boardPrint[gap+2*(border+pointSize)-1][boardPrint[gap+2*(border+pointSize)-1].length-1]="    "+playerWscore;
         for (int i=0;i<gap;i++) {
             String[] printGap = new String[midPoint + 2];
             Arrays.fill(printGap, "   ");
-            printOut[pointSize + border + i] = printGap;
+            boardPrint[pointSize + border + i] = printGap;
         }
-        return printOut;
+        return boardPrint;
     }
 
     /**
@@ -178,7 +177,7 @@ public class Board {
      * @param quarterPoint how many points are in a quarter board
      * @return integer representing the column change
      */
-    private int colIncrement(int position, int midPoint, int quarterPoint){
+    protected int colIncrement(int position, int midPoint, int quarterPoint){
         // If we're on the first half of the points on the board we move from right to left
         int colIncrement = position<=midPoint?-1:1;
         // If we're at exactly the mid point the column stays the same as we switch from bottom to top
@@ -228,24 +227,6 @@ public class Board {
      * Any open spaces on the point (they can hold up to six pieces) show " | "
      * The co-ordinates of the points are given in two integer arrays
      */
-
-    /*
-    some rules:
-        - can't move to point with 2+ enemy pieces
-
-        - or a point with 6 of your pieces
-
-        - if you land on one single with enemy piece, that's out
-
-
-        - you need to use both dice if you CAN
-
-        - if you can only use ONE, you MUST use the larger one
-
-        - and if you roll doubles, you effectively have four dice of the same value
-     */
-
-
     protected void updateBoard(String doubleStatus) {
         int pointIndex = 0;
         for (Point point : points) {
