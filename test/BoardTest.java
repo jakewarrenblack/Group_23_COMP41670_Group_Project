@@ -1,9 +1,13 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,57 +26,51 @@ class BoardTest {
 
     @Test
     void colNames(){
-        assertEquals("-1-",testBoard.colNames(1,6));
-        assertEquals("-6-",testBoard.colNames(6,6));
-        assertEquals("-7-",testBoard.colNames(7,6));
-        assertEquals("-12",testBoard.colNames(12,6));
-        assertEquals("-13",testBoard.colNames(13,6));
-        assertEquals("18-",testBoard.colNames(18,6));
-        assertEquals("-19",testBoard.colNames(19,6));
-        assertEquals("24-",testBoard.colNames(24,6));
+        Map<Integer, String> testValues = Map.of(1,"-1-",6,"-6-",7,"-7-",12,"-12",13,"-13",18,"18-",19,"-19",24,"24-");
+
+        for (Map.Entry<Integer, String> testCase : testValues.entrySet()) {
+            assertEquals(testCase.getValue(), testBoard.colNames(testCase.getKey(), 6));
+        }
     }
-    @Test
-    void placeWhitePieces(){
-        Player testPlayer = new Player("Test", Player.Color.WHITE);
+
+    // we can use the @EnumSource annotation to test all the possible values of the enum, combining the black and white test cases
+    @ParameterizedTest
+    @EnumSource(Player.Color.class)
+    void placePiecesTest(Player.Color color){
+        Player testPlayer = new Player("Test", color);
         testBoard.placePieces(testPlayer);
-        assertAll(()->assertEquals(2,testBoard.numPieces(24)),
-                ()->assertEquals(5,testBoard.numPieces(13)),
-                ()->assertEquals(3,testBoard.numPieces(8)),
-                ()->assertEquals(5,testBoard.numPieces(6)));
+        if (color == Player.Color.WHITE) {
+            assertAll(()->assertEquals(2,testBoard.numPieces(24)),
+                    ()->assertEquals(5,testBoard.numPieces(13)),
+                    ()->assertEquals(3,testBoard.numPieces(8)),
+                    ()->assertEquals(5,testBoard.numPieces(6)));
+        } else {
+            assertAll(()->assertEquals(2,testBoard.numPieces(1)),
+                    ()->assertEquals(5,testBoard.numPieces(12)),
+                    ()->assertEquals(3,testBoard.numPieces(17)),
+                    ()->assertEquals(5,testBoard.numPieces(19)));
+        }
     }
+
     @Test
-    void placeBlackPieces(){
-        Player testPlayer = new Player("Test", Player.Color.BLACK);
-        testBoard.placePieces(testPlayer);
-        assertAll(()->assertEquals(2,testBoard.numPieces(1)),
-                ()->assertEquals(5,testBoard.numPieces(12)),
-                ()->assertEquals(3,testBoard.numPieces(17)),
-                ()->assertEquals(5,testBoard.numPieces(19)));
-    }
-    @Test
-    void placeAllPieces(){
+    void placeAllPieces() {
         Player testPlayer = new Player("Test", Player.Color.BLACK);
         Player otherPlayer = new Player("Other", Player.Color.WHITE);
         testBoard.placePieces(testPlayer);
         testBoard.placePieces(otherPlayer);
-        assertAll(()->assertEquals(2,testBoard.numPieces(24)),
-                ()->assertEquals(" W ",testBoard.getColour(24)),
-                ()->assertEquals(5,testBoard.numPieces(13)),
-                ()->assertEquals(" W ",testBoard.getColour(13)),
-                ()->assertEquals(3,testBoard.numPieces(8)),
-                ()->assertEquals(" W ",testBoard.getColour(8)),
-                ()->assertEquals(5,testBoard.numPieces(6)),
-                ()->assertEquals(" W ",testBoard.getColour(6)),
-                ()->assertEquals(2,testBoard.numPieces(1)),
-                ()->assertEquals(" B ",testBoard.getColour(1)),
-                ()->assertEquals(5,testBoard.numPieces(12)),
-                ()->assertEquals(" B ",testBoard.getColour(12)),
-                ()->assertEquals(3,testBoard.numPieces(17)),
-                ()->assertEquals(" B ",testBoard.getColour(17)),
-                ()->assertEquals(5,testBoard.numPieces(19)),
-                ()->assertEquals(" B ",testBoard.getColour(19)));
 
+        Map<Integer, Pair<Integer, String>> testCases = Map.of(24, new Pair<>(2, " W "), 13, new Pair<>(5, " W "), 8, new Pair<>(3, " W "), 6, new Pair<>(5, " W "), 1, new Pair<>(2, " B "), 12, new Pair<>(5, " B "), 17, new Pair<>(3, " B "), 19, new Pair<>(5, " B "));
+
+        assertAll(() -> {
+            for (Map.Entry<Integer, Pair<Integer, String>> testCase : testCases.entrySet()) {
+                assertEquals(testCase.getValue().getKey(), testBoard.numPieces(testCase.getKey()));
+                assertEquals(testCase.getValue().getValue(), testBoard.getColour(testCase.getKey()));
+            }
+        });
     }
+
+
+
     @Test
     void printBlank(){
         testBoard.print(Player.Color.WHITE,testLog.recentLog(10),"");
