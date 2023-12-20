@@ -23,15 +23,12 @@ public class Main {
             }
 
             System.out.println("Moves imported:");
-            for (String move : moves) {
-                System.out.println(move);
+            // first line is the number of games to play
+            int games = Integer.parseInt(moves.get(0));
+            match = new Match(games);
+            // lines 2 and 3 are players 1 and 2
+            match.addPlayers(moves.get(1), moves.get(2));
 
-                // first line is the number of games to play
-                int games = Integer.parseInt(moves.get(0));
-                match = new Match(games);
-                // lines 2 and 3 are players 1 and 2
-                match.addPlayers(moves.get(1), moves.get(2));
-            }
 
             assert match != null;
             // the normal moves start at index 3

@@ -155,26 +155,41 @@ public class Match {
         List<String> exclude = new ArrayList<>();
 
 
-        String selectedTestOption = "";
+        List<String> selectedTestOption = new ArrayList<String>();
 
         String[] alphabet = {"a","b","c","d","e","f", "g"};
         if(moves.length > 0){
-            for(String move : moves[0]){
-                // check if the command is a letter, and present somewhere in the alphabet array
-                if (move.length() == 1 && Arrays.asList(alphabet).contains(move)) {
-                    // when this is the case, we also need to manually trigger the MOVE command
-
-                    // if so, convert it to a number
-                    int num = Arrays.asList(alphabet).indexOf(move);
-                    // and add 1 to it, to get the correct number
-                    num++;
-                    // then convert it back to a string
-                    selectedTestOption = Integer.toString(num);
-                }
-                else{
-                    command.acceptCommand(move);
+            for (int i=0;i<moves[0].size();i++){
+                if (moves[0].get(i).length()==1){
+                    if (moves[0].get(i-1).length()>1){
+                        selectedTestOption.clear();
+                    }
+                    selectedTestOption.add(letterToNumber(moves[0].get(i)));
+                    if (moves[0].get(i+1).length()>1){
+                        game.processRolls(die.getCurrentValues(),currentPlayer,doublingCube.doubleStatus(),selectedTestOption.toArray(new String[0]));
+                        currentPlayer=nextTurn();
+                    }
+                } else {
+                    command.acceptCommand(moves[0].get(i));
                 }
             }
+//            for(String move : moves[0]){
+//
+//                // check if the command is a letter, and present somewhere in the alphabet array
+//                if (move.length() == 1 && Arrays.asList(alphabet).contains(move)) {
+//                    // when this is the case, we also need to manually trigger the MOVE command
+//
+//                    // if so, convert it to a number
+//                    int num = Arrays.asList(alphabet).indexOf(move);
+//                    // and add 1 to it, to get the correct number
+//                    num++;
+//                    // then convert it back to a string
+//                    selectedTestOption = Integer.toString(num);
+//                }
+//                else{
+//                    command.acceptCommand(move);
+//                }
+//            }
         }
 
 
@@ -186,7 +201,7 @@ public class Match {
 
 
         //TODO: the test file will have some option a/b/c/d/e/f, pass that in here to make the selection automatically
-        game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus(), selectedTestOption);
+        game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus(), selectedTestOption.toArray(new String[0]));
         currentPlayer=nextTurn();
 
         while (game.isGameOngoing()) {
@@ -220,6 +235,14 @@ public class Match {
         return gameIndex==games;
     }
 
+    private String letterToNumber(String letter){
+        String[] alphabet = {"a","b","c","d","e","f", "g"};
+        int num = Arrays.asList(alphabet).indexOf(letter);
+        // and add 1 to it, to get the correct number
+        num++;
+        // then convert it back to a string
+        return Integer.toString(num);
+    }
     private void acceptCommand(String target, List<String> exclude){
         String[] commands = command.listCommands(exclude);
         int commandIndex = commands.length-1;
@@ -332,4 +355,13 @@ public class Match {
         log.updateLog(message);
     }
 
+    /**
+     * To add a contrived game for use in unit testing
+     *
+     * @param game
+     */
+    protected void addGame(Game game){
+        this.game = game;
+        this.command.newGame(game);
+    }
 }

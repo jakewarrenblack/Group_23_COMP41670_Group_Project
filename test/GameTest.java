@@ -6,7 +6,10 @@ import org.junit.jupiter.api.BeforeEach;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,17 +64,6 @@ class GameTest {
         assertFalse(myGame.isGameWon());
     }
 
-//    @Test
-//    @DisplayName("Checks we can update the game state")
-//    void setGameState() {
-//        assertFalse(myGame.isGameWon()),
-//        myGame.setGameState(Game.GameState.WON);
-//        assertAll(()->assertTrue(myGame.isGameWon()),
-//                ()->assertFalse(myGame.isGameWon()));
-//        myGame.setGameState(Game.GameState.LOST);
-//        assertAll(()->assertFalse(myGame.isGameWon()),
-//                ()->assertTrue(myGame.isGameWon()));
-//    }
 
     @Test
     void addPlayer() {
@@ -238,6 +230,27 @@ class GameTest {
             contains=false;
         }
     }
-
+    @Test
+    void processRolls_inprogress(){
+        // A move using the smalled die roll is not valid if you're left unable to use the larger die roll
+        // A contrived example of this is where black rolls a 5 and a 3 with the following configuration
+        // 1 checker on point 9
+        // 1 checker on point 12
+        // 5 checkers on point 15
+        // 6 checkers on point 20
+        testPlayer contrivedP = new testPlayer("Contrived", Player.Color.BLACK);
+        Game contrived = new Game(new Player[]{contrivedP,contrivedP},1,1);
+        Match contrivedM = new Match(1);
+        contrivedM.addPlayer(0,contrivedP,true);
+        contrivedM.addPlayer(1,contrivedP,false);
+        contrivedM.addGame(contrived);
+        contrived.setCurrentPlayer(contrivedP);
+        contrived.placePieces(contrivedP);
+        ArrayList<Integer> rolls = new ArrayList<Integer>();
+        rolls.add(3);
+        rolls.add(5);
+        contrived.processRolls_inprogress(rolls,contrivedP,"Status",new String[]{"1","1"});
+        assertEquals("You have moved from 15 to 18",outputStreamCaptor.toString().split("\n")[16].trim());
+        assertEquals("You have moved from 12 to 17",outputStreamCaptor.toString().split("\n")[33].trim());    }
 
 }

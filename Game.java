@@ -20,7 +20,9 @@ public class Game {
         this.board = new Board(gameNumber,matchGames,players[0].printScore(),players[1].printScore());
         this.log = Log.getInstance();
     }
-    public void setCommand(Command command){this.command=command;}
+    public void setCommand(Command command){
+        this.command=command;
+    }
 
 
     public void setCurrentPlayer(Player player){this.currentPlayer=player;}
@@ -135,7 +137,7 @@ public class Game {
      */
     public void processRolls(List<Integer> diceRolls,Player currentPlayer,String doubleStatus, String... selectedTestOption){
         this.currentPlayer=currentPlayer;
-        processDiceRolls(diceRolls,doubleStatus, selectedTestOption);
+        processRolls_inprogress(diceRolls,currentPlayer,doubleStatus, selectedTestOption);
 
         isOngoing = !currentPlayer.hasWon();
     }
@@ -348,6 +350,7 @@ public class Game {
         }
         public int getFrom(){return from;}
         public int getTo(){return to;}
+        public int getRoll(){return roll;}
 
         /**
          * Get the pip value of the from point for the specified player
@@ -369,5 +372,60 @@ public class Game {
         }
 
     }
-}
 
+    /**
+     * Allow the current player to choose what to do with their dice rolls
+     * If they roll a double they get to use each die twice - ie, they get to make 4 moves
+     *
+     * @param diceRolls the values of their dice rolls
+     */
+    public void processRolls_inprogress(List<Integer> diceRolls,Player currentPlayer,String doubleStatus,String... selectedTestOption){
+        this.currentPlayer=currentPlayer;
+        List<Move> validMoves = new ArrayList<Move>();
+        if (diceRolls.size()==2){
+            validMoves=getAllAvailableValidMoves(diceRolls);
+        } else {
+            validMoves=getAvailableValidMoves(diceRolls.get(0));
+        }
+        int i=0;
+        while (!validMoves.isEmpty()&i<diceRolls.size()){
+            board.print(currentPlayer.getColor(), log.recentLog(10),doubleStatus);
+            Move chosenMove;
+            if (selectedTestOption.length>0){
+                // If less moves have been supplied than we have dice rolls, make the first move again
+                if(i>=selectedTestOption.length){
+                    log.updateLog("You have provided less moves than you have dice rolls available");
+                    chosenMove=chooseMove(validMoves,selectedTestOption[0]);
+                } else {
+                    chosenMove = chooseMove(validMoves, selectedTestOption[i]);
+                }
+            } else {
+                chosenMove = chooseMove(validMoves);
+            }
+            command.acceptCommand("move "+chosenMove.getFrom()+" "+chosenMove.getTo());
+            isOngoing=!currentPlayer.hasWon();
+            if (isOngoing) {
+                i++;
+                int nextRoll = diceRolls.get(0) == chosenMove.getRoll() ? diceRolls.get(1) : diceRolls.get(0);
+                if (i < diceRolls.size()) {
+                    validMoves = getAvailableValidMoves(nextRoll);
+                }
+            }
+        }
+        if (i<diceRolls.size()&isOngoing){log.updateLog("You have no more valid moves");}
+    }
+
+    public Game.Move chooseMove(List<Move> validMoves){
+        String[] validMoveString=validMovesString(validMoves);
+        int chosenMove = Command.chooseOption(currentPlayer.getName() +" you have the following options. Please choose: ",validMoveString );
+        return validMoves.get(chosenMove);
+    }
+    public Game.Move chooseMove(List<Move> validMoves,String selectedTestOption){
+        int chosenMove = Integer.parseInt(selectedTestOption);
+        if (chosenMove>=validMoves.size()){
+            log.updateLog("You have selected a move that is not one of the options");
+            return validMoves.get(validMoves.size()-1);
+        }
+        return validMoves.get(chosenMove);
+    }
+}

@@ -76,14 +76,6 @@ class CommandTest {
         command.acceptCommand("");
         assertEquals("I do not recognise  as a command",outputStreamCaptor.toString().trim());
     }
-    @Test
-    void testScript(){
-        game.placePieces(players[0]);
-        game.placePieces(players[1]);
-        //command.test("C:/Users/User/OneDrive/MSc/41670 Software Engineering/Group_Project/res/TestScript.txt");
-        assertTrue(players[0].canMoveOff());
-        assertTrue(players[1].canMoveOff());
-    }
 
     @AfterEach
     public void tearDown() {
