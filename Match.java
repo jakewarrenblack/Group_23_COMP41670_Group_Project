@@ -173,23 +173,6 @@ public class Match {
                     command.acceptCommand(moves[0].get(i));
                 }
             }
-//            for(String move : moves[0]){
-//
-//                // check if the command is a letter, and present somewhere in the alphabet array
-//                if (move.length() == 1 && Arrays.asList(alphabet).contains(move)) {
-//                    // when this is the case, we also need to manually trigger the MOVE command
-//
-//                    // if so, convert it to a number
-//                    int num = Arrays.asList(alphabet).indexOf(move);
-//                    // and add 1 to it, to get the correct number
-//                    num++;
-//                    // then convert it back to a string
-//                    selectedTestOption = Integer.toString(num);
-//                }
-//                else{
-//                    command.acceptCommand(move);
-//                }
-//            }
         }
 
 

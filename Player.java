@@ -177,9 +177,11 @@ public class Player  {
         int score = pipScore()*doubleValue;
         // If a player loses without bearing off any checkers, they are gammoned and their score is doubled
         if (!hasOff()){
+            Log.getInstance().updateLog(name+" you have not born off any checkers and so are gammoned!");
             // If a player loses while they haven't born off any checkers, and they still have a checker on the bar
             // they are backgammoned and their score is quadrupled
             if (hasBar()) {
+                Log.getInstance().updateLog(name+" you still have checkers on the bar and so are backgammoned!");
                 score *= 4;
             } else { score*=2;}
         }
@@ -192,6 +194,7 @@ public class Player  {
      * @param doubleValue the value to calculate the game score with.
      */
     public void loseGame(int doubleValue){
+        Log.getInstance().updateLog();
         this.score+=getGameScore(doubleValue);
     }
 }
