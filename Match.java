@@ -217,12 +217,15 @@ public class Match {
         return gameIndex==games;
     }
 
+    /**
+     * The test script uses letters to represent the dice rolls
+     * But the game uses numbers, so convert the letters to numbers
+     * @param letter
+     * @return the number corresponding to the letter
+     */
     private String letterToNumber(String letter){
-        String[] alphabet = {"a","b","c","d","e","f", "g"};
-        int num = Arrays.asList(alphabet).indexOf(letter);
-        // and add 1 to it, to get the correct number
-        num++;
-        // then convert it back to a string
+        // ASCII value of 'a' is 97, so subtract 96 to get the number corresponding to the letter
+        int num = letter.charAt(0) - 'a' + 1;
         return Integer.toString(num);
     }
 
@@ -349,9 +352,13 @@ public class Match {
     }
 
     public Match nextGame() {
-        gameIndex++;
+        if(gameIndex < games){
+            gameIndex++;
+        }
+        else{
+            return null;
+        }
 
         return this;
-
     }
 }

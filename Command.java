@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Command {
-    enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST,}
+    enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST,NEXT}
     private Game game;
     private Match match;
 
@@ -77,8 +77,14 @@ public class Command {
             case "DICE" -> {
                 int[] rolls;
                 if(cmdTokens.length==1) {
-                    int firstRoll = getInteger("Please enter the desired value for the first die");
-                    int secondRoll = getInteger("Please enter the desired value for the second die");
+                    int firstRoll = getInteger("Please enter the desired value for the first die, or C to cancel");
+                    int secondRoll = getInteger("Please enter the desired value for the second die, or C to cancel");
+
+                    // cancel if either of the rolls are -1, means the user entered C
+                    if(firstRoll == -1 || secondRoll == -1) {
+                        return;
+                    }
+
                     if (firstRoll == secondRoll) {
                         System.out.println("Since the two die rolls specified are equal your number of rolls will be doubled");
                         rolls = new int[4];
@@ -100,8 +106,14 @@ public class Command {
             }
             // helpful for testing, but also useful if the player just wants to skip to the next game
             case "NEXT" -> {
-                this.match = match.nextGame();
-                match.updateLog("You have skipped to the next game");
+                if(match.nextGame() != null){
+                    this.match = match.nextGame();
+                    match.updateLog("You have skipped to the next game");
+                }
+                else{
+                    match.updateLog("\nCan't skip. You have reached the end of the match\n");
+                }
+
             }
             default -> match.updateLog("I do not recognise " + cmdTokens[0] + " as a command");
         }
@@ -191,13 +203,24 @@ public class Command {
      * @param message explaining the input required
      * @return an int representing the user's input
      */
-    public static int getInteger(String message){
+    public static int getInteger(String message, boolean...allowCancel){
         Scanner in = new Scanner(System.in);
         int input=0;
         while (input==0) {
             System.out.println(message);
+
+            if(allowCancel != null && allowCancel.length > 0 && allowCancel[0]) {
+                System.out.println("Enter C to cancel");
+            }
+
             while (!in.hasNextInt()) {
                 String temp = in.next();
+
+
+                if(allowCancel != null && allowCancel[0] && temp.equalsIgnoreCase("C")) {
+                    return -1;
+                }
+
                 System.out.println(temp + " is not a number");
             }
             int temp = in.nextInt();
