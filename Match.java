@@ -32,8 +32,10 @@ public class Match {
     private final Die die;
     /**
      * The two players competing in the match
+     *
+     * Protected so can be accessed by unit tests
      */
-    private Player[] players;
+    protected Player[] players;
     /**
      * The log of messages sent to the players
      */
@@ -44,8 +46,10 @@ public class Match {
     private final Cube doublingCube;
     /**
      * The player taking their turn at present
+     *
+     * protected so accessible by unit tests
      */
-    private Player currentPlayer;
+    protected Player currentPlayer;
 
     /**
      * Create a new match of however many games you want
@@ -116,6 +120,8 @@ public class Match {
             game.setCurrentPlayer(this.currentPlayer);
         } catch (IllegalArgumentException e) {
             log.updateLog("Cannot set current player of game right now");
+        } catch (IndexOutOfBoundsException e){
+            log.updateLog(String.valueOf(PlayerID) + " is not a valid player ID");
         }
     }
 
@@ -213,8 +219,13 @@ public class Match {
         }
 
         gameIndex++;
-        log.updateLog("Game "+gameIndex+" of "+games+" complete. "+players[0].getName()+" has a score of "+players[0].getScore()+" and "+players[1].getName()+" has a score of "+players[1].getScore());
-        return gameIndex==games;
+        if (gameIndex==games){
+            log.updateLog("Match complete. "+players[0].getName()+" has a score of "+players[0].getScore()+" and "+players[1].getName()+" has a score of "+players[1].getScore());
+            return true;
+        } else {
+            log.updateLog("Game " + gameIndex + " of " + games + " complete. " + players[0].getName() + " has a score of " + players[0].getScore() + " and " + players[1].getName() + " has a score of " + players[1].getScore());
+            return false;
+        }
     }
 
     /**
@@ -285,13 +296,6 @@ public class Match {
         log.updateLog(message);
     }
 
-    /**
-     * Set the dice to return pre-specified values on the next roll
-     * To satisfy the DICE feature required in the game scope
-     *
-     * @param rolls
-     */
-    public void setDie(int[] rolls){die.setValues(rolls);}
     /**
      * Allows the current player to offer a doubling of the cube
      * If the other player accepts the next face of the doubling cube is shown
