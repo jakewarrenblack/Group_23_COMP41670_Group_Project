@@ -10,9 +10,7 @@ import java.io.IOException;
 public class Command {
     enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST,}
     private Game game;
-    private final Match match;
-
-    private ArrayList<String> moves = new ArrayList<>();
+    private Match match;
 
     public Command(Match match) {
         this.match = match;
@@ -45,7 +43,7 @@ public class Command {
     /**
      * This method processes a given command and performs the corresponding action.
      * It's sole purpose is to allow the user to interact with the game.
-     * The actions can be: "ROLL", "QUIT", "PIP", "HINT", "MOVE", "DOUBLE", "DICE", "TEST", "SET_PLAYER".
+     * The actions can be: "ROLL", "QUIT", "PIP", "HINT", "MOVE", "DOUBLE", "DICE", "TEST", "SET_PLAYER", "NEXT"
      *
      * @param command The command to be processed.
      */
@@ -99,6 +97,11 @@ public class Command {
             }
             case "SET_PLAYER" -> {
                 match.setCurrentPlayer(Integer.parseInt(cmdTokens[1]));
+            }
+            // helpful for testing, but also useful if the player just wants to skip to the next game
+            case "NEXT" -> {
+                this.match = match.nextGame();
+                match.updateLog("You have skipped to the next game");
             }
             default -> match.updateLog("I do not recognise " + cmdTokens[0] + " as a command");
         }
@@ -205,10 +208,6 @@ public class Command {
         return input;
     }
 
-
-    public static ArrayList<String> importMoves(){
-        return getStrings();
-    }
 
     static ArrayList<String> getStrings() {
         ArrayList<String> moves = new ArrayList<>();

@@ -157,7 +157,6 @@ public class Match {
 
         List<String> selectedTestOption = new ArrayList<String>();
 
-        String[] alphabet = {"a","b","c","d","e","f", "g"};
         if(moves.length > 0){
             for (int i=0;i<moves[0].size();i++){
                 if (moves[0].get(i).length()==1){
@@ -202,7 +201,7 @@ public class Match {
             if(game.isGameOngoing()) {
                 // Once the player has rolled the dice, allow the game to process the dice rolls
                 game.processRolls(diceRolls, currentPlayer, doublingCube.doubleStatus());
-                if (game.isGameWon()) {
+                if (!game.isGameOngoing()) {
                     updateLog(currentPlayer.getName() + " has won!");
                     game.finishGame(otherPlayer, doublingCube.getDouble());
                 } else {
@@ -226,12 +225,13 @@ public class Match {
         // then convert it back to a string
         return Integer.toString(num);
     }
+
     private void acceptCommand(String target, List<String> exclude){
         String[] commands = command.listCommands(exclude);
         int commandIndex = commands.length-1;
         // The player can continue executing commands until they choose the target command
         // Some commands (like DOUBLE) can result in the game ending. if this happens don't accept any more commands
-        while (!commands[commandIndex].equals(target)&game.isGameOngoing()) {
+        while (!commands[commandIndex].equals(target) && game.isGameOngoing()) {
             commandIndex = Command.chooseOption(currentPlayer.getName() + " what would you like to do next?", commands);
             command.acceptCommand(commands[commandIndex]);
         }
@@ -346,5 +346,12 @@ public class Match {
     protected void addGame(Game game){
         this.game = game;
         this.command.newGame(game);
+    }
+
+    public Match nextGame() {
+        gameIndex++;
+
+        return this;
+
     }
 }

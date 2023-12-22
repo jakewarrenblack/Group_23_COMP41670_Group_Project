@@ -15,7 +15,7 @@ public class Main {
         if (Command.chooseOption("Play normally or enter test mode?", new String[]{"Begin game", "Test mode"}) == 1) {
             testMode = true;
             moves = importMoves();
-            Match match = null;
+            Match match;
 
             if (moves == null){
                 System.out.println("No moves imported. Exiting.");
@@ -30,7 +30,6 @@ public class Main {
             match.addPlayers(moves.get(1), moves.get(2));
 
 
-            assert match != null;
             // the normal moves start at index 3
             match.play(moves.subList(3, moves.size()));
 

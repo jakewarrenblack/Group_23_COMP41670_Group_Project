@@ -28,11 +28,6 @@ public class Game {
     public void setCurrentPlayer(Player player){this.currentPlayer=player;}
 
 
-    public boolean isGameWon() {
-
-        return !this.isOngoing;
-    }
-
     public boolean isGameOngoing() {
         return this.isOngoing;
     }
@@ -114,13 +109,6 @@ public class Game {
         return true;
     }
 
-    /**
-     * Print a text representation of the current game to the screen
-     */
-    public void print(String doubleStatus) {
-        board.print(currentPlayer.getColor(), log.recentLog(10),doubleStatus);
-    }
-
 
     // TODO would we need this if we moved most of the move validation functionality to the
     // Board class? Seems to only be used in the unit tests
@@ -140,51 +128,6 @@ public class Game {
         processRolls_inprogress(diceRolls,currentPlayer,doubleStatus, selectedTestOption);
 
         isOngoing = !currentPlayer.hasWon();
-    }
-
-    /**
-     * Allow the current player to choose between the different moves available to them
-     * from their dice roll
-     *
-     * NB - they cannot use the smaller roll first if that would mean they're unable to use the larger roll on this turn
-     *
-     * @param diceRolls
-     */
-    public void processDiceRolls(List<Integer> diceRolls, String doubleStatus, String... selectedTestOption) {
-        for(int i=0; i<diceRolls.size(); i++){
-            ArrayList<Move> validMoves = getAvailableValidMoves(diceRolls.get(i));
-
-            if (!validMoves.isEmpty()) {
-                String[] validMoveString = validMovesString(validMoves);
-                board.print(currentPlayer.getColor(), log.recentLog(10), doubleStatus);
-
-                int chosenMove = Command.chooseOption(currentPlayer.getName() + " you rolled " + diceRolls.get(i) + ". Choose your move: ", validMoveString);
-
-
-                // **They cannot use the smaller roll first if that would mean they're unable to use the larger roll on this turn**
-                int otherRoll = diceRolls.get(0)==validMoves.get(chosenMove).getFrom()-validMoves.get(chosenMove).getTo()?diceRolls.get(1):diceRolls.get(0);
-                validMoves = getAvailableValidMoves(otherRoll);
-
-                if(validMoves.isEmpty()){
-                    log.updateLog("You have no valid moves to make with your other die roll of "+otherRoll);
-                }
-                else{
-                    // use the option we got from the text file. this will have been converted from a letter to a number (in string format)
-                    if (!selectedTestOption[0].isEmpty()) {
-                        chosenMove = Integer.parseInt(selectedTestOption[0]);
-                    }
-
-                    command.acceptCommand("move " + validMoves.get(chosenMove).getFrom() + " " + validMoves.get(chosenMove).getTo());
-                }
-
-            } else {
-                log.updateLog("You have no valid moves to make with your die roll of " + diceRolls.get(i));
-            }
-
-            if (i < diceRolls.size()) {
-                log.updateLog("You have no more valid moves");
-            }
-        }
     }
 
     /**
@@ -320,17 +263,17 @@ public class Game {
         /**
          * The index of the point the piece would be moving from
          */
-        private int from;
+        private final int from;
         /**
          * The index of the point the piece would be moving to
          */
-        private int to;
+        private final int to;
         /**
          * The value of the die roll which generated the move
          * This needs to be tracked as if a move is bearing a piece off the difference
          * between from and to may not be equal to the value of the die roll
          */
-        private int roll;
+        private final int roll;
 
         public Move(int from,int to, int roll){
             this.from=from;
@@ -381,7 +324,7 @@ public class Game {
      */
     public void processRolls_inprogress(List<Integer> diceRolls,Player currentPlayer,String doubleStatus,String... selectedTestOption){
         this.currentPlayer=currentPlayer;
-        List<Move> validMoves = new ArrayList<Move>();
+        List<Move> validMoves;
         if (diceRolls.size()==2){
             validMoves=getAllAvailableValidMoves(diceRolls);
         } else {

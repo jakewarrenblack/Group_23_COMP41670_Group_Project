@@ -53,15 +53,9 @@ class GameTest {
     }
 
     @Test
-    @DisplayName("Checks whether we can check the game state is won")
-    void isGameWon() {
-        assertFalse(myGame.isGameWon());
-    }
-
-    @Test
-    @DisplayName("Checks whether we can check the game state is lost")
-    void isGameLost() {
-        assertFalse(myGame.isGameWon());
+    @DisplayName("Checks whether we can check the game state is ongoing")
+    void isGameOngoing() {
+        assertFalse(myGame.isGameOngoing());
     }
 
 
