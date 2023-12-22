@@ -64,16 +64,6 @@ class GameTest {
         assertFalse(myGame.isGameWon());
     }
 
-
-    @Test
-    void addPlayer() {
-
-    }
-
-    @Test
-    void addPlayers() {
-    }
-
     @Test
     @DisplayName("Checks the correct message is sent to the console. Need to figure out how to capture multiple outputs to test different cases")
     void sendMessage() {

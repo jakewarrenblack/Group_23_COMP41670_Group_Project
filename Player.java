@@ -194,7 +194,6 @@ public class Player  {
      * @param doubleValue the value to calculate the game score with.
      */
     public void loseGame(int doubleValue){
-        Log.getInstance().updateLog();
         this.score+=getGameScore(doubleValue);
     }
 }

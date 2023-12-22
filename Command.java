@@ -94,7 +94,7 @@ public class Command {
                         rolls[i-1]=Integer.parseInt(cmdTokens[i]);
                     }
                 }
-                match.setDie(rolls);
+                Die.getInstance().setValues(rolls);
                 match.updateLog("The values of the dice have been set manually for the next roll");
             }
             case "SET_PLAYER" -> {
