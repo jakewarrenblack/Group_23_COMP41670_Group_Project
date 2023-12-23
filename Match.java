@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -83,16 +82,14 @@ public class Match {
 
     /**
      * Construct two players with names entered by the users
-     *
-     * @return  an array of 2 Player objects
      */
-    public Player[] addPlayers(String...providedPlayers) {
+    public void addPlayers(String...providedPlayers) {
         if(providedPlayers.length > 0){
             for(int i = 0; i < providedPlayers.length; i++){
                 this.players[i] = new Player(providedPlayers[i], Player.Color.values()[i]);
             }
 
-            return players;
+            return;
         }
 
         Player[] players = new Player[2];
@@ -103,7 +100,6 @@ public class Match {
         }
         this.players = players;
 
-        return players;
     }
 
     /**
@@ -121,7 +117,7 @@ public class Match {
         } catch (IllegalArgumentException e) {
             log.updateLog("Cannot set current player of game right now");
         } catch (IndexOutOfBoundsException e){
-            log.updateLog(String.valueOf(PlayerID) + " is not a valid player ID");
+            log.updateLog(PlayerID + " is not a valid player ID");
         }
     }
 
@@ -132,6 +128,7 @@ public class Match {
      * @return the game object created
      */
     public Game newGame(){
+        System.out.println("\n**Currently playing game number " + gameIndex + " of " + games + " in the match**\n");
         this.game = new Game(players,gameIndex,games);
         this.game.setCurrentPlayer(currentPlayer);
         return this.game;
@@ -145,6 +142,8 @@ public class Match {
      * @return True if the specified number of games in the match series have been complete, False otherwise
      */
     public boolean play(List<String>...moves){
+        System.out.println("\n**Currently playing game number " + gameIndex+1 + " of " + games+1 + " in the match**\n");
+
         game=new Game(players,gameIndex,games);
         command.newGame(game);
 
@@ -161,7 +160,9 @@ public class Match {
         List<String> exclude = new ArrayList<>();
 
 
-        List<String> selectedTestOption = new ArrayList<String>();
+        List<String> selectedTestOption = new ArrayList<>();
+
+
 
         if(moves.length > 0){
             for (int i=0;i<moves[0].size();i++){
@@ -187,8 +188,7 @@ public class Match {
         // The player can execute commands until they choose MOVE
         acceptCommand("MOVE",exclude);
 
-
-        //TODO: the test file will have some option a/b/c/d/e/f, pass that in here to make the selection automatically
+        // Once the player has chosen to move, allow the game to process the dice rolls
         game.processRolls(diceRolls,currentPlayer, doublingCube.doubleStatus(), selectedTestOption.toArray(new String[0]));
         currentPlayer=nextTurn();
 
@@ -287,13 +287,13 @@ public class Match {
      */
     public void roll() {
         List<Integer> dice = die.roll();
-        String message=currentPlayer.getName() + " rolled " + dice.get(0);
+        StringBuilder message= new StringBuilder(currentPlayer.getName() + " rolled " + dice.get(0));
 
         for (int i=1;i<dice.size();i++){
-            message+=", " + dice.get(i);
+            message.append(", ").append(dice.get(i));
         }
 
-        log.updateLog(message);
+        log.updateLog(message.toString());
     }
 
     /**
@@ -358,11 +358,12 @@ public class Match {
     public Match nextGame() {
         if(gameIndex < games){
             gameIndex++;
+            // make a new game
+            this.game = newGame();
         }
         else{
             return null;
         }
-
         return this;
     }
 }

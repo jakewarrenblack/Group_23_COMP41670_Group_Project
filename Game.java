@@ -20,10 +20,10 @@ public class Game {
         this.board = new Board(gameNumber,matchGames,players[0].printScore(),players[1].printScore());
         this.log = Log.getInstance();
     }
+
     public void setCommand(Command command){
         this.command=command;
     }
-
 
     public void setCurrentPlayer(Player player){this.currentPlayer=player;}
 
@@ -109,8 +109,6 @@ public class Game {
         return true;
     }
 
-
-    // TODO would we need this if we moved most of the move validation functionality to the
     // Board class? Seems to only be used in the unit tests
     protected Board getBoard() {
         return this.board;

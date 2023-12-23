@@ -29,12 +29,12 @@ public class Main {
             // lines 2 and 3 are players 1 and 2
             match.addPlayers(moves.get(1), moves.get(2));
 
-
             // the normal moves start at index 3
             match.play(moves.subList(3, moves.size()));
 
 
         }
+        // otherwise, play normally
         else{
             int games = Command.getInteger("How many games would you like to play?");
 
