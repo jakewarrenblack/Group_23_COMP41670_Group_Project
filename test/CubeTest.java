@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CubeTest {
     private Cube testCube;
-    private Player playerB,playerW ;
+    private Player playerB,playerW;
     @BeforeEach
     void setUp() {
         testCube=new Cube();

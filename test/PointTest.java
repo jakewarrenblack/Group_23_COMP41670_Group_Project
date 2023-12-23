@@ -5,10 +5,9 @@ import org.junit.jupiter.api.TestFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointTest {
-    private Point firstPoint;
-    private Point secondPoint;
-    private Player testPlayerW;
-    private Player testPlayerB;
+    private Point firstPoint, secondPoint;
+    private Player testPlayerW, testPlayerB;
+
     @BeforeEach
     void setUp(){
         firstPoint = new Point(1,24,14,12);

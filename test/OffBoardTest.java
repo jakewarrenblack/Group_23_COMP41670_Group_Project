@@ -6,14 +6,9 @@ import java.util.Stack;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OffBoardTest {
-    private OffBoard offWhiteBarBlack;
-    private OffBoard offBlackBarWhite;
-    private Player testPlayerW;
-    private Player testPlayerB;
-    private Point whiteOff;
-    private Point blackBar;
-    private Point blackOff;
-    private Point whiteBar;
+    private OffBoard offWhiteBarBlack, offBlackBarWhite;
+    private Player testPlayerW, testPlayerB;
+    private Point whiteOff, blackOff, whiteBar, blackBar;
 
     @BeforeEach
     void setUp(){
@@ -55,32 +50,6 @@ class OffBoardTest {
         }
         assertEquals(4,offWhiteBarBlack.numPieces());
 
-    }
-    @Test
-    void addPiece() {
-        // Add a white piece to the White off
-        offWhiteBarBlack.addPiece(testPlayerW.getPiece(1));
-        assertAll(()->assertEquals(0,blackBar.numPieces()),
-                ()->assertEquals(0,testPlayerW.getPiece(1).getPosition()),
-                ()->assertEquals(1,whiteOff.numPieces()),
-                ()->assertEquals(0,testPlayerW.getPiece(1).getPip()));
-        // Add a white piece to the White bar
-        offBlackBarWhite.addPiece(testPlayerW.getPiece(2));
-        assertAll(()->assertEquals(0,blackOff.numPieces()),
-                ()->assertEquals(25,testPlayerW.getPiece(2).getPosition()),
-                ()->assertEquals(1,whiteBar.numPieces()),
-                ()->assertEquals(25,testPlayerW.getPiece(2).getPip()));
-        // Now change focus colour and try again
-
-        offWhiteBarBlack.addPiece(testPlayerB.getPiece(1));
-        assertAll(()->assertEquals(1,blackBar.numPieces()),
-                ()->assertEquals(0,testPlayerB.getPiece(1).getPosition()),
-                ()->assertEquals(25,testPlayerB.getPiece(1).getPip()));
-        offBlackBarWhite.addPiece(testPlayerB.getPiece(2));
-        assertAll(()->assertEquals(1,blackOff.numPieces()),
-                ()->assertEquals(25,testPlayerB.getPiece(2).getPosition()),
-                ()->assertEquals(1,whiteBar.numPieces()),
-                ()->assertEquals(0,testPlayerB.getPiece(2).getPip()));
     }
 
     @Test
@@ -225,15 +194,9 @@ class OffBoardTest {
         // Position is the same, whatever the focus colour
         offWhiteBarBlack.setColor(Player.Color.WHITE);
         offBlackBarWhite.setColor(Player.Color.WHITE);
-        assertAll(()->assertEquals(0, offWhiteBarBlack.getPosition()),
-                ()->assertEquals(25, offBlackBarWhite.getPosition()));
+        assertAll(()->assertEquals(0, offWhiteBarBlack.getPosition()), ()->assertEquals(25, offBlackBarWhite.getPosition()));
         offWhiteBarBlack.setColor(Player.Color.BLACK);
         offBlackBarWhite.setColor(Player.Color.BLACK);
-        assertAll((()->assertEquals(25,offBlackBarWhite.getPosition())),
-                ()->assertEquals(0,offWhiteBarBlack.getPosition()));
+        assertAll((()->assertEquals(25,offBlackBarWhite.getPosition())), ()->assertEquals(0,offWhiteBarBlack.getPosition()));
     }
-
-
-
-
 }

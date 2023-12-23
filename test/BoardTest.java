@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class BoardTest {
     Board testBoard;
     Log testLog;
-    private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     @BeforeEach
     void setUp(){
@@ -28,7 +27,7 @@ class BoardTest {
     void createPoints(){
         Point[] points = testBoard.createPoints();
         assertEquals(26,points.length);
-        assertTrue(points[0] instanceof OffBoard);
+        assertInstanceOf(OffBoard.class, points[0]);
         for (int i=0;i<points.length;i++){
             assertEquals(points.length-i-1,points[i].getPip(new Player("B", Player.Color.BLACK)));
         }
@@ -99,6 +98,8 @@ class BoardTest {
     void placePiecesTest(Player.Color color){
         Player testPlayer = new Player("Test", color);
         testBoard.placePieces(testPlayer);
+
+
         if (color == Player.Color.WHITE) {
             assertAll(()->assertEquals(2,testBoard.numPieces(24)),
                     ()->assertEquals(5,testBoard.numPieces(13)),
@@ -256,10 +257,5 @@ class BoardTest {
         assertEquals(1,barB.numPieces());
         assertEquals(0,testBoard.numPieces(1));
 
-    }
-
-    @AfterEach
-    public void tearDown() {
-        System.setOut(standardOut);
     }
 }

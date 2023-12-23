@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
     import java.io.ByteArrayInputStream;
 
 class MatchTest {
-    private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     private Match testMatch;
     private Player playerB;

@@ -4,11 +4,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PieceTest {
-    Player testPlayer;
-    Player testPlayer2;
+    Player testPlayer, testPlayer2;
     @BeforeEach
     void setUp(){
-
         testPlayer=new Player("Test", Player.Color.BLACK);
         testPlayer2=new Player("TestW", Player.Color.WHITE);
     }
@@ -28,22 +26,14 @@ class PieceTest {
 
     @Test
     void getPip(){
-        Piece blackPiece = new Piece(testPlayer,1);
-        Piece blackPiece2 = new Piece(testPlayer,5);
-        Piece blackPieceBar = new Piece(testPlayer,0);
-        Piece blackPieceOff = new Piece(testPlayer,25);
-        Piece whitePiece1 = new Piece(testPlayer2,24);
-        Piece whitePiece2 = new Piece(testPlayer2,6);
-        Piece whitePieceBar = new Piece(testPlayer2,25);
-        Piece whitePieceOff = new Piece(testPlayer2,0);
-        assertAll(()->assertEquals(24,blackPiece.getPip()),
-                ()->assertEquals(20,blackPiece2.getPip()),
-                ()->assertEquals(25,blackPieceBar.getPip()),
-                ()->assertEquals(0,blackPieceOff.getPip()),
-                ()->assertEquals(24,whitePiece1.getPip()),
-                ()->assertEquals(6,whitePiece2.getPip()),
-                ()->assertEquals(25,whitePieceBar.getPip()),
-                ()->assertEquals(0,whitePieceOff.getPip()));
+        Piece[] blackPieces = new Piece[4], whitePieces = new Piece[4];
+        int[] p1Values = {1,5,0,25}, p2Values = {24,6,25,0};
+        int[] endValues = {24,20,25,0,24,6,25,0};
+
+        for(int i=0; i < p1Values.length; i++) blackPieces[i] = new Piece(testPlayer,p1Values[i]);
+        for(int i=0; i < p2Values.length; i++) whitePieces[i] = new Piece(testPlayer2,p2Values[i]);
+
+        for(int i=0; i < endValues.length; i++) assertEquals(endValues[i],(i<4) ? blackPieces[i].getPip() : whitePieces[i-4].getPip());
     }
 
     @Test

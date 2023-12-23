@@ -19,11 +19,6 @@ class DieTest {
         System.setOut(new PrintStream(outputStreamCaptor));
     }
 
-    @AfterEach
-    void tearDown() {
-        System.setOut(System.out);
-    }
-
     @Test
     void roll() {
         List<Integer> rolls = testDie.roll();

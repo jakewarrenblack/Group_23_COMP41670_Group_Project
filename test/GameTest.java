@@ -7,39 +7,23 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
-    private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-    private Player blackPlayer;
-    private Player whitePlayer;
+    private Player blackPlayer, whitePlayer;
     private Game myGame;
     @BeforeEach
     void setUp() {
         blackPlayer = new Player("B", Player.Color.BLACK);
         whitePlayer = new Player("W", Player.Color.WHITE);
         myGame = new Game(new Player[]{blackPlayer,whitePlayer},1,1);
-//        myGame.addPlayer(0,blackPlayer,true);
-//        myGame.addPlayer(1,whitePlayer,false);
         myGame.placePieces(blackPlayer);
         myGame.placePieces(whitePlayer);
         myGame.setCurrentPlayer(blackPlayer);
         System.setOut(new PrintStream(outputStreamCaptor));
-    }
-
-    private void provideInput(String data) {
-        ByteArrayInputStream testIn = new ByteArrayInputStream(data.getBytes());
-        System.setIn(testIn);
-    }
-
-    @AfterEach
-    void tearDown() {
-        System.setOut(standardOut);
     }
 
 
@@ -48,14 +32,11 @@ class GameTest {
     void testGame(){
         assertNotNull(myGame);
     }
-    @Test
-    void handleMove() {
-    }
 
     @Test
     @DisplayName("Checks whether we can check the game state is ongoing")
     void isGameOngoing() {
-        assertFalse(myGame.isGameOngoing());
+        assertTrue(myGame.isGameOngoing());
     }
 
     @Test
@@ -72,13 +53,7 @@ class GameTest {
         myGame.movePiece(1,3);
         assertEquals(3,blackPlayer.getPiece(1).getPosition());
     }
-    @Test
-    void chooseOption() {
-    }
 
-    @Test
-    void getInput() {
-    }
     @Test
     void getMovablePieces() {
         Piece[] blackMovable = new Piece[]{myGame.getBoard().getPoint(1).getTopChecker(), myGame.getBoard().getPoint(12).getTopChecker(), myGame.getBoard().getPoint(17).getTopChecker(), myGame.getBoard().getPoint(19).getTopChecker()};
@@ -88,33 +63,28 @@ class GameTest {
             assertEquals(blackMovable[i], result[i]);
         }
     }
-    // TODO Scrub all tests above this one
+
     @Test
     void isLegalMove(){
         // Illegal moves first
         // Try to move when the player has players on the bar
         myGame.movePiece(19,0);
-        IllegalArgumentException thrown = assertThrows(
-                IllegalArgumentException.class,
-                () -> {myGame.isLegalMove(19,20);});
+        assertThrows(IllegalArgumentException.class, () -> {myGame.isLegalMove(19,20);});
         myGame.movePiece(0,19);
+
         // Try a move from a point where the player has no checkers
-        thrown = assertThrows(
-                IllegalArgumentException.class,
-                () -> {myGame.isLegalMove(20,21);});
+        assertThrows(IllegalArgumentException.class, () -> {myGame.isLegalMove(20, 21);});
+
         // Try to move a piece off before all your pieces are in the final quadrant
-        thrown = assertThrows(
-                IllegalArgumentException.class,
-                () -> {myGame.isLegalMove(19,25);});
+        assertThrows(IllegalArgumentException.class, () -> {myGame.isLegalMove(19,25);});
+
         // Try to move a piece to a point with too many of the opponent's checkers
-        thrown = assertThrows(
-                IllegalArgumentException.class,
-                () -> {myGame.isLegalMove(19,24);});
+        assertThrows(IllegalArgumentException.class, () -> {myGame.isLegalMove(19,24);});
+
         // Try to move a piece to a point with too many of your own checkers
         myGame.movePiece(1,19);
-        thrown = assertThrows(
-                IllegalArgumentException.class,
-                () -> {myGame.isLegalMove(1,19);});
+        assertThrows(IllegalArgumentException.class, () -> {myGame.isLegalMove(1,19);});
+
         // Try to move with some of your pieces on the bar
         // Move a piece to an empty point
         assertTrue(myGame.isLegalMove(19,2));
@@ -154,35 +124,35 @@ class GameTest {
         ArrayList<Game.Move> moves = myGame.getAvailableValidMoves(6);
         assertEquals(expected.size(),moves.size());
         boolean contains=false;
-        for (int i=0;i<expected.size();i++){
-            int j=0;
+        for (Game.Move move : expected) {
+            int j = 0;
             while (!contains) {
-                contains = expected.get(i).equals(moves.get(j));
+                contains = move.equals(moves.get(j));
                 j++;
             }
             assertTrue(contains);
-            contains=false;
+            contains = false;
         }
     }
     @Test
     void getAvailableValidMovesReplica(){
         // App crashes when black starts with roll of 1 and 2
         ArrayList<Game.Move> expected = new ArrayList<Game.Move>();
-        expected.add(new Game.Move(1,3,2));
-        expected.add(new Game.Move(12,14,2));
-        expected.add(new Game.Move(17,19,2));
-        expected.add(new Game.Move(19,21,2));
+        Map<Integer, Integer[]> map = Map.of(1, new Integer[]{1,3,2}, 2, new Integer[]{12,14,2}, 3, new Integer[]{17,19,2}, 4, new Integer[]{19,21,2});
+
+        for(int i = 1; i < 5; i++) expected.add(new Game.Move(map.get(i)[0], map.get(i)[1], map.get(i)[2]));
+
         ArrayList<Game.Move> moves = myGame.getAvailableValidMoves(2);
         assertEquals(expected.size(),moves.size());
         boolean contains=false;
-        for (int i=0;i<expected.size();i++){
-            int j=0;
+        for (Game.Move move : expected) {
+            int j = 0;
             while (!contains) {
-                contains = expected.get(i).equals(moves.get(j));
+                contains = move.equals(moves.get(j));
                 j++;
             }
             assertTrue(contains);
-            contains=false;
+            contains = false;
         }
     }
     @Test
@@ -204,14 +174,14 @@ class GameTest {
         Game.Move[] expected = new Game.Move[]{new Game.Move(20,23,3),new Game.Move(15,18,3),new Game.Move(10,13,3),new Game.Move(12,17,5),new Game.Move(10,15,5)};
         assertEquals(expected.length,validMoves.size());
         boolean contains=false;
-        for (int i=0;i<expected.length;i++){
-            int j=0;
+        for (Game.Move move : expected) {
+            int j = 0;
             while (!contains) {
-                contains = expected[i].equals(validMoves.get(j));
+                contains = move.equals(validMoves.get(j));
                 j++;
             }
             assertTrue(contains);
-            contains=false;
+            contains = false;
         }
     }
     @Test

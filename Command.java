@@ -49,8 +49,6 @@ public class Command {
      */
     public void acceptCommand(String command){
 
-
-
         String[] cmdTokens = command.split("\\s+");
         switch (cmdTokens[0].toUpperCase()) {
             case "ROLL" -> match.roll();
