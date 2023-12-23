@@ -16,6 +16,8 @@ public class Command {
         this.match = match;
     }
 
+    private static JFileChooser chooser = new JFileChooser(); //now declared globally
+
     public void newGame(Game game){
         this.game=game;
         game.setCommand(this);
@@ -234,7 +236,6 @@ public class Command {
         ArrayList<String> moves = new ArrayList<>();
 
         try {
-            JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File("."));
 
             if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
