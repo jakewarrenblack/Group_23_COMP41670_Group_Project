@@ -128,7 +128,6 @@ public class Match {
      * @return the game object created
      */
     public Game newGame(){
-        System.out.println("\n**Currently playing game number " + gameIndex + " of " + games + " in the match**\n");
         this.game = new Game(players,gameIndex,games);
         this.game.setCurrentPlayer(currentPlayer);
         return this.game;
@@ -142,7 +141,7 @@ public class Match {
      * @return True if the specified number of games in the match series have been complete, False otherwise
      */
     public boolean play(List<String>...moves){
-        System.out.println("\n**Currently playing game number " + gameIndex+1 + " of " + games+1 + " in the match**\n");
+        System.out.println("\n**Currently playing game number " + (gameIndex +1) + " of " + games + " in the match**\n");
 
         game=new Game(players,gameIndex,games);
         command.newGame(game);
@@ -360,6 +359,7 @@ public class Match {
             gameIndex++;
             // make a new game
             this.game = newGame();
+            this.play();
         }
         else{
             return null;
