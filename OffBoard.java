@@ -34,8 +34,8 @@ public class OffBoard extends Point{
      */
     public OffBoard(int positionWhite, int positionBlack, int col, int row) {
         super(positionWhite,positionBlack,col,row);
-        int blackCol = positionBlack==0?col:(int)(col/2);
-        int whiteCol = positionBlack==0?(int)(col/2):col;
+        int blackCol = positionBlack==0?col: (col/2);
+        int whiteCol = positionBlack==0? (col/2) :col;
         int blackRow = 1;
         int whiteRow = 14;
         pointBlack=new Point(positionWhite,positionBlack,blackCol,blackRow);

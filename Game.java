@@ -323,11 +323,8 @@ public class Game {
     public void processRolls_inprogress(List<Integer> diceRolls,Player currentPlayer,String doubleStatus,String... selectedTestOption){
         this.currentPlayer=currentPlayer;
         List<Move> validMoves;
-        if (diceRolls.size()==2){
-            validMoves=getAllAvailableValidMoves(diceRolls);
-        } else {
-            validMoves=getAvailableValidMoves(diceRolls.get(0));
-        }
+        validMoves = diceRolls.size()==2 ? getAllAvailableValidMoves(diceRolls) : getAvailableValidMoves(diceRolls.get(0));
+
         int i=0;
         while (!validMoves.isEmpty()&i<diceRolls.size()){
             board.print(currentPlayer.getColor(), log.recentLog(10),doubleStatus);
@@ -343,6 +340,7 @@ public class Game {
             } else {
                 chosenMove = chooseMove(validMoves);
             }
+
             command.acceptCommand("move "+chosenMove.getFrom()+" "+chosenMove.getTo());
             isOngoing=!currentPlayer.hasWon();
             if (isOngoing) {
@@ -353,7 +351,9 @@ public class Game {
                 }
             }
         }
-        if (i<diceRolls.size()&isOngoing){log.updateLog("You have no more valid moves");}
+        if (i<diceRolls.size()&isOngoing){
+            log.updateLog("You have no more valid moves");
+        }
     }
 
     public Game.Move chooseMove(List<Move> validMoves){

@@ -50,17 +50,13 @@ public class Cube {
     public boolean hasOwner(){return owner!=null;}
 
     /**
-     * Who if a particular player owns the cube
+     * Who is a particular player owns the cube
      *
      * @param player to check
      * @return true if the player does own the cube, false otherwise
      */
     public boolean isOwnedBy(Player player) {
-        if (owner != null) {
-            return owner.equals(player);
-        } else {
-            return false;
-        }
+        return owner != null && owner.equals(player);
     }
 
     /**
@@ -82,11 +78,6 @@ public class Cube {
      * @return a String saying who owns the cube and what its face value is
      */
     public String doubleStatus(){
-        String status = "Double: "+String.valueOf(getDouble());
-        if (owner==null){
-            return status+" no owner";
-        } else {
-            return status+" "+owner.getName()+" in possession";
-        }
+        return owner == null ? "Double: " + getDouble() + " no owner" : "Double: " + getDouble() + " " + owner.getName() + " in possession";
     }
 }

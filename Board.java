@@ -136,9 +136,14 @@ public class Board {
     protected String colNames(int position,int quarterPoint){
         String name = "-+-";
         String colName = String.valueOf(position);
-        if (position % quarterPoint==0) name = colName.length() == 1 ? "-" + colName + "-" : "-" + colName;
+        String s = colName.length() == 1 ? "-" + colName + "-" : colName + "-";
 
-        if ((position-1) % quarterPoint==0) name = position-1 < quarterPoint*2 ? colName.length() == 1 ? "-" + colName + "-" : colName + "-" : "-" + colName;
+        if (position % quarterPoint==0) {
+            name = ((position - 1) < (quarterPoint * 2)) ? colName.length() == 1 ? "-" + colName + "-" : "-" + colName : s;
+        }
+        if ((position-1) % quarterPoint==0){
+            name = ((position - 1) < (quarterPoint * 2)) ? s : "-" + colName;
+        }
 
         return name;
     }

@@ -47,12 +47,7 @@ public class Point {
      * @return a Piece instance
      */
     public Piece getTopChecker() {
-        if (!this.pieces.isEmpty()) {
-            return pieces.peek();
-        } else {
-            //FIXME: add error handling case where the stack is empty (no checkers on the piece)
-            return null;
-        }
+        return !this.pieces.isEmpty() ? pieces.peek() : null;
     }
 
     /**
@@ -72,13 +67,9 @@ public class Point {
      * @return The piece which has been removed
      */
     public Piece removePiece() {
-
-        if (!this.pieces.isEmpty()){
-            return this.pieces.pop();
-        } else {
-            return null;
-        }
+        return !this.pieces.isEmpty() ? this.pieces.pop() : null;
     }
+
     /**
      * The number of pieces currently placed on this point
      *

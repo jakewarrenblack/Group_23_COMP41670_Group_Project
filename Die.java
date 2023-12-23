@@ -18,7 +18,7 @@ public class Die {
     // we don't need to pass the die around, we can just call Die.getInstance()
     private Die(){
         // Initialise to 'empty' die faces
-        this.values = new ArrayList<Integer>();
+        this.values = new ArrayList<>();
 
         // Roll to initialise when instantiated
         this.roll();
