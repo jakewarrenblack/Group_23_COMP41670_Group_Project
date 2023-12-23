@@ -26,20 +26,20 @@ public class Board {
      * Could conceivably be changed for "Super Backgammon"
      * but in normal play should always be 24
      */
-    private int numPoints = 24;
+    private final int numPoints = 24;
     /**
      * How many pieces can be placed on a point
      */
-    private int pointSize = 6;
+    private final int pointSize = 6;
     /**
      * How many blank rows should be placed between the two series of points
      * when displaying the board on the console
      */
-    private int gap = 2;
+    private final int gap = 2;
     /**
      * How big should the border around the points be when displaying the board on the console
      */
-    private int border = 1;
+    private final int border = 1;
 
 
     /**
@@ -136,32 +136,10 @@ public class Board {
     protected String colNames(int position,int quarterPoint){
         String name = "-+-";
         String colName = String.valueOf(position);
-        if (position%quarterPoint==0) {
-            if ((position - 1) < (quarterPoint * 2)) {
-                if (colName.length() == 1) {
-                    name = "-" + colName + "-";
-                } else {
-                    name = "-" + colName;
-                }
-            } else {
-                if (colName.length() == 1) {
-                    name = "-" + colName + "-";
-                } else {
-                    name = colName + "-";
-                }
-            }
-        }
-        if ((position-1)%quarterPoint==0){
-            if ((position-1)<(quarterPoint*2)){
-                if (colName.length()==1){
-                    name = "-" + colName + "-";
-                } else {
-                    name = colName + "-";
-                }
-            } else {
-                name = "-"+colName;
-            }
-        }
+        if (position % quarterPoint==0) name = colName.length() == 1 ? "-" + colName + "-" : "-" + colName;
+
+        if ((position-1) % quarterPoint==0) name = position-1 < quarterPoint*2 ? colName.length() == 1 ? "-" + colName + "-" : colName + "-" : "-" + colName;
+
         return name;
     }
 
@@ -180,7 +158,7 @@ public class Board {
     protected int colIncrement(int position, int midPoint, int quarterPoint){
         // If we're on the first half of the points on the board we move from right to left
         int colIncrement = position<=midPoint?-1:1;
-        // If we're at exactly the mid point the column stays the same as we switch from bottom to top
+        // If we're at exactly the mid-point the column stays the same as we switch from bottom to top
         colIncrement*=position==midPoint+1?0:1;
             // If we're at the quarter points we skip a column to accommodate the bar
         colIncrement*=(position-1)%quarterPoint==0&(position-1)%midPoint!=0?2:1;
@@ -272,12 +250,9 @@ public class Board {
      * @return a three character string which can be added to the boardPrint String array to print to console
      */
     public String emptySpace(int i){
-        if (i>0&i<points.length-1){
-            return " | ";
-        } else {
-            return "   ";
-        }
+        return i > 0 & i < points.length - 1 ? " | " : "   ";
     }
+
     /**
      * Prints a text representation of the board to the screen
      * The board can be drawn from the perspective of the black player or the white player
@@ -288,13 +263,17 @@ public class Board {
     public void print (Player.Color color, String[] recentLog, String doubleStatus) {
         updateBoard(doubleStatus);
         int[] printOrder = new int[boardPrint.length];
+
         for (int i=0;i<boardPrint.length;i++){
             printOrder[i]=i;
         }
+
+
         if (color.equals(Player.Color.BLACK)){
             printOrder[0]=boardPrint.length-1;
             printOrder[boardPrint.length-1]=0;
         }
+
         for (int i=0;i<printOrder.length;i++) {
             String[] strings = boardPrint[printOrder[i]];
             for (String string : strings) {

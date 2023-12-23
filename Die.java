@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,24 +38,24 @@ public class Die {
      *
      * @return List of Integers representing the face value of the dice rolled
      */
-    public List<Integer> roll(){
+    public List<Integer> roll() {
         if (!setManual) {
             this.values.clear();
 
             int value1 = (int) (Math.random() * 6 + 1);
             int value2 = (int) (Math.random() * 6 + 1);
 
-            this.values.add(value1);
-            this.values.add(value2);
-            int max = value1 == value2 ? 4 : 2;
+            // add both arrays to the list
+            this.values.addAll(Arrays.asList(value1, value2));
 
-            for (int i = 2; i < max; i++) {
-                this.values.add(Math.min(value1, value2));
-            }
+            // Use a single loop to add values based on the condition
+            for (int i = 2; i < (value1 == value2 ? 4 : 2); i++) this.values.add(value1);
         }
-        setManual=false;
+
+        setManual = false;
         return this.values;
     }
+
 
     /**
      * Manually set the value to return the next time the dice are rolled

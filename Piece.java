@@ -20,18 +20,15 @@ public class Piece {
      * Construct a new piece for White and place it in its initial position
      * Calculating the PIP uses a hard coded value at the moment.
      * Probably not an issue since there don't seem to be any moves in play to increase the size of the backgammon board
-     * but could be an enhancement to link this in some way to the boardSize parameter in the Board class
-     * just in case we ever decide to launch !!!SUPERBACKGAMMON!!!
-     *
+     * but could be an enhancement to link this in some way to the boardSize parameter in the Board class*
      * @param player
      * @param position
      */
     public Piece(Player player, int position){
         this.player = player;
         this.position = position;
-        if (player.getColor().equals(Player.Color.BLACK)){
-            this.pip=25-position;
-        } else {this.pip=position;}
+        this.pip = player.getColor().equals(Player.Color.BLACK) ? 25 - position : position;
+
     }
 
     /**
@@ -42,9 +39,7 @@ public class Piece {
      */
     public void setPosition(int position){
         this.position = position;
-        if (this.getColor().equals(Player.Color.BLACK)){
-            this.pip=25-position;}
-        else {this.pip=position;}
+        this.pip = this.getColor().equals(Player.Color.BLACK) ? 25 - position : position;
     }
 
     /**
