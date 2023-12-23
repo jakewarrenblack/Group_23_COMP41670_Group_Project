@@ -1,5 +1,10 @@
 import com.sun.source.tree.BreakTree;
 
+/**
+ * Represents the player in the game, and contains all the information about the player.
+ * This includes the player's name, score, pieces, and whether they have a double.
+ * The functionality of the player includes the ability to move pieces, and the ability to calculate the player's score.
+ */
 public class Player  {
     protected final String name;
     protected int score;
