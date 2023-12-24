@@ -1,5 +1,5 @@
 # COMP41670_Group_Project
-Repository for the COMP40200 Software Engineering group Backgammon project.
+Repository for the COMP41670 Software Engineering group Backgammon project.
 
 ![Animation](https://github.com/jakewarrenblack/COMP41670_Group_Project/assets/47800618/773f702e-c58f-49b8-a53d-76d6e60b7b06)
 
