@@ -3,6 +3,12 @@ import java.util.ArrayList;
 /**
  * Prints to the screen messages sent to the players and then keeps a record of those messages
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Log {
     private ArrayList<String> log = new ArrayList<>();
 

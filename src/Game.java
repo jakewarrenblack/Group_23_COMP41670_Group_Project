@@ -3,6 +3,12 @@ import java.util.*;
 /**
  * Conduct a single game of Backgammon
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Game {
     /**
      * The board the game will be played on

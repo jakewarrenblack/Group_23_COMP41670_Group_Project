@@ -8,6 +8,12 @@ import java.util.Objects;
  * After each game the loser's score is calculated based on the number of their pieces still on the board
  *
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Match {
     /**
      * The number of games in the match

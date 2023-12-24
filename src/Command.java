@@ -7,6 +7,12 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Command {
     enum Commands{ROLL,QUIT,PIP,HINT,MOVE,DOUBLE,DICE,TEST,NEXT}
     private Game game;

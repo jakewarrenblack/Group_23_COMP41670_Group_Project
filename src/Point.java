@@ -5,6 +5,12 @@ import java.util.Stack;
  * The can only hold Pieces of one colour at a time
  * And can only hold a maximum of six Pieces at once
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Point {
     /**
      * The position of the Point on the board from the perspective of the WHITE player

@@ -7,6 +7,12 @@ import java.util.Arrays;
  * Consists of 24 points, in two rows, each split in two by a bar
  *
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Board {
     /**
      * An array of Points which can hold Pieces

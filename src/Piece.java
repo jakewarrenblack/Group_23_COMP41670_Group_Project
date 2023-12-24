@@ -2,6 +2,12 @@
  * Each player gets 15 pieces of a particular colour - either black or white
  *
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Piece {
     /**
      * The player this piece belongs to

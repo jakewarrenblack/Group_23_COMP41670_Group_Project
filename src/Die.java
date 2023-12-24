@@ -7,6 +7,12 @@ import java.util.List;
  * The pair of dice which the players use in the games to see how far they can move their
  * pieces on each turn
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Die {
     private final List<Integer> values;
     private boolean setManual = false;

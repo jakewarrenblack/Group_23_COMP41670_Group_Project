@@ -1,5 +1,11 @@
 import java.util.*;
 
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Main {
     public static ArrayList<String> importMoves(){
         return Command.getStrings();

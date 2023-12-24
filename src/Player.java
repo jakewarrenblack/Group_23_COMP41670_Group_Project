@@ -5,6 +5,12 @@ import com.sun.source.tree.BreakTree;
  * This includes the player's name, score, pieces, and whether they have a double.
  * The functionality of the player includes the ability to move pieces, and the ability to calculate the player's score.
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Player  {
     protected final String name;
     protected int score;

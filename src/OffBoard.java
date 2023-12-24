@@ -6,6 +6,12 @@ import java.util.Stack;
  * The point which interacts with other classes can be defined by the color of the player we're
  * interested in
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class OffBoard extends Point{
     /**
      * Whether the colour we're interested in at present is white

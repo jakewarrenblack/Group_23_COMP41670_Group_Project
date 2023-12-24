@@ -5,6 +5,12 @@
  * At the start of a match it isn't owned by either player, but once a player claims it
  * it continually passes back and forth
  */
+
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class Cube {
     /**
      * The values the doubling cube can take

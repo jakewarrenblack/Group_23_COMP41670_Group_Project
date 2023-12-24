@@ -1,3 +1,8 @@
+/*
+- Team number: 23
+- Team members: Jake Black & Richard Mitchell
+- Github IDs: jakewarrenblack & richardmitchell1
+*/
 public class testPlayer extends Player {
     // A move using the smaller die roll is not valid if you're left unable to use the larger die roll
     // A contrived example of this is where black rolls a 5 and a 3 with the following configuration
